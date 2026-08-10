@@ -1,0 +1,101 @@
+<%- include('../../partials/header') %>
+
+<main class="d-flex align-items-center justify-content-center px-3 sl-pt-nav"
+      style="min-height:100vh;background:var(--sl-bg-950);position:relative;overflow:hidden">
+
+    <%# Decorative glow %>
+    <div style="position:absolute;top:25%;right:25%;width:384px;height:384px;background:rgba(14,165,233,0.07);border-radius:50%;filter:blur(120px);pointer-events:none"></div>
+
+    <div style="width:100%;max-width:440px;position:relative;z-index:1">
+
+        <% if (typeof erro !== 'undefined' && erro) { %>
+        <div class="alert alert-danger fw-bold small text-center mb-4 rounded-3 d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> <%= erro %>
+        </div>
+        <% } %>
+
+        <div class="rounded-4 p-4 p-sm-5"
+             style="background:rgba(15,23,42,0.5);backdrop-filter:blur(24px);border:1px solid var(--sl-bg-800)">
+
+            <div class="text-center mb-4">
+                <h1 class="fw-black text-white text-uppercase mb-1" style="letter-spacing:-0.03em">Forjar Identidade</h1>
+                <p class="fw-bold text-uppercase mb-0" style="font-size:11px;color:var(--sl-text-500);letter-spacing:0.15em">Crie o seu acesso à Fundição</p>
+            </div>
+
+            <form action="/register" method="POST" id="regForm">
+                <div class="mb-3">
+                    <label for="name" class="d-block mb-1 fw-black text-uppercase"
+                           style="font-size:10px;color:var(--sl-text-500);letter-spacing:0.15em">Nome do Operador</label>
+                    <input type="text" name="name" id="name" autocomplete="name" required
+                           placeholder="Ex: Rodrigo Silva"
+                           class="form-control"
+                           style="background:rgba(15,23,42,0.6);border-color:var(--sl-bg-800);color:#fff">
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="d-block mb-1 fw-black text-uppercase"
+                           style="font-size:10px;color:var(--sl-text-500);letter-spacing:0.15em">Identidade (E-mail)</label>
+                    <input type="email" name="email" id="email" autocomplete="email" required
+                           placeholder="operador@softload.com"
+                           class="form-control"
+                           style="background:rgba(15,23,42,0.6);border-color:var(--sl-bg-800);color:#fff">
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="d-block mb-1 fw-black text-uppercase"
+                           style="font-size:10px;color:var(--sl-text-500);letter-spacing:0.15em">Chave de Acesso (Mín. 8)</label>
+                    <input type="password" name="password" id="password" autocomplete="new-password" required minlength="8"
+                           placeholder="••••••••"
+                           class="form-control"
+                           oninput="validateReg()"
+                           style="background:rgba(15,23,42,0.6);border-color:var(--sl-bg-800);color:#fff">
+                    <p id="msgLen" class="mt-1 fw-bold text-uppercase" style="font-size:10px;color:#eab308;display:none">A chave deve ter 8 ou mais caracteres.</p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="confirm" class="d-block mb-1 fw-black text-uppercase"
+                           style="font-size:10px;color:var(--sl-text-500);letter-spacing:0.15em">Confirmar Chave</label>
+                    <input type="password" id="confirm" autocomplete="new-password" required
+                           placeholder="••••••••"
+                           class="form-control"
+                           oninput="validateReg()"
+                           style="background:rgba(15,23,42,0.6);border-color:var(--sl-bg-800);color:#fff">
+                    <p id="msgMatch" class="mt-1 fw-bold text-uppercase" style="font-size:10px;color:#f87171;display:none">As chaves não coincidem.</p>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn btn-sl-primary w-100 fw-black text-uppercase"
+                        style="letter-spacing:0.1em;height:48px">
+                    Registrar e Entrar
+                </button>
+            </form>
+
+            <div class="text-center mt-4">
+                <p class="small mb-0" style="color:var(--sl-text-500)">
+                    Já possui uma licença?
+                    <a href="/login" class="fw-bold text-white text-decoration-none">Acessar Painel</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+function validateReg() {
+    var pwd     = document.getElementById('password').value;
+    var conf    = document.getElementById('confirm').value;
+    var msgLen  = document.getElementById('msgLen');
+    var msgMatch = document.getElementById('msgMatch');
+    var btn     = document.getElementById('submitBtn');
+
+    msgLen.style.display   = pwd.length > 0 && pwd.length < 8 ? 'block' : 'none';
+    msgMatch.style.display = conf.length > 0 && pwd !== conf   ? 'block' : 'none';
+
+    var valid = pwd.length >= 8 && pwd === conf;
+    btn.disabled = !valid;
+    btn.style.opacity = valid ? '1' : '0.5';
+    btn.style.cursor  = valid ? 'pointer' : 'not-allowed';
+}
+validateReg();
+</script>
+
+<%- include('../../partials/footer') %>

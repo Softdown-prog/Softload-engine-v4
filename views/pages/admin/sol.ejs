@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= titulo %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="/css/softload.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <style>
+        body { background: var(--sl-bg-950); color: var(--sl-text-300); }
+        .admin-topbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1050;
+            height: 56px;
+            background: rgba(15,23,42,0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--sl-bg-800);
+            display: flex; align-items: center; padding: 0 1rem; gap: .5rem;
+        }
+        .admin-badge {
+            font-size: 9px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--sl-text-500);
+            border: 1px solid var(--sl-bg-800); padding: 2px 8px; border-radius: 4px;
+        }
+        .sol-shell {
+            display: flex; flex-direction: column;
+            height: calc(100dvh - 56px - 2rem);
+            background: rgba(15,23,42,0.6); border: 1px solid var(--sl-bg-800);
+            border-radius: 1rem; overflow: hidden;
+        }
+        .sol-header {
+            padding: 1rem 1.25rem; border-bottom: 1px solid var(--sl-bg-800);
+            display: flex; align-items: center; gap: .75rem;
+        }
+        .sol-avatar {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: linear-gradient(135deg, #fbbf24, #f97316);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .sol-mensagens {
+            flex: 1; overflow-y: auto; padding: 1.25rem;
+            display: flex; flex-direction: column; gap: 1rem;
+            scroll-behavior: smooth;
+        }
+        .sol-msg { max-width: 78%; }
+        .sol-msg.user { align-self: flex-end; }
+        .sol-msg.sol  { align-self: flex-start; }
+        .sol-bolha {
+            padding: .75rem 1rem; border-radius: .9rem; font-size: .875rem; line-height: 1.5;
+            white-space: pre-wrap; word-break: break-word;
+        }
+        .sol-msg.user .sol-bolha { background: var(--sl-primary); color: #051108; border-bottom-right-radius: .25rem; }
+        .sol-msg.sol .sol-bolha  { background: var(--sl-bg-800); color: var(--sl-text-200); border-bottom-left-radius: .25rem; }
+        .sol-arquivos-lidos {
+            font-size: 10px; color: var(--sl-text-500); margin-top: .35rem; padding: 0 .25rem;
+            display: flex; align-items: center; gap: .35rem; flex-wrap: wrap;
+        }
+        .sol-arquivo-chip {
+            background: var(--sl-bg-900); border: 1px solid var(--sl-bg-800);
+            border-radius: 4px; padding: 1px 6px; font-family: monospace;
+        }
+        .sol-input-row {
+            border-top: 1px solid var(--sl-bg-800); padding: 1rem 1.25rem;
+            display: flex; gap: .75rem; align-items: flex-end;
+        }
+        .sol-input-row textarea {
+            resize: none; background: var(--sl-bg-900); border: 1px solid var(--sl-bg-800);
+            color: var(--sl-text-200); border-radius: .6rem; padding: .6rem .8rem;
+            font-size: .875rem; flex: 1; max-height: 140px;
+        }
+        .sol-input-row textarea:focus { outline: none; border-color: var(--sl-primary); box-shadow: none; }
+        .sol-typing { display: flex; gap: 4px; padding: .25rem 0; }
+        .sol-typing span {
+            width: 6px; height: 6px; border-radius: 50%; background: var(--sl-text-500);
+            animation: solTypingPulse 1.2s infinite ease-in-out;
+        }
+        .sol-typing span:nth-child(2) { animation-delay: .2s; }
+        .sol-typing span:nth-child(3) { animation-delay: .4s; }
+        @keyframes solTypingPulse { 0%, 60%, 100% { opacity: .3; } 30% { opacity: 1; } }
+        .sol-progresso {
+            font-size: 11px; color: var(--sl-text-500); padding: .1rem 0 .35rem;
+            display: flex; align-items: center; gap: .4rem;
+        }
+        /* Markdown renderizado dentro das respostas do Sol */
+        .sol-bolha.md :is(p, ul, ol, pre, blockquote, table) { margin: 0 0 .6rem; }
+        .sol-bolha.md :last-child { margin-bottom: 0; }
+        .sol-bolha.md ul, .sol-bolha.md ol { padding-left: 1.3rem; }
+        .sol-bolha.md code {
+            background: rgba(0,0,0,0.35); border-radius: 4px; padding: 1px 5px;
+            font-size: .82em; font-family: 'SFMono-Regular', Consolas, monospace;
+        }
+        .sol-bolha.md pre {
+            background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: .5rem; padding: .7rem .85rem; overflow-x: auto;
+        }
+        .sol-bolha.md pre code { background: none; padding: 0; }
+        .sol-bolha.md a { color: var(--sl-primary); }
+        .sol-bolha.md blockquote {
+            border-left: 3px solid var(--sl-bg-800); padding-left: .75rem; color: var(--sl-text-500);
+        }
+        .sol-bolha.md h1, .sol-bolha.md h2, .sol-bolha.md h3 { font-size: 1rem; font-weight: 800; margin: .4rem 0; }
+
+        /* ── Drawer de histórico (mesmo padrão do chat de suporte em /dashboard/chat) ── */
+        .sol-hist-item {
+            padding: 10px 12px; border-radius: 8px; cursor: pointer; margin-bottom: 4px;
+            border: 1px solid transparent; transition: background .15s, border-color .15s;
+        }
+        .sol-hist-item:hover, .sol-hist-item:active {
+            background: rgba(251,191,36,.08); border-color: rgba(251,191,36,.2);
+        }
+        .sol-hist-preview {
+            font-size: .82rem; color: var(--sl-text-300);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .sol-hist-meta { font-size: .7rem; color: var(--sl-text-500); margin-top: 3px; display: flex; gap: 8px; }
+
+        /* ── Mobile ── */
+        @media (max-width: 576px) {
+            .admin-topbar { padding: 0 .75rem; gap: .35rem; }
+            main { padding-top: 56px !important; }
+            .sol-shell { height: calc(100dvh - 56px - 1rem); border-radius: .6rem; }
+            .sol-header { padding: .75rem .9rem; }
+            .sol-mensagens { padding: .85rem; gap: .75rem; }
+            .sol-msg { max-width: 90%; }
+            .sol-input-row { padding: .65rem .75rem; }
+            .sol-avatar { width: 30px; height: 30px; font-size: .95rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="admin-topbar">
+    <span class="fw-black text-white sl-brand d-none d-sm-inline" style="font-size:1rem">SOFTLOAD<span class="sl-accent">ENGINE</span></span>
+    <span class="admin-badge d-none d-sm-inline">Admin</span>
+    <div class="flex-grow-1"></div>
+    <button onclick="solHistoricoOpen()" class="btn btn-sm fw-bold text-uppercase d-flex align-items-center gap-1"
+            style="background:transparent;color:var(--sl-text-300);border:1px solid var(--sl-bg-800);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-clock-history"></i><span class="d-none d-sm-inline">Conversas</span>
+    </button>
+    <a href="/eu" class="btn btn-sm fw-bold text-uppercase"
+       style="background:var(--sl-bg-800);color:var(--sl-text-300);border:1px solid var(--sl-bg-800);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-arrow-left"></i><span class="d-none d-sm-inline"> Painel</span>
+    </a>
+    <a href="/logout" class="btn btn-sm fw-bold text-uppercase"
+       style="background:transparent;color:#f87171;border:1px solid rgba(239,68,68,0.3);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-box-arrow-right"></i><span class="d-none d-sm-inline"> Sair</span>
+    </a>
+</nav>
+
+<main style="padding-top:56px;" class="px-2 px-sm-3 px-md-5 py-2 py-md-4">
+    <div class="mx-auto" style="max-width:900px">
+        <div class="sol-shell">
+            <div class="sol-header">
+                <div class="sol-avatar">☀️</div>
+                <div class="flex-grow-1">
+                    <p class="fw-bolder text-white mb-0" style="font-size:.95rem">Sol</p>
+                    <p class="mb-0 d-none d-sm-block" style="font-size:11px;color:var(--sl-text-500)">
+                        Lê o código da Softload sob demanda · Gemini · só consultivo, nunca executa ação
+                    </p>
+                </div>
+                <button class="btn btn-sm" id="btnNovaConversa"
+                        style="background:transparent;color:var(--sl-text-500);border:1px solid var(--sl-bg-800);font-size:10px;letter-spacing:.08em;font-weight:700;text-transform:uppercase">
+                    <i class="bi bi-plus-circle"></i><span class="d-none d-sm-inline"> Nova conversa</span>
+                </button>
+            </div>
+
+            <div class="sol-mensagens" id="solMensagens">
+                <div class="sol-msg sol">
+                    <div class="sol-bolha">Oi! Sou o Sol. Pergunte sobre a arquitetura da Softload, peça pra eu ler um arquivo específico, ou peça sugestão sobre algum trecho de código.</div>
+                </div>
+            </div>
+
+            <div class="sol-input-row">
+                <textarea id="solInput" rows="1" placeholder="Pergunte algo pro Sol... (Enter envia, Shift+Enter quebra linha)"></textarea>
+                <button class="btn fw-bold" id="btnEnviar"
+                        style="background:var(--sl-primary);color:#051108;border:none;padding:.6rem 1.1rem">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%# ── Drawer de conversas salvas — mesmo padrão do chat de suporte (/dashboard/chat) ── %>
+<div id="solHistOverlay"
+     style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.55);backdrop-filter:blur(2px)"
+     onclick="solHistoricoClose()"></div>
+
+<div id="solHistDrawer"
+     style="position:fixed;top:0;left:0;bottom:0;width:min(340px,92vw);z-index:401;
+            background:var(--sl-bg-900);border-right:1px solid var(--sl-bg-800);
+            transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1);
+            overflow:hidden;display:flex;flex-direction:column">
+    <div class="d-flex align-items-center gap-2 px-3 py-3 flex-shrink-0"
+         style="border-bottom:1px solid var(--sl-bg-800)">
+        <i class="bi bi-clock-history" style="color:var(--sl-primary);font-size:1rem"></i>
+        <span class="fw-black text-uppercase flex-grow-1" style="font-size:.85rem;letter-spacing:-.01em">Conversas com o Sol</span>
+        <button onclick="solHistoricoClose()"
+                style="background:none;border:none;color:var(--sl-text-400);font-size:1.1rem;cursor:pointer;padding:2px;line-height:1">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <div id="solHistList" style="flex:1;overflow-y:auto;padding:8px"></div>
+</div>
+
+<script>
+(function () {
+    var historico = [];
+    var currentSessionId = null;
+    var enviando = false;
+
+    var elMensagens = document.getElementById('solMensagens');
+    var elInput      = document.getElementById('solInput');
+    var elBtnEnviar   = document.getElementById('btnEnviar');
+    var elBtnNovaConversa = document.getElementById('btnNovaConversa');
+
+    function scrollParaFim() {
+        elMensagens.scrollTop = elMensagens.scrollHeight;
+    }
+
+    // Markdown só pras respostas do Sol (nunca pra mensagem digitada pelo
+    // usuário) — marked converte, DOMPurify sanitiza antes de ir pro DOM.
+    function renderMarkdownSeguro(texto) {
+        try {
+            var html = marked.parse(String(texto), { breaks: true });
+            return DOMPurify.sanitize(html, { ADD_ATTR: ['target'] });
+        } catch (e) {
+            return null; // fallback pro caller usar textContent puro
+        }
+    }
+
+    function adicionarMensagem(role, texto, arquivosLidos) {
+        var div = document.createElement('div');
+        div.className = 'sol-msg ' + (role === 'user' ? 'user' : 'sol');
+
+        var bolha = document.createElement('div');
+        bolha.className = 'sol-bolha';
+
+        if (role === 'sol') {
+            var htmlSeguro = renderMarkdownSeguro(texto);
+            if (htmlSeguro !== null) {
+                bolha.classList.add('md');
+                bolha.innerHTML = htmlSeguro;
+            } else {
+                bolha.textContent = texto;
+            }
+        } else {
+            bolha.textContent = texto;
+        }
+        div.appendChild(bolha);
+
+        if (arquivosLidos && arquivosLidos.length > 0) {
+            var meta = document.createElement('div');
+            meta.className = 'sol-arquivos-lidos';
+            meta.innerHTML = '<i class="bi bi-file-earmark-code"></i> leu:';
+            arquivosLidos.forEach(function (a) {
+                var chip = document.createElement('span');
+                chip.className = 'sol-arquivo-chip';
+                chip.textContent = a;
+                meta.appendChild(chip);
+            });
+            div.appendChild(meta);
+        }
+
+        elMensagens.appendChild(div);
+        scrollParaFim();
+        return div;
+    }
+
+    // Indicador de progresso: bolinhas pulsando + label que muda em tempo
+    // real conforme o Sol chama ferramentas ("Lendo src/x.js...", etc),
+    // em vez de um "digitando..." genérico e estático.
+    function adicionarProgresso() {
+        var div = document.createElement('div');
+        div.className = 'sol-msg sol';
+        div.id = 'solProgresso';
+        div.innerHTML =
+            '<div class="sol-bolha"><div class="sol-typing"><span></span><span></span><span></span></div></div>' +
+            '<div class="sol-progresso" id="solProgressoLabel"></div>';
+        elMensagens.appendChild(div);
+        scrollParaFim();
+    }
+
+    function atualizarProgresso(label) {
+        var el = document.getElementById('solProgressoLabel');
+        if (el) { el.textContent = label; scrollParaFim(); }
+    }
+
+    function removerProgresso() {
+        var el = document.getElementById('solProgresso');
+        if (el) el.remove();
+    }
+
+    // Parser manual de SSE (não EventSource nativo, porque é POST com body):
+    // lê o stream, separa por "\n\n", processa cada linha "data: {...}".
+    async function consumirStream(res, callbacks) {
+        var reader = res.body.getReader();
+        var decoder = new TextDecoder();
+        var buffer = '';
+
+        while (true) {
+            var chunk = await reader.read();
+            if (chunk.done) break;
+            buffer += decoder.decode(chunk.value, { stream: true });
+
+            var partes = buffer.split('\n\n');
+            buffer = partes.pop();
+
+            for (var i = 0; i < partes.length; i++) {
+                var linha = partes[i].trim();
+                if (!linha.startsWith('data:')) continue;
+                var evento;
+                try { evento = JSON.parse(linha.slice(5).trim()); } catch (e) { continue; }
+                if (evento.type === 'status' && callbacks.onStatus) callbacks.onStatus(evento);
+                else if (evento.type === 'chunk' && callbacks.onChunk) callbacks.onChunk(evento);
+                else if (evento.type === 'done' && callbacks.onDone) callbacks.onDone(evento);
+                else if (evento.type === 'error' && callbacks.onError) callbacks.onError(evento);
+            }
+        }
+    }
+
+    async function enviar() {
+        var texto = elInput.value.trim();
+        if (!texto || enviando) return;
+
+        enviando = true;
+        elBtnEnviar.disabled = true;
+        elInput.value = '';
+        elInput.style.height = 'auto';
+
+        adicionarMensagem('user', texto);
+        adicionarProgresso();
+
+        try {
+            var res = await fetch('/eu/api/sol/perguntar/stream', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mensagem: texto, historico: historico, sessionId: currentSessionId }),
+            });
+
+            if (!res.ok) {
+                var errJson = await res.json().catch(function () { return {}; });
+                removerProgresso();
+                adicionarMensagem('sol', 'Erro: ' + (errJson.erro || 'falha desconhecida.'));
+                return;
+            }
+
+            var respostaFinal = null;
+            var erroFinal = null;
+            var budgetFinal = null;
+
+            await consumirStream(res, {
+                onStatus: function (ev) { atualizarProgresso(ev.label || ''); },
+                onChunk:  function (ev) { respostaFinal = ev.text; },
+                onDone:   function (ev) { respostaFinal = ev.resposta; budgetFinal = ev.budget; if (ev.sessionId) currentSessionId = ev.sessionId; },
+                onError:  function (ev) { erroFinal = ev.message; },
+            });
+
+            removerProgresso();
+
+            if (erroFinal) {
+                adicionarMensagem('sol', 'Erro: ' + erroFinal);
+            } else if (respostaFinal) {
+                adicionarMensagem('sol', respostaFinal, budgetFinal ? budgetFinal.ficheirosCarregados : []);
+                historico.push({ role: 'user', content: texto });
+                historico.push({ role: 'assistant', content: respostaFinal });
+            } else {
+                adicionarMensagem('sol', '[SOL] Sem resposta.');
+            }
+        } catch (e) {
+            removerProgresso();
+            adicionarMensagem('sol', 'Erro de conexão — tente de novo.');
+        } finally {
+            enviando = false;
+            elBtnEnviar.disabled = false;
+            elInput.focus();
+        }
+    }
+
+    function novaConversa() {
+        historico = [];
+        currentSessionId = null;
+        elMensagens.innerHTML = '';
+        adicionarMensagem('sol', 'Nova conversa. Pode perguntar.');
+    }
+
+    // ── Histórico de conversas (mesmo padrão do chat de suporte em /dashboard/chat) ──
+    window.solHistoricoOpen = function () {
+        document.getElementById('solHistOverlay').style.display = 'block';
+        document.getElementById('solHistDrawer').style.transform = 'translateX(0)';
+        solHistoricoLoad();
+    };
+
+    window.solHistoricoClose = function () {
+        document.getElementById('solHistOverlay').style.display = 'none';
+        document.getElementById('solHistDrawer').style.transform = 'translateX(-100%)';
+    };
+
+    async function solHistoricoLoad() {
+        var list = document.getElementById('solHistList');
+        list.innerHTML = '<p style="padding:14px 12px;color:var(--sl-text-400);font-size:.82rem">Carregando...</p>';
+        try {
+            var r = await fetch('/eu/api/sol/sessions');
+            var d = await r.json();
+            var sessions = d.sessions || [];
+            if (!sessions.length) {
+                list.innerHTML = '<p style="padding:14px 12px;color:var(--sl-text-400);font-size:.82rem">Nenhuma conversa salva ainda.</p>';
+                return;
+            }
+            list.innerHTML = sessions.map(function (s) {
+                var dt = new Date(s.updatedAt);
+                var dateStr = dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) +
+                              ' ' + dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                var preview = (s.firstMessage || '(sem mensagem)').slice(0, 72);
+                return '<div class="sol-hist-item" onclick="solHistoricoCarregar(\'' + s.sessionId + '\')">' +
+                    '<div class="sol-hist-preview">' + preview + '</div>' +
+                    '<div class="sol-hist-meta"><span>' + dateStr + '</span><span>' + (s.messageCount || 0) + ' msgs</span></div>' +
+                '</div>';
+            }).join('');
+        } catch (e) {
+            list.innerHTML = '<p style="padding:14px 12px;color:#f87171;font-size:.82rem">Erro ao carregar histórico.</p>';
+        }
+    }
+
+    window.solHistoricoCarregar = async function (sessionId) {
+        if (enviando) return;
+        var list = document.getElementById('solHistList');
+        list.innerHTML = '<p style="padding:14px 12px;color:var(--sl-text-400);font-size:.82rem">Carregando conversa...</p>';
+        try {
+            var r = await fetch('/eu/api/sol/sessions/' + sessionId);
+            if (!r.ok) throw new Error('not found');
+            var d = await r.json();
+            var session = d.session;
+
+            historico = [];
+            currentSessionId = session.sessionId;
+            elMensagens.innerHTML = '';
+            (session.messages || []).forEach(function (msg) {
+                if (msg.role !== 'user' && msg.role !== 'assistant') return;
+                historico.push({ role: msg.role, content: msg.content });
+                adicionarMensagem(msg.role === 'assistant' ? 'sol' : 'user', msg.content);
+            });
+            solHistoricoClose();
+            elInput.focus();
+        } catch (e) {
+            list.innerHTML = '<p style="padding:14px 12px;color:#f87171;font-size:.82rem">Erro ao carregar conversa.</p>';
+        }
+    };
+
+    elBtnEnviar.addEventListener('click', enviar);
+    elInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            if ('ontouchstart' in window) return; // mobile: Enter quebra linha, botão envia
+            e.preventDefault();
+            enviar();
+        }
+    });
+    elInput.addEventListener('input', function () {
+        elInput.style.height = 'auto';
+        elInput.style.height = Math.min(elInput.scrollHeight, 140) + 'px';
+    });
+
+    elBtnNovaConversa.addEventListener('click', novaConversa);
+
+    // iOS/mobile: evita salto de scroll quando o teclado virtual abre
+    if ('ontouchstart' in window) {
+        elInput.addEventListener('focus', function () {
+            setTimeout(function () { window.scrollTo(0, 0); }, 150);
+        });
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', function () {
+                window.scrollTo(0, 0);
+                scrollParaFim();
+            });
+        }
+    }
+
+    elInput.focus();
+})();
+</script>
+</body>
+</html>

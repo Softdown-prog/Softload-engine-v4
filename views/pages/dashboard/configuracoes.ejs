@@ -1,0 +1,174 @@
+<%- include('../../partials/header') %>
+
+<div class="sl-dash-wrapper">
+
+    <%- include('../../partials/dashboard-sidebar', { activePage: 'configuracoes', user: user }) %>
+
+    <main class="flex-grow-1 overflow-auto">
+
+        <div class="sl-topbar d-lg-none">
+            <span class="flex-grow-1 fw-black text-uppercase small" style="letter-spacing:0.05em">Configurações</span>
+            <a href="/dashboard" class="btn btn-link p-1" style="color:var(--sl-text-400)" title="Painel">
+                <i class="bi bi-house-fill" style="font-size:1.2rem"></i>
+            </a>
+        </div>
+
+        <div class="p-4 p-md-5">
+        <div style="max-width:42rem">
+
+            <!-- Header -->
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <svg width="22" height="22" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"
+                     class="d-none d-sm-block flex-shrink-0" style="color:var(--sl-text-400)">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8.625 1.04232C8.54924 0.814981 8.3371 0.65 8.09635 0.65H6.90364C6.66289 0.65 6.45076 0.814981 6.37499 1.04232L6.10811 1.84293C5.69666 1.98403 5.3113 2.1691 4.96024 2.39178L4.22591 1.86532C4.03264 1.72671 3.7663 1.7454 3.59368 1.91802L2.75276 2.75893C2.58014 2.93156 2.56146 3.1979 2.69999 3.39121L3.22656 4.12563C3.00392 4.47665 2.81888 4.86196 2.6778 5.27335L1.87707 5.54024C1.64974 5.616 1.48476 5.82814 1.48476 6.06889V7.2616C1.48476 7.50235 1.64974 7.71449 1.87707 7.79025L2.6778 8.05714C2.81888 8.46853 3.00392 8.85384 3.22656 9.20486L2.69999 9.93928C2.56146 10.1326 2.58014 10.3989 2.75276 10.5716L3.59368 11.4125C3.7663 11.5851 4.03264 11.6038 4.22591 11.4652L4.96024 10.9387C5.3113 11.1614 5.69666 11.3465 6.10811 11.4876L6.37499 12.2882C6.45076 12.5155 6.66289 12.6805 6.90364 12.6805H8.09635C8.3371 12.6805 8.54924 12.5155 8.625 12.2882L8.89188 11.4876C9.30334 11.3465 9.68869 11.1614 10.0397 10.9387L10.7741 11.4652C10.9673 11.6038 11.2337 11.5851 11.4063 11.4125L12.2472 10.5716C12.4198 10.3989 12.4385 10.1326 12.3 9.93928L11.7734 9.20486C11.9961 8.85384 12.1811 8.46853 12.3222 8.05714L13.1229 7.79025C13.3502 7.71449 13.5152 7.50235 13.5152 7.2616V6.06889C13.5152 5.82814 13.3502 5.616 13.1229 5.54024L12.3222 5.27335C12.1811 4.86196 11.9961 4.47665 11.7734 4.12563L12.3 3.39121C12.4385 3.1979 12.4198 2.93156 12.2472 2.75893L11.4063 1.91802C11.2337 1.7454 10.9673 1.72671 10.7741 1.86532L10.0397 2.39178C9.68869 2.1691 9.30334 1.98403 8.89188 1.84293L8.625 1.04232ZM7.49999 9.34049C8.68213 9.34049 9.64049 8.38213 9.64049 7.19999C9.64049 6.01786 8.68213 5.05949 7.49999 5.05949C6.31786 5.05949 5.35949 6.01786 5.35949 7.19999C5.35949 8.38213 6.31786 9.34049 7.49999 9.34049Z" fill="currentColor"/>
+                </svg>
+                <div>
+                    <h1 class="fw-black text-uppercase mb-0" style="font-size:1.25rem;letter-spacing:-0.02em">Configurações</h1>
+                    <p class="mb-0 small" style="color:var(--sl-text-400)">Gerencie sua conta e preferências.</p>
+                </div>
+            </div>
+
+            <!-- Seção: Conta -->
+            <div class="sl-card mb-3">
+                <div class="px-4 py-3 border-bottom" style="border-color:rgba(148,163,184,.15)!important">
+                    <h2 class="sl-section-label mb-0">Conta</h2>
+                </div>
+                <div class="px-4 py-4 d-flex flex-column gap-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="fw-semibold small mb-0">Nome</p>
+                            <p class="mb-0" style="font-size:.75rem;color:var(--sl-text-400)"><%= user.nome %></p>
+                        </div>
+                    </div>
+                    <hr class="my-0" style="border-color:rgba(148,163,184,.15)">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="fw-semibold small mb-0">E-mail</p>
+                            <p class="mb-0" style="font-size:.75rem;color:var(--sl-text-400)"><%= user.email %></p>
+                        </div>
+                    </div>
+                    <hr class="my-0" style="border-color:rgba(148,163,184,.15)">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="fw-semibold small mb-0">Plano</p>
+                            <p class="mb-0 text-capitalize" style="font-size:.75rem;color:var(--sl-text-400)"><%= user.plano || 'Gratuito' %></p>
+                        </div>
+                        <% if (!user.is_active) { %>
+                            <a href="/dashboard/upgrade" class="btn btn-sm fw-bold text-uppercase"
+                               style="font-size:.7rem;letter-spacing:.08em;background:var(--sl-text-500);color:#fff;border:0">
+                                Ativar
+                            </a>
+                        <% } else { %>
+                            <span class="badge fw-black text-uppercase"
+                                  style="font-size:.65rem;letter-spacing:.1em;color:var(--sl-primary);background:rgba(14,165,233,.1);padding:.3em .6em">
+                                Ativo
+                            </span>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Sessão -->
+            <div class="sl-card mb-3">
+                <div class="px-4 py-3 border-bottom" style="border-color:rgba(148,163,184,.15)!important">
+                    <h2 class="sl-section-label mb-0">Sessão</h2>
+                </div>
+                <div class="px-4 py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="fw-semibold small mb-0">Encerrar sessão</p>
+                            <p class="mb-0" style="font-size:.75rem;color:var(--sl-text-400)">Você será redirecionado para a página de login.</p>
+                        </div>
+                        <a href="/logout" class="btn btn-sm fw-bold text-uppercase"
+                           style="font-size:.7rem;letter-spacing:.08em;background:rgba(239,68,68,.1);color:#f87171;border:0">
+                            Sair
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção: Zona de Perigo -->
+            <div class="sl-card" style="border-color:rgba(239,68,68,.3)!important">
+                <div class="px-4 py-3 border-bottom" style="border-color:rgba(239,68,68,.2)!important">
+                    <h2 class="sl-section-label mb-0" style="color:#f87171">Zona de Perigo</h2>
+                </div>
+                <div class="px-4 py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="fw-semibold small mb-0">Excluir minha conta</p>
+                            <p class="mb-0" style="font-size:.75rem;color:var(--sl-text-400)">Ação irreversível. Todos os seus dados serão permanentemente apagados.</p>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-danger fw-bold text-uppercase"
+                                style="font-size:.7rem;letter-spacing:.08em"
+                                data-bs-toggle="modal" data-bs-target="#modal-excluir-conta">
+                            Excluir
+                        </button>
+                    </div>
+
+                    <% if (typeof query !== 'undefined' && query.erro === 'confirmacao') { %>
+                        <p class="text-danger small fw-semibold mt-3 mb-0">Confirmação inválida. Digite EXCLUIR exatamente.</p>
+                    <% } else if (typeof query !== 'undefined' && query.erro === 'exclusao') { %>
+                        <p class="text-danger small fw-semibold mt-3 mb-0">Falha ao excluir conta. Tente novamente ou contate o suporte.</p>
+                    <% } %>
+                </div>
+            </div>
+
+        </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal: Confirmar Exclusão -->
+<div class="modal fade" id="modal-excluir-conta" tabindex="-1" aria-labelledby="modalExcluirLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content sl-card" style="border-radius:16px">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-black" id="modalExcluirLabel" style="font-size:1rem;letter-spacing:-.01em">
+                    Excluir conta permanentemente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <p class="small mb-2" style="color:var(--sl-text-400);line-height:1.6">
+                    Esta ação é <strong class="text-danger">irreversível</strong>. Seu acesso, dados de plano e histórico serão apagados definitivamente do sistema.
+                </p>
+                <p class="small mb-3" style="color:var(--sl-text-400)">
+                    Para confirmar, digite <strong class="fw-black">EXCLUIR</strong> no campo abaixo:
+                </p>
+
+                <form method="POST" action="/dashboard/conta/excluir" id="form-excluir-conta">
+                    <input type="text" name="confirmacao" id="confirmacao-input" autocomplete="off"
+                           placeholder="EXCLUIR"
+                           class="form-control form-control-sm font-monospace"
+                           style="letter-spacing:.1em">
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn btn-sm fw-bold" data-bs-dismiss="modal"
+                                style="background:rgba(148,163,184,.12);color:var(--sl-text-300);border:0">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="btn-confirmar-exclusao" disabled
+                                class="btn btn-sm btn-danger fw-bold text-uppercase"
+                                style="font-size:.7rem;letter-spacing:.08em;opacity:.4">
+                            Excluir Definitivamente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const confirmacaoInput = document.getElementById('confirmacao-input');
+    const btnConfirmar = document.getElementById('btn-confirmar-exclusao');
+    if (confirmacaoInput && btnConfirmar) {
+        confirmacaoInput.addEventListener('input', () => {
+            const ok = confirmacaoInput.value === 'EXCLUIR';
+            btnConfirmar.disabled = !ok;
+            btnConfirmar.style.opacity = ok ? '1' : '.4';
+        });
+    }
+</script>
+
+<%- include('../../partials/footer') %>

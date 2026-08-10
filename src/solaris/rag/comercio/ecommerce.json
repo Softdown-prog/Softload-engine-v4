@@ -1,0 +1,39 @@
+{
+  "id": "ecommerce",
+  "slug": "ecommerce",
+
+  "titulo": "Loja Virtual",
+
+  "categoria": "comercio",
+
+  "componentes": [
+    "header",
+    "search",
+    "categorias",
+    "banner",
+    "produtos",
+    "produto-card",
+    "carrinho",
+    "checkout",
+    "newsletter",
+    "footer"
+  ],
+
+  "frameworks": [
+    "php",
+    "django",
+    "flask",
+    "html5",
+    "bootstrap5",
+    "javascript",
+    "ejs"
+  ],
+
+  "seo": true,
+
+  "performance": [
+    "lazy-loading",
+    "responsive-images",
+    "cache"
+  ]
+}

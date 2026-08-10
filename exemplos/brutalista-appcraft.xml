@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultmessages='true' b:layoutsVersion='3' b:responsive='true' lang='pt-br' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+<head>
+  <b:include data='blog' name='all-head-content'/>
+  <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+  <title><data:blog.pageTitle/></title>
+
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'/>
+  
+  <link href='https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&amp;family=Space+Grotesk:wght@400;600;700&amp;display=swap' rel='stylesheet'/>
+
+  <b:skin><![CDATA[
+  
+    /*
+    <Group description="🎨 Cores do Tema (AppCraft)" selector=":root">
+      <Variable name="cor.fundo" description="Cor de Fundo (Branco Gelo)" type="color" default="#f8f9fa" value="#f8f9fa"/>
+      <Variable name="cor.escura" description="Cor Escura (Preto Nanquim)" type="color" default="#111111" value="#111111"/>
+      <Variable name="cor.destaque" description="Cor de Destaque (Amarelo Tech)" type="color" default="#facc15" value="#facc15"/>
+    </Group>
+    */
+
+    /*
+    -----------------------------------------------
+    Blogger Template Style
+    Nome: AppCraft (Brutalista / Minimalista)
+    ----------------------------------------------- */
+
+    :root {
+      --ac-bg: $(cor.fundo);
+      --ac-dark: $(cor.escura);
+      --ac-yellow: $(cor.destaque);
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    /* === ESTILOS GLOBAIS === */
+    body {
+      background-color: var(--ac-bg);
+      color: var(--ac-dark);
+      font-family: var(--font-display);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* Links Brutalistas (Sublinhado grosso que vira marca-texto) */
+    a {
+      color: var(--ac-dark);
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+      text-decoration-color: var(--ac-yellow);
+      text-underline-offset: 3px;
+      transition: all 0.2s ease;
+    }
+    a:hover {
+      background-color: var(--ac-yellow);
+      color: var(--ac-dark);
+      text-decoration: none;
+    }
+
+    h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -1px; color: var(--ac-dark); margin-bottom: 1rem; }
+
+    /* === CABEÇALHO === */
+    header {
+      background-color: var(--ac-bg);
+      border-bottom: 3px solid var(--ac-dark);
+      padding: 0.5rem 0;
+    }
+    .navbar-brand h1 {
+      font-weight: 700;
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      margin: 0;
+    }
+    .navbar-brand { text-decoration: none; }
+    .navbar-brand:hover { background-color: transparent; }
+    
+    .nav-link {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+      padding: 0.5rem 1.2rem !important;
+      border: 2px solid transparent;
+      text-decoration: none !important;
+      color: var(--ac-dark) !important;
+    }
+    .nav-link:hover {
+      background-color: var(--ac-yellow);
+      border-color: var(--ac-dark);
+    }
+    .navbar-toggler { color: var(--ac-dark); border-radius: 0; padding: 5px; }
+    .navbar-toggler:focus { box-shadow: 0 0 0 3px var(--ac-yellow); }
+
+    /* === PÁGINA INICIAL ESTÁTICA === */
+    .hero-section {
+      border-bottom: 3px solid var(--ac-dark);
+      padding: 6rem 0;
+      /* Grid sutil de caderno pontilhado no fundo */
+      background-image: radial-gradient(var(--ac-dark) 1px, transparent 1px);
+      background-size: 30px 30px;
+      background-position: center;
+    }
+    .hero-section h1, .hero-section h2 {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1;
+      letter-spacing: -3px;
+      font-weight: 700;
+      background-color: var(--ac-bg); /* Limpa os pontos atrás do texto */
+      display: inline-block;
+      padding: 0 15px;
+    }
+    .hero-section p {
+      font-size: 1.25rem;
+      font-weight: 500;
+      max-width: 600px;
+      margin: 1.5rem auto;
+      background-color: var(--ac-bg);
+      padding: 10px;
+    }
+
+    .features-section { border-bottom: 3px solid var(--ac-dark); background: var(--ac-bg); }
+    .features-section h2 { font-size: 2.5rem; text-transform: uppercase; border-bottom: 3px solid var(--ac-dark); display: inline-block; padding-bottom: 5px; margin-bottom: 2rem; }
+
+    /* === FEED DE POSTS (ATUALIZAÇÕES) === */
+    .post-feed .post-item { border-bottom: 3px solid var(--ac-dark); }
+    .post-title { font-size: 2.2rem; line-height: 1.1; margin-bottom: 0.8rem; }
+    .post-title a { text-decoration: none; }
+    .post-title a:hover { background-color: var(--ac-yellow); }
+    
+    /* Metadados Estilo Código */
+    .post-meta, .post-meta-single {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #444;
+      text-transform: uppercase;
+    }
+    
+    .post-snippet { font-size: 1.15rem; color: #222; margin-top: 1rem; }
+
+    /* === SINGLE POST === */
+    .post-title-single { font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1; margin-bottom: 1rem; }
+    .post-body-content { font-size: 1.2rem; line-height: 1.8; margin-top: 2rem; }
+    .post-body-content img { max-width: 100%; height: auto; border: 3px solid var(--ac-dark); margin: 1.5rem 0; box-shadow: 8px 8px 0 var(--ac-dark); }
+    
+    /* Tags Brutalistas (Cruas) */
+    .post-bottom-tags { font-family: var(--font-mono); font-weight: 500; font-size: 0.9rem; border-top: 3px solid var(--ac-dark); }
+    .post-bottom-tags span:first-child { color: #666; }
+    .post-bottom-tags a {
+      background: var(--ac-dark);
+      color: var(--ac-bg);
+      text-decoration: none;
+      padding: 2px 8px;
+      display: inline-block;
+      margin-top: 5px;
+    }
+    .post-bottom-tags a:hover {
+      background: var(--ac-yellow);
+      color: var(--ac-dark);
+    }
+
+    /* === SIDEBAR === */
+    aside .widget {
+      background: var(--ac-bg);
+      border: 3px solid var(--ac-dark);
+      padding: 1.5rem;
+      box-shadow: 6px 6px 0 var(--ac-dark);
+      margin-bottom: 2.5rem;
+    }
+    aside h3 {
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      border-bottom: 3px solid var(--ac-dark);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    /* Paginação Clássica */
+    .pagination a {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      text-decoration: none;
+      border: 2px solid var(--ac-dark);
+      padding: 8px 16px;
+      text-transform: uppercase;
+    }
+    .pagination a:hover { background: var(--ac-dark); color: var(--ac-bg); }
+
+    /* === FOOTER (CAIXA PRETA) === */
+    .footer-section { background-color: var(--ac-dark); color: var(--ac-bg); border-top: 5px solid var(--ac-yellow); }
+    .footer-section h2, .footer-section h3 { color: var(--ac-yellow); text-transform: uppercase; border-bottom: 2px solid #333; padding-bottom: 10px; }
+    .footer-section a { color: var(--ac-bg); text-decoration-color: #555; }
+    .footer-section a:hover { color: var(--ac-dark); background-color: var(--ac-yellow); text-decoration: none; }
+    
+    /* Contact Form Hacker UX */
+    .contact-form-widget form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+    .contact-form-widget input, .contact-form-widget textarea {
+      width: 100%;
+      padding: 12px 15px;
+      background: transparent;
+      border: 2px solid #333;
+      color: var(--ac-bg);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      outline: none;
+      border-radius: 0;
+      transition: border-color 0.3s ease;
+    }
+    .contact-form-widget input::placeholder, .contact-form-widget textarea::placeholder { color: #666; }
+    .contact-form-widget input:focus, .contact-form-widget textarea:focus { border-color: var(--ac-yellow); background: rgba(255, 255, 255, 0.05); }
+    
+    .contact-form-button-submit {
+      background: var(--ac-yellow) !important;
+      color: var(--ac-dark) !important;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none !important;
+      padding: 12px !important;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 4px 4px 0 #fff;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .contact-form-button-submit:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #fff; }
+    .contact-form-button-submit:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #fff; } /* Efeito Tecla Mecânica */
+
+    .footer-bottom { border-top: 1px solid #333 !important; font-family: var(--font-mono); font-size: 0.8rem; color: #888; }
+
+blockquote{margin:30px 10px;padding:20px;background:var(--ac-primary);border:3px solid var(--ac-text);box-shadow:7px 7px 0 var(--ac-text);font-family:'Space Grotesk',sans-serif;font-weight:700;font-style:italic;color:var(--ac-text)}
+
+  ]]></b:skin>
+</head>
+
+<body>
+
+  <header class='sticky-top'>
+    <nav class='navbar navbar-expand-lg py-1'>
+      <div class='container d-flex justify-content-between align-items-center'>
+        
+        <b:section id='header-logo' maxwidgets='1' name='Logotipo (App)' showaddelement='yes'>
+          <b:widget id='Header1' locked='false' title='App Craft (Cabeçalho)' type='Header' version='2' visible='true'>
+            <b:widget-settings>
+              <b:widget-setting name='displayUrl'>https://blogger.googleusercontent.com/img/a/AVvXsEjBxBW-4bL9xKyrEIFe_gQnZQhMPl-oJBjYxmMe0qWLAZg0tDTKzpAUJcfBCw-cadAOSDEA3CWKM32_J1f9aVZoa1c31lIdKwRYDgSqWi4fxBiWaydFULccZzpqQLPMrVrJySj6ueJNhlUZN5LeE63xgz-8W3-QBfuXpOvTm2r-wujx5GqaTBBB7kGbrqXE=s143</b:widget-setting>
+              <b:widget-setting name='displayHeight'>60</b:widget-setting>
+              <b:widget-setting name='sectionWidth'>791</b:widget-setting>
+              <b:widget-setting name='useImage'>true</b:widget-setting>
+              <b:widget-setting name='shrinkToFit'>false</b:widget-setting>
+              <b:widget-setting name='imagePlacement'>REPLACE</b:widget-setting>
+              <b:widget-setting name='displayWidth'>143</b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main'>
+              <a class='navbar-brand' expr:href='data:blog.homepageUrl'>
+                <h1 class='m-0'><data:title/></h1>
+              </a>
+            </b:includable>
+            <b:includable id='behindImageStyle'>
+    <b:if cond='data:sourceUrl'>
+      <b:include cond='data:this.image' data='{                    image: data:this.image,                    selector: &quot;.header-widget&quot;                  }' name='responsiveImageStyle'/>
+      <style type='text/css'>
+        .header-widget {
+          background-position: <data:blog.locale.languageAlignment/>;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+      </style>
+    </b:if>
+  </b:includable>
+            <b:includable id='description'>
+    <p>
+      <data:this.description/>
+    </p>
+  </b:includable>
+            <b:includable id='image'>
+    <a class='header-image-wrapper' expr:href='data:blog.homepageUrl'>
+      <b:include data='{                                                 image: data:image,                                                 altText: data:blog.title.escaped,                                                 originalWidth: data:width,                                                 originalHeight: data:height                                               }' name='responsiveImage'/>
+    </a>
+  </b:includable>
+            <b:includable id='title'>
+    <h1>
+      <b:tag cond='data:view.url != data:blog.homepageUrl' expr:href='data:blog.homepageUrl' name='a'>
+        <data:title/>
+      </b:tag>
+    </h1>
+  </b:includable>
+          </b:widget>
+        </b:section>
+
+        <button aria-controls='mainNavbar' aria-expanded='false' class='navbar-toggler border-0' data-bs-target='#mainNavbar' data-bs-toggle='collapse' type='button'>
+          <svg fill='none' height='28' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24' width='28' xmlns='http://www.w3.org/2000/svg'>
+            <line x1='3' x2='21' y1='12' y2='12'/>
+            <line x1='3' x2='21' y1='6' y2='6'/>
+            <line x1='3' x2='21' y1='18' y2='18'/>
+          </svg>
+        </button>
+
+        <div class='collapse navbar-collapse justify-content-end' id='mainNavbar'>
+          <b:section id='main-menu' maxwidgets='1' name='Menu de Navegação' showaddelement='yes'>
+            <b:widget id='PageList1' locked='false' title='Menu' type='PageList' version='2' visible='true'>
+              <b:widget-settings>
+                <b:widget-setting name='pageListJson'><![CDATA[{"link1":{"href":"https://drive.google.com/file/d/1SQKpVZM7qOFGYu_j_ZrE5xuVn6wgn3EF/view?usp=drive_link","position":1,"title":"Documentação"},"link0":{"href":"http://tecdowny.blogspot.com/","position":0,"title":"Página inicial"},"2561038359066131849":{"href":"https://tecdowny.blogspot.com/p/termos-de-uso.html","position":2,"title":"Termos De Uso"}}]]></b:widget-setting>
+                <b:widget-setting name='homeTitle'>Página inicial</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+                <ul class='navbar-nav gap-2 mt-3 mt-lg-0 pb-3 pb-lg-0'>
+                  <b:loop values='data:links' var='link'>
+                    <li class='nav-item'><a class='nav-link' expr:href='data:link.href'><data:link.title/></a></li>
+                  </b:loop>
+                </ul>
+              </b:includable>
+              <b:includable id='content'>
+  <div class='widget-content'>
+    <b:include name='pageList'/>
+  </div>
+</b:includable>
+              <b:includable id='overflowButton'>
+  <b:include name='verticalMoreIcon'/>
+</b:includable>
+              <b:includable id='overflowablePageList'>
+  <div class='overflowable-container'>
+    <div class='overflowable-contents'>
+      <div class='container'>
+        <b:with value='true' var='overflow'>
+        <b:with value='&quot;tabs&quot;' var='pageListClass'>
+          <b:include name='pageList'/>
+        </b:with>
+        </b:with>
+      </div>
+    </div>
+    <div class='overflow-button hidden'>
+      <b:include name='overflowButton'/>
+    </div>
+  </div>
+</b:includable>
+              <b:includable id='pageLink'>
+  <li>
+    <b:class cond='data:overflow' name='overflowable-item'/>
+    <b:class cond='data:link.isCurrentPage' name='selected'/>
+
+    <a expr:href='data:link.href'><data:link.title/></a>
+  </li>
+</b:includable>
+              <b:includable id='pageList'>
+  <ul>
+    <b:class cond='data:pageListClass' expr:name='data:pageListClass'/>
+    <b:loop values='data:links' var='link'>
+      <b:include name='pageLink'/>
+    </b:loop>
+  </ul>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+
+      </div>
+    </nav>
+  </header>
+
+  <b:if cond='data:view.isHomepage'>
+    
+    <section class='hero-section text-center'>
+      <div class='container'>
+        <b:section id='home-hero' maxwidgets='1' name='Hero (Bloco de Texto Topo)' showaddelement='yes'>
+          <b:widget id='HTML101' locked='false' title='App Hero' type='HTML' version='2' visible='false'>
+            <b:widget-settings>
+              <b:widget-setting name='content'/>
+            </b:widget-settings>
+            <b:includable id='main'>
+              <data:content/>
+            </b:includable>
+          </b:widget>
+        </b:section>
+      </div>
+    </section>
+
+    <section class='features-section py-5'>
+      <div class='container py-4'>
+        <b:section id='home-features' name='Recursos (Blocos Editáveis)' showaddelement='yes'>
+          <b:widget id='HTML1' locked='false' title='' type='HTML'>
+            <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+          </b:widget>
+        </b:section>
+      </div>
+    </section>
+
+  </b:if>
+
+  <div class='container my-5 py-3'>
+    <div class='row g-5'>
+      
+      <main class='col-lg-8'>
+        <b:section id='main-content' name='Páginas e Atualizações' showaddelement='no'>
+          <b:widget id='Blog1' locked='true' title='Postagens no blog' type='Blog' version='2' visible='true'>
+            <b:widget-settings>
+              <b:widget-setting name='commentLabel'>$type={blogger}</b:widget-setting>
+              <b:widget-setting name='showShareButtons'>true</b:widget-setting>
+              <b:widget-setting name='authorLabel'>by</b:widget-setting>
+              <b:widget-setting name='style.unittype'>TextAndImage</b:widget-setting>
+              <b:widget-setting name='timestampLabel'>-</b:widget-setting>
+              <b:widget-setting name='reactionsLabel'/>
+              <b:widget-setting name='showAuthorProfile'>true</b:widget-setting>
+              <b:widget-setting name='style.layout'>1x1</b:widget-setting>
+              <b:widget-setting name='showLocation'>false</b:widget-setting>
+              <b:widget-setting name='showTimestamp'>true</b:widget-setting>
+              <b:widget-setting name='postsPerAd'>1</b:widget-setting>
+              <b:widget-setting name='style.bordercolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='showDateHeader'>false</b:widget-setting>
+              <b:widget-setting name='style.textcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='showCommentLink'>true</b:widget-setting>
+              <b:widget-setting name='style.urlcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='postLocationLabel'>Location:</b:widget-setting>
+              <b:widget-setting name='showAuthor'>true</b:widget-setting>
+              <b:widget-setting name='style.linkcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='style.bgcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='showLabels'>true</b:widget-setting>
+              <b:widget-setting name='postLabelsLabel'>Tags</b:widget-setting>
+              <b:widget-setting name='showBacklinks'>false</b:widget-setting>
+              <b:widget-setting name='showInlineAds'>false</b:widget-setting>
+              <b:widget-setting name='showReactions'>false</b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main' var='top'>
+              
+              <b:if cond='data:view.isMultipleItems'>
+                <div class='post-feed'>
+                  <b:loop values='data:posts' var='post'>
+                    <article class='post-item mb-5 pb-4'>
+                      <header class='mb-3'>
+                        <h2 class='post-title'><a expr:href='data:post.url'><data:post.title/></a></h2>
+                        <div class='post-meta'>
+                          <span>[ <data:post.date/> ]</span>
+                          <b:if cond='data:post.labels'>
+                            <span class='mx-2'>/</span>
+                            <span>
+                              <b:loop values='data:post.labels' var='label'>
+                                <data:label.name/><b:if cond='not data:label.isLast'> / </b:if>
+                              </b:loop>
+                            </span>
+                          </b:if>
+                        </div>
+                      </header>
+                      <div class='post-snippet'>
+                        <data:post.snippet/>
+                      </div>
+                    </article>
+                  </b:loop>
+                </div>
+                <b:include name='nextprev'/>
+                
+              <b:else/>
+                <b:loop values='data:posts' var='post'>
+                  <article class='post-single mb-5'>
+                    <header class='mb-4'>
+                      <h1 class='post-title-single'><data:post.title/></h1>
+                      <div class='post-meta-single'>
+                        <span>&gt; pub_date: <data:post.date/></span>
+                      </div>
+                    </header>
+                    <div class='post-body-content'>
+                      <data:post.body/>
+                    </div>
+                    <b:if cond='data:post.labels'>
+                      <div class='post-bottom-tags mt-5 pt-3'>
+                        <span>Tags: </span>
+                        <b:loop values='data:post.labels' var='label'>
+                          <a expr:href='data:label.url'>#<data:label.name/></a><b:if cond='not data:label.isLast'> </b:if>
+                        </b:loop>
+                      </div>
+                    </b:if>
+                  </article>
+                </b:loop>
+              </b:if>
+
+            </b:includable>
+            <b:includable id='aboutPostAuthor'><div/></b:includable>
+            <b:includable id='addComments'><div/></b:includable>
+            <b:includable id='commentAuthorAvatar'><div/></b:includable>
+            <b:includable id='commentDeleteIcon' var='comment'><span/></b:includable>
+            <b:includable id='commentForm' var='post'><div/></b:includable>
+            <b:includable id='commentFormIframeSrc' var='post'><a/></b:includable>
+            <b:includable id='commentItem' var='comment'><div/></b:includable>
+            <b:includable id='commentList' var='comments'><div/></b:includable>
+            <b:includable id='commentPicker' var='post'><div/></b:includable>
+            <b:includable id='comments' var='post'><div/></b:includable>
+            <b:includable id='commentsTitle'><div/></b:includable>
+            <b:includable id='feedLinks'><div/></b:includable>
+            <b:includable id='feedLinksBody' var='links'><div/></b:includable>
+            <b:includable id='homePageLink'><div/></b:includable>
+            <b:includable id='iframeComments' var='post'><div/></b:includable>
+            <b:includable id='inlineAd' var='post'><div/></b:includable>
+            <b:includable id='nextPageLink'><div/></b:includable>
+            <b:includable id='nextprev'>
+              <div class='pagination d-flex justify-content-between mt-5 pt-3'>
+                <b:if cond='data:newerPageUrl'><a expr:href='data:newerPageUrl'>&lt; Voltar</a><b:else/><span/></b:if>
+                <b:if cond='data:olderPageUrl'><a expr:href='data:olderPageUrl'>Avançar &gt;</a></b:if>
+              </div>
+            </b:includable>
+            <b:includable id='post' var='post'><div/></b:includable>
+            <b:includable id='postBody' var='post'><div/></b:includable>
+            <b:includable id='postBodySnippet' var='post'><div/></b:includable>
+            <b:includable id='postCommentsAndAd' var='post'><div/></b:includable>
+            <b:includable id='postCommentsLink'><div/></b:includable>
+            <b:includable id='postFooter' var='post'><div/></b:includable>
+            <b:includable id='postFooterAuthorProfile' var='post'><div/></b:includable>
+            <b:includable id='postHeader' var='post'><div/></b:includable>
+            <b:includable id='postMeta' var='post'><div/></b:includable>
+            <b:includable id='postPagination'><div/></b:includable>
+            <b:includable id='postTitle' var='post'><div/></b:includable>
+            <b:includable id='previousPageLink'><div/></b:includable>
+            <b:includable id='threadedCommentForm' var='post'><div/></b:includable>
+            <b:includable id='threadedCommentJs' var='post'><div/></b:includable>
+            <b:includable id='threadedComments' var='post'><div/></b:includable>
+            <b:includable id='tooltipCss'>
+  <!-- LINT.IfChange -->
+  <style>
+    .post-body a.b-tooltip-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .post-body a.b-tooltip-container .b-tooltip {
+      display: block !important;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translate(-20%, 1px);
+      visibility: hidden;
+      opacity: 0;
+      z-index: 1;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .post-body a.b-tooltip-container .b-tooltip iframe {
+      width: 200px;
+      height: 198px;
+      max-width: none;
+      border: none;
+      border-radius: 20px;
+      box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (hover: hover) {
+      .post-body a.b-tooltip-container:hover .b-tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+  </style>
+  <!-- LINT.ThenChange(//depot/google3/java/com/google/blogger/b2/layouts/widgets/v2-style.css) -->
+</b:includable>
+          </b:widget>
+        </b:section>
+      </main>
+
+      <aside class='col-lg-4'>
+        <div class='sticky-top' style='top: 100px;'>
+          <b:section id='sidebar-right' name='Barra Lateral Direita' showaddelement='yes'>
+            <b:widget id='Translate1' locked='false' title='Translate' type='Translate'>
+              <b:widget-settings>
+                <b:widget-setting name='displayMode'>SIMPLE</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div id='google_translate_element'/>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: &#39;<data:pageLanguage/>&#39;,
+        autoDisplay: &#39;true&#39;,
+        layout: google.translate.TranslateElement.InlineLayout.<data:layout/>
+      }, &#39;google_translate_element&#39;);
+    }
+  </script>
+  <script src='//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'/>
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+            <b:widget id='HTML102' locked='false' title='Sobre o Desenvolvedor' type='HTML' version='2' visible='true'>
+              <b:widget-settings>
+                <b:widget-setting name='content'/>
+              </b:widget-settings>
+              <b:includable id='main'>
+                <div class='widget-content'>
+                  <h3><data:title/></h3>
+                  <data:content/>
+                </div>
+              </b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <footer class='footer-section pt-5 pb-3'>
+    <div class='container'>
+      <div class='row g-5 mb-5'>
+        
+        <div class='col-md-6'>
+          <b:section id='footer-info' name='Informações do Footer' showaddelement='yes'>
+            <b:widget id='Stats1' locked='false' title='Total de visualizações de página' type='Stats'>
+              <b:widget-settings>
+                <b:widget-setting name='showGraphicalCounter'>true</b:widget-setting>
+                <b:widget-setting name='showAnimatedCounter'>true</b:widget-setting>
+                <b:widget-setting name='showSparkline'>true</b:widget-setting>
+                <b:widget-setting name='sparklineStyle'>BLACK_TRANSPARENT</b:widget-setting>
+                <b:widget-setting name='timeRange'>ALL_TIME</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'><h2><data:title/></h2></b:if>
+  <div class='widget-content'>
+    <!-- Content is going to be visible when data will be fetched from server. -->
+    <div expr:id='data:widget.instanceId + &quot;_content&quot;' style='display: none;'>
+      <!-- Counter and image will be injected later via AJAX call. -->
+      <b:if cond='data:showSparkline'>
+        <script src='https://www.gstatic.com/charts/loader.js' type='text/javascript'/>
+        <span expr:id='data:widget.instanceId + &quot;_sparklinespan&quot;' style='display:inline-block; width:75px; height:30px'/>
+      </b:if>
+      <span expr:class='&quot;counter-wrapper &quot; + (data:showGraphicalCounter ? &quot;graph-counter-wrapper&quot; : &quot;text-counter-wrapper&quot;)' expr:id='data:widget.instanceId + &quot;_totalCount&quot;'>
+      </span>
+      <b:include name='quickedit'/>
+    </div>
+  </div>
+</b:includable>
+            </b:widget>
+            <b:widget id='Label1' locked='false' title='Marcadores' type='Label'>
+              <b:widget-settings>
+                <b:widget-setting name='sorting'>ALPHA</b:widget-setting>
+                <b:widget-setting name='display'>LIST</b:widget-setting>
+                <b:widget-setting name='selectedLabelsList'>Software</b:widget-setting>
+                <b:widget-setting name='showType'>USER_SELECTED</b:widget-setting>
+                <b:widget-setting name='showFreqNumbers'>true</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2><data:title/></h2>
+  </b:if>
+  <div expr:class='&quot;widget-content &quot; + data:display + &quot;-label-widget-content&quot;'>
+    <b:if cond='data:display == &quot;list&quot;'>
+      <ul>
+        <b:loop values='data:labels' var='label'>
+          <li>
+            <b:if cond='data:blog.url == data:label.url'>
+              <span expr:dir='data:blog.languageDirection'><data:label.name/></span>
+            <b:else/>
+              <a expr:dir='data:blog.languageDirection' expr:href='data:label.url'><data:label.name/></a>
+            </b:if>
+            <b:if cond='data:showFreqNumbers'>
+              <span dir='ltr'>(<data:label.count/>)</span>
+            </b:if>
+          </li>
+        </b:loop>
+      </ul>
+    <b:else/>
+      <b:loop values='data:labels' var='label'>
+        <span expr:class='&quot;label-size label-size-&quot; + data:label.cssSize'>
+          <b:if cond='data:blog.url == data:label.url'>
+            <span expr:dir='data:blog.languageDirection'><data:label.name/></span>
+          <b:else/>
+            <a expr:dir='data:blog.languageDirection' expr:href='data:label.url'><data:label.name/></a>
+          </b:if>
+          <b:if cond='data:showFreqNumbers'>
+            <span class='label-count' dir='ltr'>(<data:label.count/>)</span>
+          </b:if>
+        </span>
+      </b:loop>
+    </b:if>
+    <b:include name='quickedit'/>
+  </div>
+</b:includable>
+            </b:widget>
+            <b:widget id='FeaturedPost1' locked='false' title='Postagem em destaque' type='FeaturedPost'>
+              <b:widget-settings>
+                <b:widget-setting name='showSnippet'>true</b:widget-setting>
+                <b:widget-setting name='showPostTitle'>true</b:widget-setting>
+                <b:widget-setting name='postId'>0</b:widget-setting>
+                <b:widget-setting name='showFirstImage'>true</b:widget-setting>
+                <b:widget-setting name='useMostRecentPost'>true</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <!-- Only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <b:include name='content'/>
+
+  <b:include name='quickedit'/>
+</b:includable>
+              <b:includable id='content'>
+  <div class='post-summary'>
+    <b:if cond='data:showPostTitle and data:postTitle != &quot;&quot;'>
+      <h3><a expr:href='data:postUrl'><data:postTitle/></a></h3>
+    </b:if>
+    <b:if cond='data:showSnippet and data:postSummary != &quot;&quot;'>
+      <p>
+        <data:postSummary/>
+      </p>
+    </b:if>
+    <b:if cond='data:showFirstImage and data:postFirstImage != &quot;&quot;'>
+      <img class='image' expr:src='data:postFirstImage'/>
+    </b:if>
+  </div>
+
+  <style type='text/css'>
+    .image {
+      width: 100%;
+    }
+  </style>
+</b:includable>
+            </b:widget>
+            <b:widget id='HTML103' locked='false' title='AppCraft' type='HTML' version='2' visible='true'>
+              <b:widget-settings>
+                <b:widget-setting name='content'/>
+              </b:widget-settings>
+              <b:includable id='main'>
+                <h2><data:title/></h2>
+                <div class='footer-text opacity-75 mt-3' style='max-width: 400px;'><data:content/></div>
+              </b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+
+        <div class='col-md-6'>
+          <b:section id='footer-contact' name='Formulário de Contato' showaddelement='yes'>
+            <b:widget id='ContactForm1' locked='false' title='Fale Conosco' type='ContactForm' version='2' visible='true'>
+              <b:includable id='main'>
+                <h3><data:title/></h3>
+                <div class='contact-form-widget'>
+                  <form name='contact-form'>
+                    <input class='contact-form-name' expr:id='data:widget.instanceId + &quot;_contact-form-name&quot;' name='name' placeholder='&gt; sys.name_' type='text'/>
+                    <input class='contact-form-email' expr:id='data:widget.instanceId + &quot;_contact-form-email&quot;' name='email' placeholder='&gt; sys.email_' type='email'/>
+                    <textarea class='contact-form-email-message' expr:id='data:widget.instanceId + &quot;_contact-form-email-message&quot;' name='email-message' placeholder='&gt; input_message...' rows='4'/>
+                    <input class='contact-form-button contact-form-button-submit' expr:id='data:widget.instanceId + &quot;_contact-form-submit&quot;' expr:value='data:contactFormSendMsg' type='button'/>
+                    <div class='mt-2'>
+                      <p class='contact-form-error-message text-danger m-0' expr:id='data:widget.instanceId + &quot;_contact-form-error-message&quot;'/>
+                      <p class='contact-form-success-message text-success m-0' expr:id='data:widget.instanceId + &quot;_contact-form-success-message&quot;'/>
+                    </div>
+                  </form>
+                </div>
+              </b:includable>
+              <b:includable id='content'>
+  <div class='contact-form-widget'>
+    <div class='form'>
+      <form name='contact-form'>
+        <p/>
+        <data:contactFormNameMsg/>
+        <br/>
+        <input class='contact-form-name' expr:id='data:widget.instanceId + &quot;_contact-form-name&quot;' name='name' size='30' type='text' value=''/>
+        <p/>
+        <data:contactFormEmailMsg/> <span style='font-weight: bolder;'>*</span>
+        <br/>
+        <input class='contact-form-email' expr:id='data:widget.instanceId + &quot;_contact-form-email&quot;' name='email' size='30' type='text' value=''/>
+        <p/>
+        <data:contactFormMessageMsg/> <span style='font-weight: bolder;'>*</span>
+        <br/>
+        <textarea class='contact-form-email-message' cols='25' expr:id='data:widget.instanceId + &quot;_contact-form-email-message&quot;' name='email-message' rows='5'/>
+        <p/>
+        <input class='contact-form-button contact-form-button-submit' expr:id='data:widget.instanceId + &quot;_contact-form-submit&quot;' expr:value='data:contactFormSendMsg' type='button'/>
+        <p/>
+        <div style='text-align: center; max-width: 222px; width: 100%'>
+          <p class='contact-form-error-message' expr:id='data:widget.instanceId + &quot;_contact-form-error-message&quot;'/>
+          <p class='contact-form-success-message' expr:id='data:widget.instanceId + &quot;_contact-form-success-message&quot;'/>
+        </div>
+      </form>
+    </div>
+  </div>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+
+      </div>
+      
+      <div class='footer-bottom pt-4 text-center'>
+        <b:section id='footer-copyright' maxwidgets='1' name='Copyright' showaddelement='yes'/>
+        <p class='m-0'>AppCraft Studio &#169; 2026. Built with logic.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'/>
+</body>
+</html>

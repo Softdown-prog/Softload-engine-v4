@@ -1,0 +1,29 @@
+{
+  "id":"documentacao",
+
+  "slug":"documentacao",
+
+  "categoria":"docs",
+
+  "frameworks":[
+    "html5",
+    "bootstrap5",
+    "ejs"
+  ],
+
+  "componentes":[
+    "sidebar",
+    "search",
+    "breadcrumbs",
+    "toc",
+    "code-block",
+    "copy-button",
+    "footer"
+  ],
+
+  "design":[
+    "dark-mode",
+    "syntax-highlight",
+    "responsive"
+  ]
+}

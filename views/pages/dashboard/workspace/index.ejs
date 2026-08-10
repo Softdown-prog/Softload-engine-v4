@@ -1,0 +1,1133 @@
+<%- include('../../../partials/header') %>
+
+<div class="sl-dash-wrapper">
+
+    <%- include('../../../partials/dashboard-sidebar', { activePage: 'workspace', user: user }) %>
+
+    <main class="flex-grow-1 overflow-auto">
+
+        <div class="sl-topbar d-lg-none">
+            <span class="flex-grow-1 fw-black text-uppercase small" style="letter-spacing:0.05em">Workspace</span>
+            <a href="/dashboard/configuracoes" title="Configurações" class="btn btn-link p-1" style="color:var(--sl-text-400)">
+                <i class="bi bi-gear-fill" style="font-size:1.2rem"></i>
+            </a>
+        </div>
+
+        <div class="p-4 p-md-5">
+
+            <%# Cabeçalho %>
+            <div class="d-flex align-items-center gap-2 mb-4 flex-wrap row-gap-2">
+                <div class="flex-grow-1 min-w-0">
+                    <h1 class="fw-black text-uppercase mb-0" style="font-size:1.1rem;letter-spacing:-0.02em">Workspace</h1>
+                    <p class="mb-0 small" style="color:var(--sl-text-400)">Projetos e sessões IA vinculadas ao estado do template</p>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <button id="ws-btn-importar"
+                            class="btn btn-sm fw-black d-flex align-items-center gap-1"
+                            style="background:transparent;color:var(--sl-primary);border:1.5px solid var(--sl-primary);padding:7px 13px;font-size:.8rem;min-height:36px">
+                        <i class="bi bi-cloud-arrow-down-fill"></i>
+                        <span>Importar</span>
+                    </button>
+                    <button id="ws-btn-novo-projeto"
+                            class="btn btn-sm fw-black d-flex align-items-center gap-1"
+                            style="background:var(--sl-primary);color:#fff;padding:7px 14px;font-size:.8rem;min-height:36px">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Novo Projeto</span>
+                    </button>
+                </div>
+            </div>
+
+            <%# Abas — "Projetos" é o conteúdo existente, intocado; "Histórico
+                de Versões" é a feature nova, isolada numa aba própria pra não
+                arriscar nada do fluxo atual. %>
+            <ul class="nav nav-tabs mb-4" id="ws-main-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="ws-tab-projetos-btn" data-bs-toggle="tab"
+                            data-bs-target="#ws-tab-projetos" type="button" role="tab"
+                            aria-controls="ws-tab-projetos" aria-selected="true">
+                        <i class="bi bi-folder2 me-1"></i>Projetos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ws-tab-historico-btn" data-bs-toggle="tab"
+                            data-bs-target="#ws-tab-historico" type="button" role="tab"
+                            aria-controls="ws-tab-historico" aria-selected="false">
+                        <i class="bi bi-clock-history me-1"></i>Histórico de Versões
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <%# Não é uma aba de verdade — navega direto pro chat dedicado
+                        do Workspace, criando projeto+sessão na hora se preciso
+                        (ver GET /dashboard/workspace/chat). Estilo idêntico aos
+                        botões de aba pra ficar visualmente no mesmo grupo. %>
+                    <a class="nav-link" href="/dashboard/workspace/chat" role="tab">
+                        <i class="bi bi-stars me-1"></i>Chat IA
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="ws-main-tabs-content">
+            <div class="tab-pane fade show active" id="ws-tab-projetos" role="tabpanel" aria-labelledby="ws-tab-projetos-btn">
+
+            <%# Estado vazio %>
+            <% if (!projetos || projetos.length === 0) { %>
+            <div class="sl-card text-center py-5 px-4" id="ws-empty">
+                <div class="rounded-3 d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width:52px;height:52px;background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.2)">
+                    <i class="bi bi-folder2-open" style="font-size:1.4rem;color:var(--sl-primary)"></i>
+                </div>
+                <h2 class="fw-black mb-1" style="font-size:1rem">Nenhum projeto ainda</h2>
+                <p class="small mb-3" style="color:var(--sl-text-400);max-width:320px;margin:0 auto">
+                    Crie um projeto para organizar as sessões IA do seu template. Cada sessão fica vinculada ao estado exato do XML naquele momento.
+                </p>
+                <button class="btn btn-sm fw-black"
+                        onclick="document.getElementById('ws-btn-novo-projeto').click()"
+                        style="background:var(--sl-primary);color:#fff;font-size:.82rem">
+                    Criar primeiro projeto
+                </button>
+            </div>
+            <% } %>
+
+            <%# Lista de projetos %>
+            <div id="ws-projetos-list">
+            <% (projetos || []).forEach(function(projeto) { %>
+                <div class="ws-projeto-card sl-card mb-3 p-0 overflow-hidden" data-projeto-id="<%= projeto.id %>">
+
+                    <%# Header do projeto — role="button" + data-pid garante clique no mobile %>
+                    <% var aberto = projeto.sessoes.length > 0; %>
+                    <div class="ws-projeto-header d-flex align-items-center gap-3 px-4 py-3"
+                         role="button" tabindex="0"
+                         data-action="toggle" data-pid="<%= projeto.id %>"
+                         style="cursor:pointer;border-bottom:1px solid <%= aberto ? 'var(--bs-border-color)' : 'transparent' %>;transition:border-color .2s">
+                        <i class="bi bi-folder2 ws-folder-icon" style="color:var(--sl-primary);font-size:1.1rem;flex-shrink:0"></i>
+                        <div class="flex-grow-1 min-width-0">
+                            <p class="fw-black mb-0 text-truncate" style="font-size:.92rem"><%= projeto.nome %></p>
+                            <p class="mb-0" style="font-size:.72rem;color:var(--sl-text-400)">
+                                <span class="ws-session-count"><%= projeto.sessoes.length %> <%= projeto.sessoes.length === 1 ? 'sessão' : 'sessões' %></span>
+                                <% if (projeto.sessoes.length > 0 && projeto.sessoes[0].snapshot) { %>
+                                · <span style="color:var(--sl-primary)">
+                                    <%= projeto.sessoes[0].snapshot.siteName || 'template vinculado' %>
+                                  </span>
+                                <% } %>
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                            <button type="button" class="btn btn-sm ws-btn-nova-sessao"
+                                    data-action="nova-sessao" data-pid="<%= projeto.id %>"
+                                    style="font-size:.72rem;color:var(--sl-text-400);border:1px solid var(--bs-border-color);background:transparent;padding:6px 10px;min-height:34px">
+                                <i class="bi bi-plus"></i> <span class="d-none d-sm-inline">Sessão</span>
+                            </button>
+                            <button type="button" class="btn btn-sm"
+                                    data-action="deletar-projeto" data-pid="<%= projeto.id %>" data-nome="<%= projeto.nome %>"
+                                    style="font-size:.8rem;color:var(--sl-text-400);border:none;background:transparent;padding:4px 6px"
+                                    aria-label="Deletar projeto">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                            <i class="bi bi-chevron-down ws-chevron" id="ws-chev-<%= projeto.id %>"
+                               style="font-size:.65rem;color:var(--sl-text-400);transition:transform .2s;<%= aberto ? 'transform:rotate(180deg)' : '' %>"></i>
+                        </div>
+                    </div>
+
+                    <%# Sessões (colapsável) %>
+                    <div class="ws-sessoes-body" id="ws-body-<%= projeto.id %>"
+                         style="display:<%= projeto.sessoes.length > 0 ? 'block' : 'none' %>">
+
+                        <% if (projeto.sessoes.length === 0) { %>
+                        <div class="px-4 py-3 text-center" style="color:var(--sl-text-400);font-size:.82rem">
+                            Nenhuma sessão. Clique em <strong>+ Sessão</strong> para criar.
+                        </div>
+                        <% } %>
+
+                        <% projeto.sessoes.forEach(function(sessao, idx) { %>
+                        <div class="ws-sessao-row d-flex align-items-center gap-3 px-4 py-3"
+                             id="ws-ss-<%= sessao.id %>"
+                             style="<%= idx < projeto.sessoes.length - 1 ? 'border-bottom:1px solid var(--bs-border-color)' : '' %>">
+
+                            <i class="bi bi-chat-dots-fill flex-shrink-0" style="font-size:.85rem;color:var(--sl-text-400)"></i>
+
+                            <div class="flex-grow-1 min-width-0">
+                                <p class="fw-bold mb-0 text-truncate" style="font-size:.85rem"><%= sessao.nome %></p>
+                                <p class="mb-0" style="font-size:.7rem;color:var(--sl-text-400)">
+                                    <% if (sessao.snapshot) { %>
+                                        <span class="ws-snapshot-badge">
+                                            <i class="bi bi-camera-fill" style="font-size:.6rem"></i>
+                                            <%= sessao.snapshot.siteName || 'snapshot' %>
+                                            · <%= sessao.snapshot.colorPreset %>
+                                        </span>
+                                        · <%= sessao.criadoEmFmt %>
+                                    <% } else { %>
+                                        <span style="color:var(--sl-text-500)">sem snapshot</span>
+                                        · <%= sessao.criadoEmFmt %>
+                                    <% } %>
+                                </p>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                                <% if (sessao.snapshot && sessao.snapshot.compilacaoId) { %>
+                                <button type="button"
+                                   class="btn btn-sm d-flex align-items-center gap-1"
+                                   title="Ver demonstração do template"
+                                   data-action="ver-demo"
+                                   data-xmlpath="<%= sessao.snapshot.xmlPath || '' %>"
+                                   data-gcpath="<%= sessao.snapshot.gcPath || '' %>"
+                                   data-sitename="<%= sessao.snapshot.siteName || '' %>"
+                                   data-colorpreset="<%= sessao.snapshot.colorPreset || '' %>"
+                                   data-nichot="<%= sessao.snapshot.nichoTema || '' %>"
+                                   data-compilacaoid="<%= sessao.snapshot.compilacaoId %>"
+                                   style="font-size:.72rem;color:#10b981;border:1px solid rgba(16,185,129,.3);background:transparent;padding:6px 9px;min-height:34px">
+                                    <i class="bi bi-eye"></i>
+                                    <span class="d-none d-sm-inline">Demo</span>
+                                </button>
+                                <button type="button"
+                                   class="btn btn-sm d-flex align-items-center gap-1"
+                                   title="Diagnóstico Inteligente do template"
+                                   data-action="ver-diagnostico"
+                                   data-compilacaoid="<%= sessao.snapshot.compilacaoId %>"
+                                   data-sitename="<%= sessao.snapshot.siteName || '' %>"
+                                   style="font-size:.72rem;color:#a855f7;border:1px solid rgba(168,85,247,.3);background:transparent;padding:6px 9px;min-height:34px">
+                                    <i class="bi bi-clipboard2-pulse"></i>
+                                    <span class="d-none d-sm-inline">Diagnóstico</span>
+                                </button>
+                                <% } %>
+                                <a href="/dashboard/workspace/chat?wsSession=<%= sessao.id %>&projeto=<%= projeto.id %>"
+                                   class="btn btn-sm d-flex align-items-center gap-1"
+                                   style="font-size:.72rem;color:var(--sl-primary);border:1px solid rgba(14,165,233,.3);background:transparent;padding:6px 9px;min-height:34px">
+                                    <i class="bi bi-arrow-right-circle"></i>
+                                    <span class="d-none d-sm-inline">Abrir</span>
+                                </a>
+                                <button type="button" class="btn btn-sm"
+                                        data-action="deletar-sessao" data-pid="<%= projeto.id %>" data-sid="<%= sessao.id %>" data-nome="<%= sessao.nome %>"
+                                        style="font-size:.85rem;color:var(--sl-text-400);border:none;background:transparent;padding:6px 8px;min-height:34px"
+                                        aria-label="Deletar sessão">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                        <% }); %>
+
+                        <%# Linha de "nova sessão" inline (oculta, revelada por JS) %>
+                        <div class="ws-nova-sessao-inline px-4 py-3" id="ws-ns-inline-<%= projeto.id %>"
+                             style="display:none;border-top:1px solid var(--bs-border-color)">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-plus-circle" style="font-size:.9rem;color:var(--sl-primary);flex-shrink:0"></i>
+                                <input type="text" class="ws-sessao-input form-control form-control-sm"
+                                       id="ws-ns-input-<%= projeto.id %>"
+                                       placeholder="Nome da sessão (ex: refatoração do hero)"
+                                       maxlength="80"
+                                       style="font-size:max(16px,.82rem)">
+                                <button type="button" class="btn btn-sm fw-black flex-shrink-0"
+                                        data-action="criar-sessao" data-pid="<%= projeto.id %>"
+                                        style="background:var(--sl-primary);color:#fff;padding:4px 12px;font-size:.78rem;white-space:nowrap">
+                                    Criar
+                                </button>
+                                <button type="button" class="btn btn-sm flex-shrink-0"
+                                        data-action="cancelar-sessao" data-pid="<%= projeto.id %>"
+                                        style="color:var(--sl-text-400);border:none;background:transparent;padding:4px 6px">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                            <p class="mb-0 mt-1" id="ws-ns-snap-info-<%= projeto.id %>"
+                               style="font-size:.7rem;color:var(--sl-text-400);padding-left:28px"></p>
+                        </div>
+
+                    </div><%# /sessoes-body %>
+                </div>
+            <% }); %>
+            </div><%# /projetos-list %>
+
+            </div><%# /ws-tab-projetos %>
+
+            <%# Aba nova: Histórico de Versões — seletor projeto → sessão
+                (populados a partir do MESMO `projetos` já carregado nesta
+                página, sem chamada de rede extra) e, ao escolher a sessão,
+                a lista de versões (GET .../historico) com baixar/reverter. %>
+            <div class="tab-pane fade" id="ws-tab-historico" role="tabpanel" aria-labelledby="ws-tab-historico-btn">
+                <% if (!projetos || projetos.length === 0) { %>
+                <div class="sl-card text-center py-5 px-4">
+                    <p class="small mb-0" style="color:var(--sl-text-400)">Crie um projeto na aba <strong>Projetos</strong> primeiro — o histórico de versões é organizado por sessão.</p>
+                </div>
+                <% } else { %>
+                <div class="sl-card p-4 mb-3">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <label class="small fw-bold mb-1" style="color:var(--sl-text-400)">Projeto</label>
+                            <select id="ws-hist-projeto-select" class="form-select form-select-sm">
+                                <option value="">Selecione um projeto...</option>
+                                <% (projetos || []).forEach(function(projeto) { %>
+                                <option value="<%= projeto.id %>"><%= projeto.nome %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="small fw-bold mb-1" style="color:var(--sl-text-400)">Sessão</label>
+                            <select id="ws-hist-sessao-select" class="form-select form-select-sm" disabled>
+                                <option value="">Selecione uma sessão...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <%# Dados de sessão por projeto — só pro JS montar o 2º select
+                    sem precisar de outra chamada de rede (mesmo `projetos` já
+                    carregado pra aba "Projetos" acima). %>
+                <div id="ws-hist-sessoes-data" style="display:none" aria-hidden="true">
+                    <% (projetos || []).forEach(function(projeto) { %>
+                    <div data-pid="<%= projeto.id %>">
+                        <% projeto.sessoes.forEach(function(sessao) { %>
+                        <span data-sid="<%= sessao.id %>" data-nome="<%= sessao.nome %>"></span>
+                        <% }); %>
+                    </div>
+                    <% }); %>
+                </div>
+
+                <div id="ws-hist-lista"></div>
+                <% } %>
+            </div><%# /ws-tab-historico %>
+
+            </div><%# /ws-main-tabs-content %>
+
+        </div>
+
+    </main>
+</div>
+
+<%# Modal: Importar do Histórico %>
+<div id="ws-import-overlay" class="ws-modal-overlay" style="display:none">
+    <div id="ws-import-card" class="ws-modal-card" style="max-width:500px;width:92vw">
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="bi bi-cloud-arrow-down-fill" style="color:var(--sl-primary);font-size:1rem"></i>
+            <p class="fw-black mb-0" style="font-size:.95rem">Importar do Histórico</p>
+        </div>
+        <p class="small mb-3" style="color:var(--sl-text-400)">
+            Selecione uma compilação para criar um projeto no Workspace com snapshot vinculado.
+        </p>
+
+        <%# Lista de compilações (preenchida por JS) %>
+        <div id="ws-import-list"
+             style="max-height:310px;overflow-y:auto;margin-bottom:12px;border:1px solid var(--bs-border-color);border-radius:10px">
+            <div id="ws-import-loading" class="text-center py-4" style="color:var(--sl-text-400);font-size:.82rem">
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                Carregando compilações...
+            </div>
+        </div>
+
+        <div id="ws-import-erro" class="text-danger small mb-2" style="display:none"></div>
+        <div class="d-flex gap-2">
+            <button type="button" id="ws-btn-import-cancelar" class="btn btn-sm flex-grow-1"
+                    style="border:1px solid var(--bs-border-color);color:var(--sl-text-300);background:transparent">
+                Cancelar
+            </button>
+            <button type="button" id="ws-btn-import-ok" class="btn btn-sm fw-black flex-grow-1" disabled
+                    style="background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;opacity:.5;transition:opacity .2s">
+                <i class="bi bi-check2-circle me-1"></i>Importar
+            </button>
+        </div>
+    </div>
+</div>
+
+<%# Modal: Novo Projeto — overlay fecha apenas se clicar fora do card (event delegation no JS) %>
+<div id="ws-modal-overlay" class="ws-modal-overlay" style="display:none">
+    <div id="ws-modal-card" class="ws-modal-card">
+        <p class="fw-black mb-1" style="font-size:.95rem">Novo Projeto</p>
+        <p class="small mb-3" style="color:var(--sl-text-400)">
+            Dê um nome para o projeto — geralmente o nome do blog ou template.
+        </p>
+        <input type="text" id="ws-input-projeto" class="form-control form-control-sm mb-3"
+               placeholder="Ex: Blog Tech, Receitas da Ana, Portfólio Dev..."
+               maxlength="60" style="font-size:max(16px,.85rem)">
+        <div id="ws-modal-erro" class="text-danger small mb-2" style="display:none"></div>
+        <div class="d-flex gap-2">
+            <button type="button" id="ws-btn-cancelar" class="btn btn-sm flex-grow-1"
+                    style="border:1px solid var(--bs-border-color);color:var(--sl-text-300);background:transparent">
+                Cancelar
+            </button>
+            <button type="button" id="ws-btn-criar" class="btn btn-sm fw-black flex-grow-1"
+                    style="background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff">
+                Criar Projeto
+            </button>
+        </div>
+    </div>
+</div>
+
+<%# Modal: Diagnóstico Inteligente — v1 restrito a templates gerados pela
+    própria Softload (não busca o blog "ao vivo" no Blogger). %>
+<div id="ws-diag-overlay" class="ws-modal-overlay" style="display:none">
+    <div id="ws-diag-card" class="ws-modal-card" style="max-width:640px;width:94vw;max-height:88vh;overflow-y:auto">
+        <div class="d-flex align-items-center justify-content-between mb-1">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-clipboard2-pulse-fill" style="color:#a855f7;font-size:1rem"></i>
+                <p class="fw-black mb-0" style="font-size:.95rem">Diagnóstico Inteligente</p>
+            </div>
+            <button type="button" id="ws-diag-fechar" aria-label="Fechar"
+                    style="border:none;background:transparent;color:var(--sl-text-400);font-size:1.1rem;line-height:1">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <p id="ws-diag-sitename" class="small mb-3" style="color:var(--sl-text-400)"></p>
+
+        <div id="ws-diag-loading" class="text-center py-5" style="color:var(--sl-text-400);font-size:.85rem">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            Analisando o template...
+        </div>
+
+        <div id="ws-diag-erro" class="text-danger small mb-2" style="display:none"></div>
+
+        <div id="ws-diag-conteudo" style="display:none">
+            <div class="d-flex align-items-center gap-3 mb-3 p-3" style="border:1px solid var(--bs-border-color);border-radius:12px">
+                <div id="ws-diag-score-circle" class="ws-diag-score">--</div>
+                <div class="flex-grow-1 min-width-0">
+                    <p class="fw-bold mb-0" id="ws-diag-resumo" style="font-size:.85rem"></p>
+                    <p class="small mb-0" style="color:var(--sl-text-400)">Nota heurística interna — não é uma métrica de terceiros como Lighthouse.</p>
+                </div>
+            </div>
+
+            <div id="ws-diag-categorias"></div>
+
+            <div id="ws-diag-corrigir-wrap" style="display:none">
+                <div class="mt-2 pt-3" style="border-top:1px solid var(--bs-border-color)">
+                    <button type="button" id="ws-diag-baixar-corrigido" class="btn btn-sm fw-black w-100"
+                            style="background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff">
+                        <i class="bi bi-download me-1"></i>Baixar XML com correções automáticas aplicadas
+                    </button>
+                    <p class="small mt-2 mb-0" style="color:var(--sl-text-400)">
+                        Corrige apenas problemas de sintaxe conhecidos. Não sobrescreve o template atual —
+                        baixe e reimporte manualmente se quiser aplicar.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ── Helpers ───────────────────────────────────────────────────────────
+    function wsEsc(str) {
+        return String(str || '')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function wsAtualizarContadorProjeto(pid) {
+        var body    = document.getElementById('ws-body-' + pid);
+        var rows    = body ? body.querySelectorAll('.ws-sessao-row').length : 0;
+        var card    = document.querySelector('[data-projeto-id="' + pid + '"]');
+        var counter = card ? card.querySelector('.ws-session-count') : null;
+        if (counter) counter.textContent = rows + (rows === 1 ? ' sessão' : ' sessões');
+    }
+
+    function wsOcultarEmpty() {
+        var el = document.getElementById('ws-empty');
+        if (el) el.style.display = 'none';
+    }
+
+    function wsExibirEmpty() {
+        var el = document.getElementById('ws-empty');
+        if (el) el.style.display = '';
+    }
+
+    // ── Toggle collapse do projeto ────────────────────────────────────────
+    function wsToggleProjeto(pid) {
+        var body   = document.getElementById('ws-body-' + pid);
+        var chev   = document.getElementById('ws-chev-' + pid);
+        var card   = body ? body.closest('.ws-projeto-card') : null;
+        var header = card ? card.querySelector('.ws-projeto-header') : null;
+        if (!body) return;
+
+        if (body.style.display === 'none') {
+            body.style.display = 'block';
+            if (chev)   chev.style.transform = 'rotate(180deg)';
+            if (header) header.style.borderBottomColor = 'var(--bs-border-color)';
+        } else {
+            body.style.display = 'none';
+            if (chev)   chev.style.transform = '';
+            if (header) header.style.borderBottomColor = 'transparent';
+            wsCancelarNovaSessao(pid);
+        }
+    }
+
+    // ── Abrir input inline de nova sessão ────────────────────────────────
+    function wsAbrirNovaSessao(pid) {
+        var body   = document.getElementById('ws-body-' + pid);
+        var inline = document.getElementById('ws-ns-inline-' + pid);
+        var input  = document.getElementById('ws-ns-input-' + pid);
+        if (!body || !inline || !input) return;
+
+        if (body.style.display === 'none') wsToggleProjeto(pid);
+        inline.style.display = 'block';
+        input.focus();
+
+        fetch('/api/workspace/snapshot-info', { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (d) {
+                var info = document.getElementById('ws-ns-snap-info-' + pid);
+                if (!info) return;
+                info.textContent = (d && d.siteName)
+                    ? 'Snapshot: ' + d.siteName + ' · ' + (d.colorPreset || '') + ' · ' + (d.criadoEmFmt || '')
+                    : 'Sem compilação recente — sessão criada sem snapshot.';
+            })
+            .catch(function () {});
+    }
+
+    function wsCancelarNovaSessao(pid) {
+        var inline = document.getElementById('ws-ns-inline-' + pid);
+        var input  = document.getElementById('ws-ns-input-' + pid);
+        if (inline) inline.style.display = 'none';
+        if (input)  input.value = '';
+    }
+
+    async function wsCriarSessao(pid) {
+        var input = document.getElementById('ws-ns-input-' + pid);
+        if (!input) return;
+        var nome = (input.value || '').trim();
+        if (!nome) { input.focus(); return; }
+        input.disabled = true;
+        try {
+            var r = await fetch('/api/workspace/projetos/' + pid + '/sessoes', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome }),
+            });
+            var d = await r.json();
+            if (!r.ok) { alert(d.erro || 'Erro ao criar sessão.'); return; }
+            wsCancelarNovaSessao(pid);
+            wsInjetarSessaoNaLista(pid, d);
+        } catch (e) {
+            alert('Falha de conexão.');
+        } finally {
+            input.disabled = false;
+        }
+    }
+
+    // ── Injetar sessão na lista após criação via JS ───────────────────────
+    function wsInjetarSessaoNaLista(pid, sessao) {
+        var body   = document.getElementById('ws-body-' + pid);
+        var inline = document.getElementById('ws-ns-inline-' + pid);
+        if (!body || !inline) return;
+        var snap = sessao.snapshot;
+        var snapHtml = snap
+            ? '<span class="ws-snapshot-badge"><i class="bi bi-camera-fill" style="font-size:.6rem"></i> ' +
+              wsEsc(snap.siteName || 'snapshot') + ' · ' + wsEsc(snap.colorPreset || '') + '</span>'
+            : '<span style="color:var(--sl-text-500)">sem snapshot</span>';
+
+        var row = document.createElement('div');
+        row.className = 'ws-sessao-row d-flex align-items-center gap-3 px-4 py-3';
+        row.id = 'ws-ss-' + sessao.id;
+        row.style.borderBottom = '1px solid var(--bs-border-color)';
+        row.innerHTML =
+            '<i class="bi bi-chat-dots-fill flex-shrink-0" style="font-size:.85rem;color:var(--sl-text-400)"></i>' +
+            '<div class="flex-grow-1 min-width-0">' +
+                '<p class="fw-bold mb-0 text-truncate" style="font-size:.85rem">' + wsEsc(sessao.nome) + '</p>' +
+                '<p class="mb-0" style="font-size:.7rem;color:var(--sl-text-400)">' + snapHtml + ' · agora</p>' +
+            '</div>' +
+            '<div class="d-flex align-items-center gap-1 flex-shrink-0">' +
+                '<a href="/dashboard/workspace/chat?wsSession=' + wsEsc(sessao.id) + '&projeto=' + wsEsc(pid) + '" class="btn btn-sm d-flex align-items-center gap-1" ' +
+                   'style="font-size:.72rem;color:var(--sl-primary);border:1px solid rgba(14,165,233,.3);background:transparent;padding:3px 9px">' +
+                    '<i class="bi bi-arrow-right-circle"></i><span class="d-none d-sm-inline">Abrir</span>' +
+                '</a>' +
+                '<button type="button" class="btn btn-sm" ' +
+                        'data-action="deletar-sessao" data-pid="' + wsEsc(pid) + '" data-sid="' + wsEsc(sessao.id) + '" data-nome="' + wsEsc(sessao.nome) + '" ' +
+                        'style="font-size:.78rem;color:var(--sl-text-400);border:none;background:transparent;padding:4px 6px">' +
+                    '<i class="bi bi-x-lg"></i>' +
+                '</button>' +
+            '</div>';
+        body.insertBefore(row, inline);
+        wsAtualizarContadorProjeto(pid);
+    }
+
+    // ── Deletar sessão ────────────────────────────────────────────────────
+    async function wsDeletarSessao(pid, sid, nome) {
+        if (!confirm('Deletar sessão "' + nome + '"?')) return;
+        try {
+            var r = await fetch('/api/workspace/projetos/' + pid + '/sessoes/' + sid, { method: 'DELETE' });
+            if (!r.ok) { alert('Erro ao deletar.'); return; }
+            var el = document.getElementById('ws-ss-' + sid);
+            if (el) el.remove();
+            wsAtualizarContadorProjeto(pid);
+        } catch (e) { alert('Falha de conexão.'); }
+    }
+
+    // ── Criar Projeto (modal) ─────────────────────────────────────────────
+    function wsAbrirModal() {
+        var overlay = document.getElementById('ws-modal-overlay');
+        var input   = document.getElementById('ws-input-projeto');
+        var erro    = document.getElementById('ws-modal-erro');
+        overlay.style.display = 'flex';
+        input.value = '';
+        erro.style.display = 'none';
+        // focus via setTimeout permite que o iOS finalize o tap antes de abrir o teclado
+        setTimeout(function () { input.focus(); }, 80);
+    }
+
+    function wsFecharModal() {
+        document.getElementById('ws-modal-overlay').style.display = 'none';
+    }
+
+    async function wsCriarProjeto() {
+        var input = document.getElementById('ws-input-projeto');
+        var erro  = document.getElementById('ws-modal-erro');
+        var nome  = (input.value || '').trim();
+        erro.style.display = 'none';
+        if (!nome) {
+            erro.textContent = 'Informe um nome.';
+            erro.style.display = 'block';
+            input.focus();
+            return;
+        }
+        var btnCriar = document.getElementById('ws-btn-criar');
+        if (btnCriar) btnCriar.disabled = true;
+        try {
+            var r = await fetch('/api/workspace/projetos', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome }),
+            });
+            var d = await r.json();
+            if (!r.ok) { erro.textContent = d.erro || 'Erro.'; erro.style.display = 'block'; return; }
+            wsFecharModal();
+            wsInjetarProjetoNaLista(d);
+            wsOcultarEmpty();
+        } catch (e) {
+            erro.textContent = 'Falha de conexão.'; erro.style.display = 'block';
+        } finally {
+            if (btnCriar) btnCriar.disabled = false;
+        }
+    }
+
+    function wsInjetarProjetoNaLista(projeto) {
+        var lista = document.getElementById('ws-projetos-list');
+        var card  = document.createElement('div');
+        card.className = 'ws-projeto-card sl-card mb-3 p-0 overflow-hidden';
+        card.dataset.projetoId = projeto.id;
+        card.innerHTML =
+            '<div class="ws-projeto-header d-flex align-items-center gap-3 px-4 py-3" ' +
+                 'role="button" tabindex="0" data-action="toggle" data-pid="' + wsEsc(projeto.id) + '" ' +
+                 'style="cursor:pointer;border-bottom:1px solid transparent;transition:border-color .2s">' +
+                '<i class="bi bi-folder2 ws-folder-icon" style="color:var(--sl-primary);font-size:1.1rem;flex-shrink:0"></i>' +
+                '<div class="flex-grow-1 min-width-0">' +
+                    '<p class="fw-black mb-0 text-truncate" style="font-size:.92rem">' + wsEsc(projeto.nome) + '</p>' +
+                    '<p class="mb-0" style="font-size:.72rem;color:var(--sl-text-400)"><span class="ws-session-count">0 sessões</span></p>' +
+                '</div>' +
+                '<div class="d-flex align-items-center gap-2 flex-shrink-0">' +
+                    '<button type="button" class="btn btn-sm ws-btn-nova-sessao" ' +
+                            'data-action="nova-sessao" data-pid="' + wsEsc(projeto.id) + '" ' +
+                            'style="font-size:.72rem;color:var(--sl-text-400);border:1px solid var(--bs-border-color);background:transparent;padding:3px 9px">' +
+                        '<i class="bi bi-plus"></i> Sessão' +
+                    '</button>' +
+                    '<button type="button" class="btn btn-sm" ' +
+                            'data-action="deletar-projeto" data-pid="' + wsEsc(projeto.id) + '" data-nome="' + wsEsc(projeto.nome) + '" ' +
+                            'style="font-size:.8rem;color:var(--sl-text-400);border:none;background:transparent;padding:4px 6px">' +
+                        '<i class="bi bi-trash3"></i>' +
+                    '</button>' +
+                    '<i class="bi bi-chevron-down ws-chevron" id="ws-chev-' + wsEsc(projeto.id) + '" ' +
+                       'style="font-size:.65rem;color:var(--sl-text-400);transition:transform .2s"></i>' +
+                '</div>' +
+            '</div>' +
+            '<div class="ws-sessoes-body" id="ws-body-' + wsEsc(projeto.id) + '" style="display:none">' +
+                '<div class="ws-nova-sessao-inline px-4 py-3" id="ws-ns-inline-' + wsEsc(projeto.id) + '" ' +
+                     'style="display:none;border-top:1px solid var(--bs-border-color)">' +
+                    '<div class="d-flex align-items-center gap-2">' +
+                        '<i class="bi bi-plus-circle" style="font-size:.9rem;color:var(--sl-primary);flex-shrink:0"></i>' +
+                        '<input type="text" class="ws-sessao-input form-control form-control-sm" ' +
+                               'id="ws-ns-input-' + wsEsc(projeto.id) + '" ' +
+                               'placeholder="Nome da sessão (ex: refatoração do hero)" maxlength="80" style="font-size:.82rem">' +
+                        '<button type="button" class="btn btn-sm fw-black flex-shrink-0" ' +
+                                'data-action="criar-sessao" data-pid="' + wsEsc(projeto.id) + '" ' +
+                                'style="background:var(--sl-primary);color:#fff;padding:4px 12px;font-size:.78rem;white-space:nowrap">Criar</button>' +
+                        '<button type="button" class="btn btn-sm flex-shrink-0" ' +
+                                'data-action="cancelar-sessao" data-pid="' + wsEsc(projeto.id) + '" ' +
+                                'style="color:var(--sl-text-400);border:none;background:transparent;padding:4px 6px">' +
+                            '<i class="bi bi-x"></i>' +
+                        '</button>' +
+                    '</div>' +
+                    '<p class="mb-0 mt-1" id="ws-ns-snap-info-' + wsEsc(projeto.id) + '" ' +
+                       'style="font-size:.7rem;color:var(--sl-text-400);padding-left:28px"></p>' +
+                '</div>' +
+            '</div>';
+        lista.insertBefore(card, lista.firstChild);
+    }
+
+    // ── Deletar projeto ───────────────────────────────────────────────────
+    async function wsDeletarProjeto(pid, nome) {
+        if (!confirm('Deletar projeto "' + nome + '" e todas as sessões?')) return;
+        try {
+            var r = await fetch('/api/workspace/projetos/' + pid, { method: 'DELETE' });
+            if (!r.ok) { alert('Erro ao deletar.'); return; }
+            var card = document.querySelector('[data-projeto-id="' + pid + '"]');
+            if (card) card.remove();
+            if (!document.querySelector('.ws-projeto-card')) wsExibirEmpty();
+        } catch (e) { alert('Falha de conexão.'); }
+    }
+
+    async function wsVerDemo(dataset) {
+        var payload = {
+            xmlPath:      dataset.xmlpath      || '',
+            gcPath:       dataset.gcpath       || '',
+            siteName:     dataset.sitename     || '',
+            colorPreset:  dataset.colorpreset  || '',
+            nichoTema:    dataset.nichot        || '',
+            compilacaoId: dataset.compilacaoid || '',
+        };
+        if (!payload.xmlPath) { alert('Snapshot sem xmlPath — faça uma nova compilação.'); return; }
+        try {
+            var r = await fetch('/api/workspace/set-preview', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify(payload),
+            });
+            if (!r.ok) { alert('Não foi possível carregar o preview.'); return; }
+            window.location.href = '/dashboard/preview/session';
+        } catch (e) { alert('Falha de conexão.'); }
+    }
+
+    // ── Diagnóstico Inteligente ─────────────────────────────────────────
+    var wsDiagUltimoResultado = null;
+
+    async function wsVerDiagnostico(dataset) {
+        var compilacaoId = dataset.compilacaoid;
+        if (!compilacaoId) { alert('Sessão sem compilação vinculada.'); return; }
+
+        var overlay    = document.getElementById('ws-diag-overlay');
+        var loading    = document.getElementById('ws-diag-loading');
+        var erroBox    = document.getElementById('ws-diag-erro');
+        var conteudo   = document.getElementById('ws-diag-conteudo');
+        var siteNameEl = document.getElementById('ws-diag-sitename');
+
+        siteNameEl.textContent = dataset.sitename || '';
+        loading.style.display  = 'block';
+        erroBox.style.display  = 'none';
+        conteudo.style.display = 'none';
+        wsDiagUltimoResultado  = null;
+        overlay.style.display  = 'flex';
+
+        try {
+            var r    = await fetch('/api/workspace/diagnostico/' + encodeURIComponent(compilacaoId), {
+                headers: { 'Accept': 'application/json' },
+            });
+            var data = await r.json().catch(function () { return null; });
+            if (!r.ok || !data) throw new Error((data && data.erro) || 'Falha ao gerar diagnóstico.');
+
+            wsDiagUltimoResultado = data;
+            wsRenderizarDiagnostico(data);
+            loading.style.display  = 'none';
+            conteudo.style.display = 'block';
+        } catch (e) {
+            loading.style.display = 'none';
+            erroBox.textContent   = e.message || 'Falha de conexão.';
+            erroBox.style.display = 'block';
+        }
+    }
+
+    function wsCorDoScore(score) {
+        if (score >= 90) return '#10b981';
+        if (score >= 70) return '#f59e0b';
+        return '#ef4444';
+    }
+
+    function wsRenderizarDiagnostico(data) {
+        var scoreCircle  = document.getElementById('ws-diag-score-circle');
+        var resumo       = document.getElementById('ws-diag-resumo');
+        var categoriasEl = document.getElementById('ws-diag-categorias');
+        var corrigirWrap = document.getElementById('ws-diag-corrigir-wrap');
+
+        var cor = wsCorDoScore(data.score);
+        scoreCircle.textContent       = data.score;
+        scoreCircle.style.borderColor = cor;
+        scoreCircle.style.color       = cor;
+
+        var partes = [];
+        if (data.totalErros  > 0) partes.push(data.totalErros  + (data.totalErros  > 1 ? ' erros'     : ' erro'));
+        if (data.totalAvisos > 0) partes.push(data.totalAvisos + (data.totalAvisos > 1 ? ' melhorias' : ' melhoria'));
+        resumo.textContent = partes.length ? 'Encontrado: ' + partes.join(' · ') : 'Nenhum problema encontrado — template limpo!';
+
+        categoriasEl.innerHTML = data.categorias.map(function (cat) {
+            if (!cat.achados.length) {
+                return '<div class="mb-2 p-2 d-flex align-items-center gap-2" style="border:1px solid var(--bs-border-color);border-radius:8px">' +
+                    '<i class="bi bi-check-circle-fill" style="color:#10b981"></i>' +
+                    '<span class="small fw-bold">' + wsEsc(cat.nome) + '</span>' +
+                    '<span class="small ms-auto" style="color:var(--sl-text-400)">OK</span>' +
+                '</div>';
+            }
+            var itens = cat.achados.map(function (a) {
+                var icone = a.nivel === 'erro' ? 'bi-x-circle-fill' : 'bi-exclamation-triangle-fill';
+                var corIt = a.nivel === 'erro' ? '#ef4444' : '#f59e0b';
+                return '<li class="d-flex align-items-start gap-2 mb-1">' +
+                    '<i class="bi ' + icone + '" style="color:' + corIt + ';font-size:.75rem;margin-top:3px;flex-shrink:0"></i>' +
+                    '<span class="small">' + wsEsc(a.mensagem) + '</span>' +
+                '</li>';
+            }).join('');
+            return '<div class="mb-2 p-2" style="border:1px solid var(--bs-border-color);border-radius:8px">' +
+                '<div class="d-flex align-items-center gap-2 mb-1">' +
+                    '<i class="bi bi-exclamation-circle-fill" style="color:#f59e0b"></i>' +
+                    '<span class="small fw-bold">' + wsEsc(cat.nome) + '</span>' +
+                    '<span class="small ms-auto" style="color:var(--sl-text-400)">' + cat.achados.length + '</span>' +
+                '</div>' +
+                '<ul class="list-unstyled mb-0 ps-3">' + itens + '</ul>' +
+            '</div>';
+        }).join('');
+
+        corrigirWrap.style.display = data.corrigivelAutomaticamente ? 'block' : 'none';
+    }
+
+    function wsFecharDiagnostico() {
+        document.getElementById('ws-diag-overlay').style.display = 'none';
+    }
+
+    function wsBaixarXmlCorrigido() {
+        if (!wsDiagUltimoResultado || !wsDiagUltimoResultado.xmlCorrigido) return;
+        var blob = new Blob([wsDiagUltimoResultado.xmlCorrigido], { type: 'application/xml' });
+        var url  = URL.createObjectURL(blob);
+        var a    = document.createElement('a');
+        a.href     = url;
+        a.download = (wsDiagUltimoResultado.siteName || 'template').replace(/[^a-z0-9-_]+/gi, '-') + '-corrigido.xml';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // ── Event Delegation — único listener captura todos os cliques ────────
+    // Substitui todos os onclick inline e garante funcionamento no mobile,
+    // incluindo elementos injetados dinamicamente via JS.
+    document.addEventListener('click', function (e) {
+        var el = e.target.closest('[data-action]');
+        if (!el) {
+            // Clique no overlay fora do card → fecha modal
+            if (e.target === document.getElementById('ws-modal-overlay')) wsFecharModal();
+            return;
+        }
+
+        var action = el.dataset.action;
+        var pid    = el.dataset.pid;
+
+        // Botões dentro do header do projeto não devem disparar o toggle do header
+        if (action !== 'toggle') e.stopPropagation();
+
+        switch (action) {
+            case 'toggle':
+                wsToggleProjeto(pid);
+                break;
+            case 'nova-sessao':
+                wsAbrirNovaSessao(pid);
+                break;
+            case 'cancelar-sessao':
+                wsCancelarNovaSessao(pid);
+                break;
+            case 'criar-sessao':
+                wsCriarSessao(pid);
+                break;
+            case 'deletar-sessao':
+                wsDeletarSessao(pid, el.dataset.sid, el.dataset.nome);
+                break;
+            case 'deletar-projeto':
+                wsDeletarProjeto(pid, el.dataset.nome);
+                break;
+            case 'ver-demo':
+                wsVerDemo(el.dataset);
+                break;
+            case 'ver-diagnostico':
+                wsVerDiagnostico(el.dataset);
+                break;
+        }
+    });
+
+    // ── Import do histórico ───────────────────────────────────────────────
+    var wsImportSelecionado = null;
+
+    function wsAbrirImport() {
+        wsImportSelecionado = null;
+        var overlay = document.getElementById('ws-import-overlay');
+        var list    = document.getElementById('ws-import-list');
+        var btnOk   = document.getElementById('ws-btn-import-ok');
+        var erro    = document.getElementById('ws-import-erro');
+
+        overlay.style.display = 'flex';
+        btnOk.disabled        = true;
+        btnOk.style.opacity   = '.5';
+        erro.style.display    = 'none';
+
+        // Reinsere loading
+        list.innerHTML =
+            '<div id="ws-import-loading" class="text-center py-4" style="color:var(--sl-text-400);font-size:.82rem">' +
+                '<div class="spinner-border spinner-border-sm me-2" role="status"></div>' +
+                'Carregando compilações...' +
+            '</div>';
+
+        fetch('/api/workspace/compilacoes', { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+            .then(function (compilacoes) {
+                list.innerHTML = '';
+                if (!compilacoes.length) {
+                    list.innerHTML =
+                        '<div class="text-center py-4 px-3" style="color:var(--sl-text-400);font-size:.82rem">' +
+                            '<i class="bi bi-inbox" style="font-size:1.4rem;display:block;margin-bottom:8px"></i>' +
+                            'Nenhuma compilação encontrada.<br>Gere um template primeiro.' +
+                        '</div>';
+                    return;
+                }
+                compilacoes.forEach(function (c) {
+                    var item = document.createElement('div');
+                    item.className = 'ws-import-item d-flex align-items-center gap-3 px-3 py-3';
+                    item.dataset.cid = c.id;
+                    item.style.cssText = 'cursor:pointer;border-bottom:1px solid var(--bs-border-color);transition:background .15s';
+                    item.innerHTML =
+                        '<div class="flex-grow-1 min-width-0">' +
+                            '<p class="fw-black mb-0 text-truncate" style="font-size:.85rem">' + wsEsc(c.siteName) + '</p>' +
+                            '<p class="mb-0" style="font-size:.72rem;color:var(--sl-text-400)">' +
+                                wsEsc(c.colorPreset) + ' · ' + wsEsc(c.typography) +
+                                (c.geradoPorIA ? ' · <span style="color:var(--sl-primary)">IA</span>' : '') +
+                                ' · ' + wsEsc(c.criadoEmFmt) +
+                            '</p>' +
+                        '</div>' +
+                        '<i class="bi bi-circle-fill ws-import-radio" style="font-size:.55rem;color:var(--bs-border-color);flex-shrink:0;transition:color .15s"></i>';
+
+                    item.addEventListener('click', function () {
+                        // Desmarca todos
+                        list.querySelectorAll('.ws-import-item').forEach(function (el) {
+                            el.style.background = '';
+                            el.querySelector('.ws-import-radio').style.color = 'var(--bs-border-color)';
+                            el.querySelector('.ws-import-radio').className = 'bi bi-circle ws-import-radio';
+                            el.style.fontWeight = '';
+                        });
+                        // Marca este
+                        item.style.background = 'rgba(14,165,233,.06)';
+                        item.querySelector('.ws-import-radio').style.color = 'var(--sl-primary)';
+                        item.querySelector('.ws-import-radio').className = 'bi bi-check-circle-fill ws-import-radio';
+                        wsImportSelecionado = c;
+                        btnOk.disabled      = false;
+                        btnOk.style.opacity = '1';
+                    });
+
+                    list.appendChild(item);
+                });
+                // Remove borda do último item
+                var items = list.querySelectorAll('.ws-import-item');
+                if (items.length) items[items.length - 1].style.borderBottom = 'none';
+            })
+            .catch(function () {
+                list.innerHTML = '<div class="text-center py-4" style="color:#f87171;font-size:.82rem">Falha ao carregar compilações.</div>';
+            });
+    }
+
+    function wsFecharImport() {
+        document.getElementById('ws-import-overlay').style.display = 'none';
+        wsImportSelecionado = null;
+    }
+
+    async function wsExecutarImport() {
+        if (!wsImportSelecionado) return;
+        var btnOk = document.getElementById('ws-btn-import-ok');
+        var erro  = document.getElementById('ws-import-erro');
+        erro.style.display = 'none';
+        btnOk.disabled = true;
+        btnOk.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Importando...';
+
+        try {
+            var r = await fetch('/api/workspace/importar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ compilacaoId: wsImportSelecionado.id }),
+            });
+            var d = await r.json();
+            if (!r.ok) {
+                erro.textContent = d.erro || 'Erro ao importar.';
+                erro.style.display = 'block';
+                return;
+            }
+            wsFecharImport();
+            // Injeta projeto + sessão automaticamente na lista
+            wsInjetarProjetoNaLista(d.projeto);
+            if (d.sessao) {
+                // Pequena pausa para o DOM ser atualizado com o novo projeto
+                setTimeout(function () {
+                    wsInjetarSessaoNaLista(d.projeto.id, d.sessao);
+                    // Expande o projeto recem-criado
+                    var body   = document.getElementById('ws-body-' + d.projeto.id);
+                    var chev   = document.getElementById('ws-chev-' + d.projeto.id);
+                    var card   = body ? body.closest('.ws-projeto-card') : null;
+                    var header = card ? card.querySelector('.ws-projeto-header') : null;
+                    if (body)   body.style.display = 'block';
+                    if (chev)   chev.style.transform = 'rotate(180deg)';
+                    if (header) header.style.borderBottomColor = 'var(--bs-border-color)';
+                }, 50);
+            }
+            wsOcultarEmpty();
+        } catch (e) {
+            erro.textContent = 'Falha de conexão.';
+            erro.style.display = 'block';
+        } finally {
+            btnOk.disabled = false;
+            btnOk.innerHTML = '<i class="bi bi-check2-circle me-1"></i>Importar';
+            btnOk.style.opacity = '1';
+        }
+    }
+
+    document.getElementById('ws-btn-importar').addEventListener('click', wsAbrirImport);
+    document.getElementById('ws-btn-import-cancelar').addEventListener('click', wsFecharImport);
+    document.getElementById('ws-btn-import-ok').addEventListener('click', wsExecutarImport);
+    // Fechar ao clicar no overlay fora do card (event delegation já cuida do overlay principal;
+    // aqui registramos o overlay de import separadamente)
+    document.getElementById('ws-import-overlay').addEventListener('click', function (e) {
+        if (e.target === this) wsFecharImport();
+    });
+
+    // ── Diagnóstico Inteligente: fechar + backdrop + download ────────────
+    document.getElementById('ws-diag-fechar').addEventListener('click', wsFecharDiagnostico);
+    document.getElementById('ws-diag-overlay').addEventListener('click', function (e) {
+        if (e.target === this) wsFecharDiagnostico();
+    });
+    document.getElementById('ws-diag-baixar-corrigido').addEventListener('click', wsBaixarXmlCorrigido);
+
+    // ── Botões fixos: Novo Projeto + modal ────────────────────────────────
+    document.getElementById('ws-btn-novo-projeto').addEventListener('click', wsAbrirModal);
+    document.getElementById('ws-btn-cancelar').addEventListener('click', wsFecharModal);
+    document.getElementById('ws-btn-criar').addEventListener('click', wsCriarProjeto);
+
+    document.getElementById('ws-input-projeto').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') wsCriarProjeto();
+    });
+
+    // Enter no input inline de sessão
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        var active = document.activeElement;
+        if (!active || !active.classList.contains('ws-sessao-input')) return;
+        wsCriarSessao(active.id.replace('ws-ns-input-', ''));
+    });
+
+    // ── Aba "Histórico de Versões" ────────────────────────────────────────
+    var wsHistOrigemLabel = {
+        'chat-pipeline': 'Geração inicial',
+        'chat-edicao':   'Editado via chat',
+        'revert':        'Revertido',
+    };
+
+    function wsHistPopularSessoes(pid) {
+        var sessaoSelect = document.getElementById('ws-hist-sessao-select');
+        var lista         = document.getElementById('ws-hist-lista');
+        if (!sessaoSelect) return;
+
+        sessaoSelect.innerHTML = '<option value="">Selecione uma sessão...</option>';
+        if (lista) lista.innerHTML = '';
+
+        if (!pid) { sessaoSelect.disabled = true; return; }
+
+        var grupo = document.querySelector('#ws-hist-sessoes-data [data-pid="' + pid + '"]');
+        var spans = grupo ? grupo.querySelectorAll('[data-sid]') : [];
+
+        if (!spans.length) {
+            sessaoSelect.disabled = true;
+            if (lista) lista.innerHTML = '<p class="small py-3" style="color:var(--sl-text-400)">Este projeto ainda não tem sessões.</p>';
+            return;
+        }
+
+        spans.forEach(function (span) {
+            var opt = document.createElement('option');
+            opt.value = span.dataset.sid;
+            opt.textContent = span.dataset.nome;
+            sessaoSelect.appendChild(opt);
+        });
+        sessaoSelect.disabled = false;
+    }
+
+    function wsHistCarregarVersoes() {
+        var pid   = document.getElementById('ws-hist-projeto-select').value;
+        var sid   = document.getElementById('ws-hist-sessao-select').value;
+        var lista = document.getElementById('ws-hist-lista');
+        if (!lista) return;
+
+        if (!pid || !sid) { lista.innerHTML = ''; return; }
+
+        lista.innerHTML =
+            '<div class="text-center py-4" style="color:var(--sl-text-400);font-size:.82rem">' +
+                '<div class="spinner-border spinner-border-sm me-2" role="status"></div>Carregando histórico...' +
+            '</div>';
+
+        fetch('/api/workspace/projetos/' + pid + '/sessoes/' + sid + '/historico', { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+            .then(function (versoes) {
+                if (!versoes.length) {
+                    lista.innerHTML = '<p class="small py-3 text-center" style="color:var(--sl-text-400)">Nenhuma versão registrada pra esta sessão ainda.</p>';
+                    return;
+                }
+                lista.innerHTML = '';
+                versoes.forEach(function (v, idx) {
+                    var row = document.createElement('div');
+                    row.className = 'ws-sessao-row d-flex align-items-center gap-3 px-3 py-3';
+                    if (idx < versoes.length - 1) row.style.borderBottom = '1px solid var(--bs-border-color)';
+                    row.innerHTML =
+                        '<i class="bi bi-clock-history flex-shrink-0" style="font-size:.85rem;color:var(--sl-text-400)"></i>' +
+                        '<div class="flex-grow-1 min-width-0">' +
+                            '<p class="fw-bold mb-0 text-truncate" style="font-size:.85rem">' +
+                                wsEsc(v.siteName) + ' <span style="color:var(--sl-text-400);font-weight:400">· ' + wsEsc(v.colorPreset) + '</span>' +
+                            '</p>' +
+                            '<p class="mb-0" style="font-size:.7rem;color:var(--sl-text-400)">' +
+                                '<span style="color:var(--sl-primary)">' + wsEsc(v.origemLabel) + '</span> · ' + wsEsc(v.criadoEmFmt) +
+                            '</p>' +
+                            (v.resumoMudancas ?
+                                '<p class="mb-0 mt-1 fst-italic text-truncate" style="font-size:.74rem;color:var(--sl-text-300)">' +
+                                    '"' + wsEsc(v.resumoMudancas) + '"' +
+                                '</p>' : '') +
+                        '</div>' +
+                        '<div class="d-flex align-items-center gap-1 flex-shrink-0">' +
+                            '<a href="/dashboard/compilacao/' + wsEsc(v.id) + '/download" ' +
+                               'class="btn btn-sm d-flex align-items-center gap-1" ' +
+                               'style="font-size:.72rem;color:var(--sl-text-400);border:1px solid var(--bs-border-color);background:transparent;padding:6px 9px;min-height:34px">' +
+                                '<i class="bi bi-download"></i><span class="d-none d-sm-inline">Baixar</span>' +
+                            '</a>' +
+                            '<button type="button" class="btn btn-sm d-flex align-items-center gap-1 ws-hist-btn-reverter" ' +
+                                    'data-cid="' + wsEsc(v.id) + '" ' +
+                                    'style="font-size:.72rem;color:#f59e0b;border:1px solid rgba(245,158,11,.3);background:transparent;padding:6px 9px;min-height:34px">' +
+                                '<i class="bi bi-arrow-counterclockwise"></i><span class="d-none d-sm-inline">Reverter</span>' +
+                            '</button>' +
+                        '</div>';
+                    lista.appendChild(row);
+                });
+            })
+            .catch(function () {
+                lista.innerHTML = '<p class="small py-3 text-center text-danger">Falha ao carregar o histórico.</p>';
+            });
+    }
+
+    async function wsHistReverter(compilacaoId) {
+        var pid = document.getElementById('ws-hist-projeto-select').value;
+        var sid = document.getElementById('ws-hist-sessao-select').value;
+        if (!pid || !sid) return;
+        if (!confirm('Reverter a sessão pra esta versão? Isso recompila e atualiza o template atual da sessão — nada é apagado, a versão atual continua no histórico.')) return;
+
+        try {
+            var r = await fetch('/api/workspace/projetos/' + pid + '/sessoes/' + sid + '/reverter', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ compilacaoId: compilacaoId }),
+            });
+            var d = await r.json();
+            if (!r.ok) { alert(d.erro || 'Erro ao reverter.'); return; }
+            wsHistCarregarVersoes(); // recarrega — a nova entrada "Revertido" aparece no topo
+        } catch (e) {
+            alert('Falha de conexão.');
+        }
+    }
+
+    var wsHistProjetoSelect = document.getElementById('ws-hist-projeto-select');
+    var wsHistSessaoSelect  = document.getElementById('ws-hist-sessao-select');
+    if (wsHistProjetoSelect) {
+        wsHistProjetoSelect.addEventListener('change', function () {
+            wsHistPopularSessoes(this.value);
+        });
+    }
+    if (wsHistSessaoSelect) {
+        wsHistSessaoSelect.addEventListener('change', wsHistCarregarVersoes);
+    }
+    var wsHistLista = document.getElementById('ws-hist-lista');
+    if (wsHistLista) {
+        wsHistLista.addEventListener('click', function (e) {
+            var btn = e.target.closest('.ws-hist-btn-reverter');
+            if (btn) wsHistReverter(btn.dataset.cid);
+        });
+    }
+
+}());
+</script>
+
+<%- include('../../../partials/footer') %>

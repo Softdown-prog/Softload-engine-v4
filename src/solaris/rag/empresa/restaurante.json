@@ -1,0 +1,34 @@
+{
+  "id":"restaurante",
+
+  "slug":"restaurante",
+
+  "categoria":"empresa",
+
+  "frameworks":[
+    "html5",
+    "bootstrap5",
+    "php",
+    "flask",
+    "django"
+  ],
+
+  "componentes":[
+    "hero",
+    "menu",
+    "cardapio",
+    "galeria",
+    "chef",
+    "depoimentos",
+    "reservas",
+    "mapa",
+    "contato",
+    "footer"
+  ],
+
+  "integracoes":[
+    "google-maps",
+    "whatsapp",
+    "instagram"
+  ]
+}

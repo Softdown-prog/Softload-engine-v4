@@ -1,0 +1,31 @@
+{
+  "id":"escola-online",
+
+  "slug":"escola-online",
+
+  "categoria":"educacao",
+
+  "frameworks":[
+    "php",
+    "django",
+    "flask",
+    "bootstrap5"
+  ],
+
+  "componentes":[
+    "hero",
+    "cursos",
+    "instrutores",
+    "cronograma",
+    "certificados",
+    "faq",
+    "contato",
+    "footer"
+  ],
+
+  "integracoes":[
+    "login",
+    "cadastro",
+    "area-do-aluno"
+  ]
+}

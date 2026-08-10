@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultmessages='true' b:layoutsVersion='3' b:responsive='true' lang='pt-br' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+<head>
+  <b:include data='blog' name='all-head-content'/>
+  <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+  <title><data:blog.pageTitle/></title>
+
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'/>
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css' rel='stylesheet'/>
+  <link href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap' rel='stylesheet'/>
+<script>
+  //<![CDATA[
+    // FOUC PREVENTION: Lê o tema antes do <body> renderizar
+    const savedTheme = localStorage.getItem('biolink-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-bs-theme', savedTheme);
+  //]]>
+  </script>
+
+  <b:skin><![CDATA[
+ 
+    /*
+    <Group description="🎨 Cores do Tema (BioLink Pro)" selector=":root">
+      <Variable name="cor.primaria" description="Cor Principal (Botões e Ciano do Fundo)" type="color" default="#00f2fe" value="#00f2fe"/>
+      <Variable name="cor.secundaria" description="Cor Secundária (Hover e Roxo do Fundo)" type="color" default="#4facfe" value="#4facfe"/>
+    </Group>
+    */
+
+    :root {
+      --bio-primary: $(cor.primaria);
+      --bio-secondary: $(cor.secundaria);
+    }
+    :root {
+      /* Paleta Light Mode */
+      --bio-bg: #f4f7f6;
+      --bio-text: #1e293b;
+      --bio-card-bg: rgba(255, 255, 255, 0.7);
+      --bio-card-border: rgba(255, 255, 255, 0.5);
+      --bio-card-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+      --bio-card-hover-bg: rgba(255, 255, 255, 0.9);
+      --bio-card-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      
+      /* Cores de Destaque */
+      --bio-primary: #06b6d4; /* Ciano */
+      --bio-secondary: #8b5cf6; /* Roxo */
+      
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    [data-bs-theme="dark"] {
+      /* Paleta Dark Mode (Midnight Glass) */
+      --bio-bg: #0a0a0a;
+      --bio-text: #f8fafc;
+      --bio-card-bg: rgba(25, 25, 25, 0.4);
+      --bio-card-border: rgba(255, 255, 255, 0.05);
+      --bio-card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --bio-card-hover-bg: rgba(255, 255, 255, 0.08);
+      --bio-card-hover-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+    }
+
+    /* === ESTILOS GLOBAIS === */
+    body {
+      background-color: var(--bio-bg);
+      color: var(--bio-text);
+      font-family: var(--font-main);
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    a { text-decoration: none; }
+
+    /* === BLOBS ANIMADOS (O SEGREDO DO GLASSMORPHISM) === */
+    .background-blobs {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      overflow: hidden; z-index: -1; pointer-events: none;
+    }
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(80px);
+      opacity: 0.6; animation: blob-float 20s infinite alternate ease-in-out;
+    }
+    .blob-1 {
+      width: 400px; height: 400px; background: var(--bio-secondary);
+      top: -100px; left: -100px; animation-delay: 0s;
+    }
+    .blob-2 {
+      width: 300px; height: 300px; background: var(--bio-primary);
+      bottom: -50px; right: -50px; animation-delay: -5s;
+    }
+    [data-bs-theme="dark"] .blob { opacity: 0.3; }
+
+    @keyframes blob-float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(150px, 100px) scale(1.2); }
+      100% { transform: translate(50px, 200px) scale(0.9); }
+    }
+
+    /* === 1. CABEÇALHO / PERFIL === */
+    .profile-img-wrapper {
+      width: 120px; height: 120px; padding: 4px; border-radius: 50%;
+      background: linear-gradient(45deg, var(--bio-primary), var(--bio-secondary));
+      animation: pulse-ring 3s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    
+    .profile-img {
+      width: 100%; height: 100%; border: 4px solid var(--bio-bg);
+      background-color: var(--bio-bg); transition: border-color 0.4s ease;
+    }
+    
+    .profile-name { letter-spacing: -0.5px; color: var(--bio-text); }
+    .profile-bio { font-size: 1rem; opacity: 0.75; }
+
+    /* === 2. BOTÕES DE LINKS === */
+    .links-container { width: 100%; max-width: 550px; margin: 0 auto; }
+    
+    .link-btn {
+      background-color: var(--bio-card-bg);
+      border: 1px solid var(--bio-card-border);
+      color: var(--bio-text) !important;
+      border-radius: 50px;
+      padding: 16px 24px;
+      font-size: 1.05rem;
+      letter-spacing: 0.3px;
+      box-shadow: var(--bio-card-shadow);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    
+    .link-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--bio-card-hover-shadow);
+      background-color: var(--bio-card-hover-bg);
+      border-color: var(--bio-primary);
+    }
+
+    /* === 3. REDES SOCIAIS (FOOTER) === */
+    .social-icon-btn {
+      color: var(--bio-text);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      opacity: 0.7;
+    }
+    .social-icon-btn:hover {
+      color: var(--bio-primary);
+      opacity: 1;
+      transform: scale(1.2) translateY(-3px);
+    }
+
+    /* === 4. CONTROLES (PARTILHAR E TEMA) === */
+    .footer-controls .btn {
+      background-color: var(--bio-card-bg);
+      border: 1px solid var(--bio-card-border);
+      color: var(--bio-text);
+      box-shadow: var(--bio-card-shadow);
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .footer-controls .btn:hover {
+      background: linear-gradient(45deg, var(--bio-primary), var(--bio-secondary));
+      color: #ffffff;
+      border-color: transparent;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    /* === ANIMAÇÕES CSS NATIVAS === */
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); }
+      70% { box-shadow: 0 0 0 15px rgba(139, 92, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+    }
+
+    /* Cascata */
+    .animate-item { animation: fadeInUp 0.6s ease backwards; position: relative; z-index: 10; }
+    header.animate-item { animation-delay: 0.1s; }
+    main.animate-item { animation-delay: 0.2s; }
+    footer .animate-item { animation-delay: 0.3s; }
+    .links-container .link-btn { animation: fadeInUp 0.5s ease backwards; }
+    .links-container .link-btn:nth-child(1) { animation-delay: 0.2s; }
+    .links-container .link-btn:nth-child(2) { animation-delay: 0.3s; }
+    .links-container .link-btn:nth-child(3) { animation-delay: 0.4s; }
+    .links-container .link-btn:nth-child(4) { animation-delay: 0.5s; }
+    .links-container .link-btn:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  ]]></b:skin>
+</head>
+
+<body>
+
+  <div class='background-blobs'>
+    <div class='blob blob-1'/>
+    <div class='blob blob-2'/>
+  </div>
+
+  <div class='biolink-wrapper container-fluid d-flex flex-column align-items-center min-vh-100 py-5' style='max-width: 680px; margin: 0 auto;'>
+
+    <header class='w-100 mb-4 animate-item'>
+      <b:section id='profile-section' maxwidgets='1' name='Perfil (Foto e Bio)' showaddelement='yes'>
+        <b:widget id='Header1' locked='false' title='Social (Cabeçalho)' type='Header' version='2' visible='true'>
+          <b:widget-settings>
+            <b:widget-setting name='displayUrl'>https://blogger.googleusercontent.com/img/a/AVvXsEg9eWoTUbUDnvS_Ast7ax8HP_m9Ff13TQr8sjz7Wm1hGGBpOB2ySfqrZpWr1c98aOl2cPMA2vp3MAf7epu0C6t9R1mtvme3F-Owuy_O6KxSf6ICZE1YC7NwoEaLWk-AQAisamQ4h43CompxOvMsx14gjZrflFYqYwTjX7oKjY1s-llEZADxfE2A4CEYTQml=s1376</b:widget-setting>
+            <b:widget-setting name='displayHeight'>768</b:widget-setting>
+            <b:widget-setting name='sectionWidth'>672</b:widget-setting>
+            <b:widget-setting name='useImage'>true</b:widget-setting>
+            <b:widget-setting name='shrinkToFit'>false</b:widget-setting>
+            <b:widget-setting name='imagePlacement'>REPLACE</b:widget-setting>
+            <b:widget-setting name='displayWidth'>1376</b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+            <div class='profile-container text-center'>
+              <b:if cond='data:image'>
+                <div class='profile-img-wrapper mb-3 mx-auto position-relative'>
+                  <img class='profile-img img-fluid rounded-circle object-fit-cover' expr:alt='data:title' expr:src='data:image'/>
+                </div>
+              </b:if>
+              <h1 class='profile-name fw-bolder mb-1 h3'><data:title/></h1>
+              <p class='profile-bio mb-0'><data:description/></p>
+            </div>
+          </b:includable>
+          <b:includable id='behindImageStyle'>
+    <b:if cond='data:sourceUrl'>
+      <b:include cond='data:this.image' data='{                    image: data:this.image,                    selector: &quot;.header-widget&quot;                  }' name='responsiveImageStyle'/>
+      <style type='text/css'>
+        .header-widget {
+          background-position: <data:blog.locale.languageAlignment/>;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+      </style>
+    </b:if>
+  </b:includable>
+          <b:includable id='description'>
+    <p>
+      <data:this.description/>
+    </p>
+  </b:includable>
+          <b:includable id='image'>
+    <a class='header-image-wrapper' expr:href='data:blog.homepageUrl'>
+      <b:include data='{                                                 image: data:image,                                                 altText: data:blog.title.escaped,                                                 originalWidth: data:width,                                                 originalHeight: data:height                                               }' name='responsiveImage'/>
+    </a>
+  </b:includable>
+          <b:includable id='title'>
+    <h1>
+      <b:tag cond='data:view.url != data:blog.homepageUrl' expr:href='data:blog.homepageUrl' name='a'>
+        <data:title/>
+      </b:tag>
+    </h1>
+  </b:includable>
+        </b:widget>
+      </b:section>
+    </header>
+
+    <main class='w-100 mb-5 px-3 animate-item'>
+      <b:section id='links-section' name='Meus Links (Botões)' showaddelement='yes'>
+        <b:widget id='PageList1' locked='false' title='Páginas' type='PageList'>
+          <b:widget-settings>
+            <b:widget-setting name='pageListJson'><![CDATA[{"link1":{"href":"https://drive.google.com/file/d/119oyM7brf4YJbtzCbhf6JkH5z3xatN_1/view?usp=drive_link","position":1,"title":"Documentação"},"link0":{"href":"http://social-webly.blogspot.com/","position":0,"title":"Página inicial"}}]]></b:widget-setting>
+            <b:widget-setting name='homeTitle'>Página inicial</b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'><h2><data:title/></h2></b:if>
+  <div class='widget-content'>
+    <b:if cond='data:mobile'>
+      <select expr:id='data:widget.instanceId + &quot;_select&quot;'>
+        <b:if cond='data:showPlaceholder'>
+          <option disabled='disabled' hidden='hidden' value=''>
+            <b:attr cond='!data:hasCurrentPage' name='selected' value='selected'/>
+            <b:message name='messages.moveToPage'/>
+          </option>
+        </b:if>
+        <b:loop values='data:links' var='link'>
+          <option expr:value='data:link.href'>
+            <b:attr cond='data:link.isCurrentPage' name='selected' value='selected'/>
+            <data:link.title/>
+          </option>
+        </b:loop>
+      </select>
+      <span class='pagelist-arrow'>&amp;#9660;</span>
+    <b:else/>
+      <ul>
+        <b:loop values='data:links' var='link'>
+          <li>
+            <b:class cond='data:link.isCurrentPage' name='selected'/>
+            <a expr:href='data:link.href'><data:link.title/></a>
+          </li>
+        </b:loop>
+      </ul>
+    </b:if>
+    <b:include name='quickedit'/>
+  </div>
+</b:includable>
+        </b:widget>
+        <b:widget id='LinkList1' locked='false' title='Links Principais {edite_aqui_seus_links}' type='LinkList' version='2' visible='true'>
+          <b:widget-settings>
+            <b:widget-setting name='shownum'>5</b:widget-setting>
+            <b:widget-setting name='link-3'>https://www.instagram.com/</b:widget-setting>
+            <b:widget-setting name='sorting'>REVERSE_ALPHABETICAL</b:widget-setting>
+            <b:widget-setting name='link-4'>https://www.facebook.com/</b:widget-setting>
+            <b:widget-setting name='text-1'>X</b:widget-setting>
+            <b:widget-setting name='link-1'>https://x.com/</b:widget-setting>
+            <b:widget-setting name='text-0'>YouTube </b:widget-setting>
+            <b:widget-setting name='link-2'>https://www.twitch.tv/?lang=pt-br</b:widget-setting>
+            <b:widget-setting name='text-3'>Instagram </b:widget-setting>
+            <b:widget-setting name='link-0'>https://www.youtube.com/</b:widget-setting>
+            <b:widget-setting name='text-2'>Twitch TV</b:widget-setting>
+            <b:widget-setting name='text-4'>Facebook </b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+            <div class='links-container d-flex flex-column gap-3'>
+              <b:loop values='data:links' var='link'>
+                <a class='link-btn d-flex align-items-center justify-content-center position-relative' expr:href='data:link.target' rel='noopener noreferrer' target='_blank'>
+                  <span class='link-text fw-bold'><data:link.name/></span>
+                </a>
+              </b:loop>
+            </div>
+          </b:includable>
+          <b:includable id='content'>
+ <div class='widget-content'>
+   <ul>
+     <b:loop values='data:links' var='link'>
+       <li><a expr:href='data:link.target'><data:link.name/></a></li>
+     </b:loop>
+   </ul>
+ </div>
+</b:includable>
+        </b:widget>
+        <b:widget id='HTML2' locked='false' title='' type='HTML'>
+          <b:widget-settings>
+            <b:widget-setting name='content'><![CDATA[<style>
+    /* 1. Fixar o container no canto inferior direito */
+    .whatsapp-widget-container {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 9999; /* Garante que fica por cima de tudo */
+    }
+
+    /* 2. O Botão Redondo e Verde */
+    .whatsapp-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      background-color: #25D366; /* Verde Oficial */
+      color: #ffffff !important; /* Pinta o SVG de branco */
+      border-radius: 50%;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      animation: pulse-wa 2s infinite; /* Animação de pulso */
+    }
+
+    /* Tamanho do Ícone SVG */
+    .whatsapp-btn svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* 3. Efeito Hover */
+    .whatsapp-btn:hover {
+      background-color: #1ebe57;
+      color: #ffffff;
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+
+    /* 4. A Mágica do Pulso */
+    @keyframes pulse-wa {
+      0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+    }
+
+    /* 5. Responsividade (Mobile) */
+    @media (max-width: 768px) {
+      .whatsapp-widget-container { bottom: 20px; right: 20px; }
+      .whatsapp-btn { width: 55px; height: 55px; }
+      .whatsapp-btn svg { width: 28px; height: 28px; }
+    }
+  </style>
+
+  <b:section id='whatsapp-floating' maxwidgets='1' name='Botão WhatsApp' showaddelement='yes'>
+    <b:widget id='HTML99' locked='false' title='Número do WhatsApp' type='HTML' version='2'>
+      <b:includable id='main'>
+        <b:if cond='data:content != &quot;&quot;'>
+          
+          <div class='whatsapp-widget-container'>
+            <a class='whatsapp-btn' expr:href='&quot;https://wa.me/&quot; + data:content' rel='noopener noreferrer' target='_blank' title='Fale connosco no WhatsApp'>
+              
+              <svg fill='currentColor' height='30' viewbox='0 0 16 16' width='30' xmlns='http://www.w3.org/2000/svg'>
+                <path d='M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z'/>
+              </path></svg>
+              
+            </a>
+          </div>
+          
+        </b:if>
+      </b:includable>
+    </b:widget>
+  </b:section>]]></b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+        </b:widget>
+        <b:widget id='HTML3' locked='false' title='{Como Instalar Seu Template}' type='HTML'>
+          <b:widget-settings>
+            <b:widget-setting name='content'><![CDATA[<iframe src="https://drive.google.com/file/d/1x6uv77pTiuZwcolU0ugJkIo2AtGiSuNE/preview" width="100%" height="400" frameborder="0" allow="autoplay" allowfullscreen></iframe>]]></b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+        </b:widget>
+      </b:section>
+    </main>
+
+    <footer class='w-100 mt-auto text-center px-3'>
+      <b:section id='social-section' maxwidgets='1' name='Redes Sociais (Ícones)' showaddelement='yes'>
+        <b:widget id='LinkList2' locked='false' title='Redes Sociais' type='LinkList' version='2' visible='true'>
+          <b:widget-settings>
+            <b:widget-setting name='link-5'>https://open.spotify.com/intl-pt</b:widget-setting>
+            <b:widget-setting name='link-3'>https://x.com</b:widget-setting>
+            <b:widget-setting name='link-4'>https://Instagram.com</b:widget-setting>
+            <b:widget-setting name='text-1'>Facebook </b:widget-setting>
+            <b:widget-setting name='text-0'>YouTube </b:widget-setting>
+            <b:widget-setting name='text-3'>X</b:widget-setting>
+            <b:widget-setting name='text-2'>Twitch </b:widget-setting>
+            <b:widget-setting name='text-5'>Spotify </b:widget-setting>
+            <b:widget-setting name='text-4'>Instagram </b:widget-setting>
+            <b:widget-setting name='shownum'>5</b:widget-setting>
+            <b:widget-setting name='sorting'>NONE</b:widget-setting>
+            <b:widget-setting name='link-1'>https://www.facebook.com/</b:widget-setting>
+            <b:widget-setting name='link-2'>https://www.twitch.tv/?lang=pt-br</b:widget-setting>
+            <b:widget-setting name='link-0'>https://www.youtube.com/</b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+            <div class='social-container d-flex justify-content-center flex-wrap gap-4 mb-4 animate-item'>
+              <b:loop values='data:links' var='link'>
+                <a class='social-icon-btn fs-3' expr:aria-label='data:link.name' expr:href='data:link.target' rel='noopener noreferrer' target='_blank'>
+                  <i class='bi bi-link-45deg'/>
+                </a>
+              </b:loop>
+            </div>
+          </b:includable>
+          <b:includable id='content'>
+ <div class='widget-content'>
+   <ul>
+     <b:loop values='data:links' var='link'>
+       <li><a expr:href='data:link.target'><data:link.name/></a></li>
+     </b:loop>
+   </ul>
+ </div>
+</b:includable>
+        </b:widget>
+      </b:section>
+
+      <div class='footer-controls d-flex justify-content-center gap-3 animate-item'>
+        <button class='btn btn-sm rounded-pill fw-bold px-3 d-flex align-items-center' id='btnShare'>
+          <i class='bi bi-share-fill me-2'/> Partilhar
+        </button>
+        <button class='btn btn-sm rounded-pill fw-bold px-3 d-flex align-items-center btn-dark-mode' id='btnTheme'>
+          <i class='bi bi-moon-stars-fill me-2'/> Tema
+        </button>
+      </div>
+      
+      <div class='copyright-text mt-4 small opacity-50 animate-item'>
+        <b:section id='footer-copyright' maxwidgets='1' name='Créditos' showaddelement='yes'>
+          <b:widget id='HTML1' locked='true' title='Detalhes deste template/ Demostração de ícones compatíveis' type='HTML'>
+            <b:widget-settings>
+              <b:widget-setting name='content'><![CDATA[<style>
+
+
+/* === DOCUMENTAÇÃO DE REDES SOCIAIS (GRID & CARDS) === */
+    .biolink-docs-container {
+      font-family: var(--font-main);
+      color: var(--bio-text);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .networks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .network-card {
+      background: var(--bio-card-bg);
+      border: 1px solid var(--bio-card-border);
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: var(--bio-card-shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .network-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--bio-primary);
+      box-shadow: var(--bio-card-hover-shadow);
+      background: var(--bio-card-hover-bg);
+    }
+
+    .network-card i {
+      font-size: 1.5rem;
+      color: var(--bio-primary);
+    }
+
+    .net-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .net-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+    }
+
+    .net-rule {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--bio-secondary);
+      background: rgba(139, 92, 246, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    /* Caixa de Aviso (Callout) */
+    .network-callout {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1));
+      border-left: 4px solid var(--bio-primary);
+      border-radius: 8px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .callout-icon i {
+      font-size: 2rem;
+      color: var(--bio-primary);
+      background: var(--bio-card-bg);
+      padding: 10px;
+      border-radius: 50%;
+      box-shadow: var(--bio-card-shadow);
+    }
+
+
+</style>
+
+<div class="biolink-docs-container mt-4">
+  
+  <div class="docs-header mb-4 text-center">
+    <h3 class="fw-bold mb-2">Ícones Suportados Automaticamente</h3>
+    <p class="opacity-75">Sempre que adicionares um link no painel do Blogger que contenha uma destas palavras-chave, o ícone correto será gerado magicamente.</p>
+  </div>
+
+  <div class="networks-grid">
+    
+    <div class="network-card"><i class="bi bi-instagram"></i>
+      <div class="net-info"><span class="net-name">Instagram</span><code class="net-rule">instagram.com</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-twitter-x"></i>
+      <div class="net-info"><span class="net-name">X / Twitter</span><code class="net-rule">twitter.com ou x.com</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-facebook"></i>
+      <div class="net-info"><span class="net-name">Facebook</span><code class="net-rule">facebook.com</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-youtube"></i>
+      <div class="net-info"><span class="net-name">YouTube</span><code class="net-rule">youtube.com ou youtu.be</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-tiktok"></i>
+      <div class="net-info"><span class="net-name">TikTok</span><code class="net-rule">tiktok.com</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-whatsapp"></i>
+      <div class="net-info"><span class="net-name">WhatsApp</span><code class="net-rule">whatsapp.com ou wa.me</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-linkedin"></i>
+      <div class="net-info"><span class="net-name">LinkedIn</span><code class="net-rule">linkedin.com</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-github"></i>
+      <div class="net-info"><span class="net-name">GitHub</span><code class="net-rule">github.com</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-spotify"></i>
+      <div class="net-info"><span class="net-name">Spotify</span><code class="net-rule">spotify.com/0</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-twitch"></i>
+      <div class="net-info"><span class="net-name">Twitch</span><code class="net-rule">twitch.tv</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-threads"></i>
+      <div class="net-info"><span class="net-name">Threads</span><code class="net-rule">threads.net</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-telegram"></i>
+      <div class="net-info"><span class="net-name">Telegram</span><code class="net-rule">t.me ou telegram.org</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-snapchat"></i>
+      <div class="net-info"><span class="net-name">Snapchat</span><code class="net-rule">snapchat.com</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-pinterest"></i>
+      <div class="net-info"><span class="net-name">Pinterest</span><code class="net-rule">pinterest.com</code></div>
+    </div>
+    
+    <div class="network-card"><i class="bi bi-envelope-at-fill"></i>
+      <div class="net-info"><span class="net-name">E-mail</span><code class="net-rule">mailto:</code></div>
+    </div>
+
+  </div>
+
+  <div class="network-callout mt-4 d-flex align-items-center">
+    <div class="callout-icon me-3">
+      <i class="bi bi-link-45deg"></i>
+    </div>
+    <div class="callout-text">
+      <strong>Detalhe Extra: Ícone de Fallback</strong>
+      <p class="mb-0 mt-1 opacity-75 small">Se o utilizador colocar qualquer outro link que não esteja nesta lista (por exemplo, um site pessoal ou um blog), o template é inteligente e colocará um ícone de "Corrente Genérica", garantindo que nunca fique um espaço vazio ou com erro.</p>
+    </div>
+  </div>
+
+</div>]]></b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+          </b:widget>
+        </b:section>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'/>
+
+  <script>
+  //<![CDATA[
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    /* === 1. TEMA ESCURO INTELIGENTE === */
+    const btnTheme = document.getElementById('btnTheme');
+    const themeIcon = btnTheme ? btnTheme.querySelector('i') : null;
+
+    const setTheme = (theme) => {
+      document.documentElement.setAttribute('data-bs-theme', theme);
+      localStorage.setItem('biolink-theme', theme);
+      if (themeIcon) {
+        themeIcon.className = theme === 'dark' ? 'bi bi-sun-fill me-2' : 'bi bi-moon-stars-fill me-2';
+      }
+    };
+
+    if (themeIcon) {
+      themeIcon.className = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'bi bi-sun-fill me-2' : 'bi bi-moon-stars-fill me-2';
+    }
+
+    if (btnTheme) {
+      btnTheme.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+        setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+      });
+    }
+
+    /* === 2. PARTILHA NATIVA BLINDADA (WEB SHARE API) === */
+    const btnShare = document.getElementById('btnShare');
+    let isSharing = false; /* Trava anti-spam de cliques */
+
+    if (btnShare) {
+      btnShare.addEventListener('click', async () => {
+        if (isSharing) return; /* Se já estiver a partilhar, ignora o clique */
+        
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: document.title,
+              text: 'Confere os meus links!',
+              url: window.location.href
+            });
+          } catch (err) {
+            console.log('Partilha cancelada.');
+          }
+        } else {
+          /* Fallback Seguro para PC/Navegadores Antigos */
+          isSharing = true;
+          navigator.clipboard.writeText(window.location.href);
+          btnShare.innerHTML = '<i class="bi bi-check2-circle me-2"></i> Copiado!';
+          
+          setTimeout(() => { 
+            btnShare.innerHTML = '<i class="bi bi-share-fill me-2"></i> Partilhar'; 
+            isSharing = false; /* Liberta a trava */
+          }, 2500);
+        }
+      });
+    }
+
+    /* === 3. MOTOR DE ÍCONES SOCIAIS (100% CORRIGIDO) === */
+    const socialLinks = document.querySelectorAll('.social-icon-btn');
+    socialLinks.forEach(link => {
+      const url = link.href.toLowerCase();
+      const icon = link.querySelector('i');
+      if (!icon) return;
+
+      if (url.includes('instagram.com')) icon.className = 'bi bi-instagram';
+      else if (url.includes('twitter.com') || url.includes('x.com')) icon.className = 'bi bi-twitter-x';
+      else if (url.includes('facebook.com')) icon.className = 'bi bi-facebook';
+      else if (url.includes('youtube.com') || url.includes('youtu.be')) icon.className = 'bi bi-youtube';
+      else if (url.includes('tiktok.com')) icon.className = 'bi bi-tiktok';
+      else if (url.includes('whatsapp.com') || url.includes('wa.me')) icon.className = 'bi bi-whatsapp';
+      else if (url.includes('linkedin.com')) icon.className = 'bi bi-linkedin';
+      else if (url.includes('github.com')) icon.className = 'bi bi-github';
+      else if (url.includes('spotify.com')) icon.className = 'bi bi-spotify'; /* BUG REALMENTE CORRIGIDO AGORA */
+      else if (url.includes('twitch.tv')) icon.className = 'bi bi-twitch';
+      else if (url.includes('threads.net')) icon.className = 'bi bi-threads';
+      else if (url.includes('t.me') || url.includes('telegram.org')) icon.className = 'bi bi-telegram';
+      else if (url.includes('snapchat.com')) icon.className = 'bi bi-snapchat';
+      else if (url.includes('pinterest.com')) icon.className = 'bi bi-pinterest';
+      else if (url.includes('mailto:')) icon.className = 'bi bi-envelope-at-fill';
+    });
+
+  });
+  //]]>
+</script>        
+    
+</body>
+</html>

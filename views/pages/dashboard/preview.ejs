@@ -1,0 +1,207 @@
+<%- include('../../partials/header') %>
+
+<div class="sl-dash-wrapper">
+
+    <%- include('../../partials/dashboard-sidebar', { activePage: activePage, user: user }) %>
+
+    <main class="flex-grow-1 d-flex flex-column" style="min-width:0;min-height:0;overflow:hidden">
+
+        <!-- Topbar mobile -->
+        <div class="sl-topbar d-lg-none">
+            <span class="flex-grow-1 fw-bolder text-uppercase small" style="color:var(--bs-body-color);letter-spacing:-0.02em">
+                Preview — <%= siteName %>
+            </span>
+            <a href="/dashboard/configuracoes" title="Configurações" class="btn btn-link p-1" style="color:var(--sl-text-400)">
+                <i class="bi bi-gear-fill" style="font-size:1.2rem"></i>
+            </a>
+        </div>
+
+        <!-- Barra de controles do preview
+             Desktop: linha única  [Voltar | nome + badges | viewport | Baixar]
+             Mobile:  linha 1 = [Voltar | nome]   linha 2 = [viewport | Baixar] -->
+        <div id="preview-bar"
+             class="flex-shrink-0 px-3 px-md-4"
+             style="border-bottom:1px solid var(--bs-border-color);background:var(--sl-bg-900);padding-top:8px;padding-bottom:8px">
+
+            <!-- Linha 1: Voltar + nome (sempre visível) -->
+            <div class="d-flex align-items-center gap-2" style="min-width:0">
+
+                <!-- Voltar -->
+                <a href="/dashboard/<%= locals.from === 'workspace' ? 'workspace' : 'historico' %>"
+                   class="btn fw-bolder text-uppercase d-flex align-items-center gap-1 flex-shrink-0"
+                   style="font-size:11px;letter-spacing:0.06em;background:var(--sl-bg-800);color:var(--sl-text-400);border:none;padding:6px 10px;min-height:34px;white-space:nowrap">
+                    <i class="bi bi-arrow-left"></i>
+                    <span><%= locals.from === 'workspace' ? 'Workspace' : 'Histórico' %></span>
+                </a>
+
+                <!-- Nome + badges -->
+                <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0">
+                    <i class="bi bi-eye flex-shrink-0" style="color:var(--sl-primary);font-size:.9rem"></i>
+                    <span class="fw-bold small text-truncate" style="color:var(--bs-body-color)"><%= siteName %></span>
+                    <span class="badge rounded-pill fw-black text-uppercase flex-shrink-0"
+                          style="font-size:9px;letter-spacing:0.06em;background:rgba(14,165,233,.15);color:var(--sl-primary)">Preview</span>
+                    <% if (locals.nichoTema) { %>
+                    <span class="badge rounded-pill fw-semibold flex-shrink-0 d-none d-sm-inline"
+                          style="font-size:9px;background:rgba(255,255,255,.06);color:var(--sl-text-400)"><%= nichoTema %></span>
+                    <% } %>
+                </div>
+
+                <!-- Viewport + Baixar — DESKTOP: mesmo linha; MOBILE: oculto aqui -->
+                <div class="d-none d-md-flex align-items-center gap-1 flex-shrink-0">
+                    <%- include('../../partials/preview-viewport-controls', { compilacaoId: compilacaoId }) %>
+                </div>
+            </div>
+
+            <!-- Linha 2: viewport + baixar (apenas mobile) -->
+            <div class="d-flex d-md-none align-items-center justify-content-between gap-2 mt-2">
+                <%- include('../../partials/preview-viewport-controls', { compilacaoId: compilacaoId }) %>
+            </div>
+        </div>
+
+        <!-- Área do stage + iframe -->
+        <div id="preview-stage"
+             class="flex-grow-1 overflow-auto d-flex flex-column align-items-center"
+             style="background:#1a1f2e;padding:16px 12px">
+
+            <!-- Moldura do device -->
+            <div id="preview-shell"
+                 style="width:100%;max-width:1280px;transition:max-width .3s cubic-bezier(.4,0,.2,1);flex-shrink:0">
+
+                <!-- Barra decorativa estilo browser -->
+                <div id="device-bar"
+                     style="background:#2a2f3e;border-radius:10px 10px 0 0;padding:8px 14px;display:flex;align-items:center;gap:8px">
+                    <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block"></span>
+                    <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block"></span>
+                    <span style="width:10px;height:10px;border-radius:50%;background:#10b981;display:inline-block"></span>
+                    <span id="device-label"
+                          style="font-size:10px;color:#64748b;margin-left:6px;font-family:monospace;letter-spacing:0.05em">
+                        1280px — Desktop
+                    </span>
+                </div>
+
+                <iframe id="preview-frame"
+                        style="width:100%;height:780px;border:none;border-radius:0 0 10px 10px;background:#fff;display:block"
+                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                        title="Preview do template"></iframe>
+            </div>
+
+            <!-- Aviso de fidelidade do sandbox -->
+            <div style="width:100%;max-width:1280px;margin-top:10px;padding:10px 14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);border-radius:8px;display:flex;align-items:flex-start;gap:10px">
+                <span style="font-size:1rem;line-height:1.4;flex-shrink:0">⚠️</span>
+                <p style="margin:0;font-size:.75rem;line-height:1.5;color:#b0976b">
+                    <strong style="color:#d4a84b">Visualização aproximada (~80%).</strong>
+                    Fontes externas, scripts de terceiros e alguns efeitos CSS ficam bloqueados pelo sandbox de segurança.
+                    Quebras de layout nesta tela são comuns e <em>não refletem a qualidade final</em> do template publicado no Blogger.
+                </p>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<style>
+.vp-btn {
+    background: var(--sl-bg-800);
+    color: var(--sl-text-400);
+    border: 1px solid var(--bs-border-color);
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: .85rem;
+}
+.vp-btn.active-vp {
+    background: var(--sl-primary);
+    color: #fff;
+    border-color: var(--sl-primary);
+}
+.vp-btn:hover:not(.active-vp) {
+    background: var(--sl-bg-700);
+    color: var(--bs-body-color);
+}
+.btn-baixar-preview {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+}
+</style>
+
+<script>
+(function () {
+    var VIEWPORTS = {
+        desktop: { maxWidth: '1280px', label: '1280px — Desktop' },
+        tablet:  { maxWidth: '768px',  label: '768px — Tablet'  },
+        mobile:  { maxWidth: '390px',  label: '390px — Mobile'  },
+    };
+
+    var frame   = document.getElementById('preview-frame');
+    var shell   = document.getElementById('preview-shell');
+    var label   = document.getElementById('device-label');
+    var current = 'desktop';
+
+    // Base64 garante que nenhum caractere do HTML gerado pode fechar
+    // esta tag <script> ou interferir no parser HTML da página principal.
+    frame.srcdoc = atob('<%= previewHtmlB64 %>');
+
+    // Ajusta altura do iframe via postMessage — mais confiável que
+    // contentDocument.scrollHeight (retorna altura do viewport em muitos browsers).
+    var heightScript = '<script>(function(){' +
+        'function send(){window.parent.postMessage({type:"sl-height",h:document.body.scrollHeight||document.documentElement.scrollHeight},\"*\");}' +
+        'window.addEventListener("load",function(){setTimeout(send,200);});' +
+        'new MutationObserver(function(){setTimeout(send,100);}).observe(document.body,{childList:true,subtree:true});' +
+        'setTimeout(send,800);' +
+        '})()</s' + 'cript>';
+
+    frame.addEventListener('load', function () {
+        try {
+            var doc = frame.contentDocument || frame.contentWindow.document;
+            if (doc && doc.body) {
+                doc.body.insertAdjacentHTML('beforeend', heightScript);
+            }
+        } catch (_) {}
+    });
+
+    function aplicarAltura(h) {
+        if (h > 200) {
+            frame.style.height = Math.min(h + 60, 8000) + 'px';
+        }
+    }
+
+    window.addEventListener('message', function (e) {
+        if (e.data && e.data.type === 'sl-height') {
+            aplicarAltura(e.data.h);
+        }
+    });
+
+    // Após trocar a largura do shell (max-width), o script injetado dentro
+    // do iframe só remede a altura sozinho em load/mutation/timeout — nenhum
+    // desses dispara por uma mudança de largura vinda do PAI. Reme a altura
+    // direto (o iframe tem allow-same-origin) depois que a transição CSS
+    // de max-width terminar, senão o box visível fica preso na altura do
+    // layout anterior (geralmente mais baixo que o mobile realmente é).
+    function remedirAposTransicao() {
+        setTimeout(function () {
+            try {
+                var doc = frame.contentDocument || frame.contentWindow.document;
+                if (doc && doc.body) {
+                    aplicarAltura(doc.body.scrollHeight || doc.documentElement.scrollHeight);
+                }
+            } catch (_) {}
+        }, 320);
+    }
+
+    // Seletor de viewport — sincroniza TODOS os botões com o mesmo id nos dois rows
+    window.setViewport = function (vp) {
+        if (current === vp) return;
+        current = vp;
+        var cfg = VIEWPORTS[vp];
+        shell.style.maxWidth = cfg.maxWidth;
+        label.textContent    = cfg.label;
+        document.querySelectorAll('[data-vp]').forEach(function (btn) {
+            btn.classList.toggle('active-vp', btn.dataset.vp === vp);
+        });
+        remedirAposTransicao();
+    };
+})();
+</script>
+
+<%- include('../../partials/footer') %>

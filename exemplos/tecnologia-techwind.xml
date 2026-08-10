@@ -1,0 +1,2155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultmessages='true' b:layoutsVersion='3' b:responsive='true' lang='pt-br' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+<head>
+  <b:include data='blog' name='all-head-content'/>
+  <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+  <title><data:blog.pageTitle/></title>
+
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'/>
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css' rel='stylesheet'/>
+
+  <b:skin><![CDATA[
+ 
+    /*
+    -----------------------------------------------
+    Blogger Template Style
+    Nome: Softdown Elegante (V6 - Fix HTML5 & Blogger Compat)
+    Design: Verde, Preto-Cinza e Branco Gelo
+    ----------------------------------------------- */
+
+    /* === VARIÁVEIS DO PAINEL DO BLOGGER === */
+    <Group description="Cores Principais" selector="body">
+      <Variable name="cor.primaria" description="Cor Principal (Verde Elegante)" type="color" default="#198754" value="#198754"/>
+      <Variable name="cor.primaria.hover" description="Cor Principal - Hover" type="color" default="#0f5132" value="#0f5132"/>
+      <Variable name="cor.fundo" description="Fundo do Site (Gelo)" type="color" default="#f8f9fa" value="#f8f9fa"/>
+      <Variable name="cor.texto" description="Texto Principal" type="color" default="#212529" value="#212529"/>
+      <Variable name="cor.escura" description="Fundo do Topo e Rodapé" type="color" default="#212529" value="#212529"/>
+    </Group>
+
+    /* === MAPEAMENTO PARA VARIÁVEIS CSS (BOOTSTRAP) === */
+    :root {
+      --sd-primary: $(cor.primaria);
+      --sd-primary-hover: $(cor.primaria.hover);
+      --sd-bg: $(cor.fundo);
+      --sd-text: $(cor.texto);
+      --sd-dark: $(cor.escura);
+    }
+
+    /* === ESTILOS GERAIS === */
+    body {
+      background-color: var(--sd-bg);
+      color: var(--sd-text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      border-top: 5px solid var(--sd-primary); 
+    }
+
+    a {
+      color: var(--sd-primary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a:hover {
+      color: var(--sd-primary-hover);
+    }
+
+    /* === CORREÇÕES DE COMPATIBILIDADE BLOGGER X BOOTSTRAP === */
+    .post-body-content img, 
+    .post-body-content iframe, 
+    .post-body-content object, 
+    .post-body-content embed {
+      max-width: 100% !important;
+      height: auto !important;
+      border-radius: 8px;
+    }
+    
+    .separator a {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    .post-body-content a {
+      color: var(--sd-primary);
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: rgba(25, 135, 84, 0.4);
+      text-underline-offset: 4px;
+    }
+    
+    .post-body-content a:hover {
+      color: var(--sd-primary-hover);
+      text-decoration-color: var(--sd-primary-hover);
+    }
+
+    /* === TOPO E RODAPÉ (PRETO CINZA) === */
+    .top-bar, footer {
+      background-color: var(--sd-dark) !important;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .top-bar a, footer a {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .top-bar a:hover, footer a:hover {
+      color: var(--sd-primary);
+    }
+
+    footer { 
+      border-top: 6px solid var(--sd-primary) !important; 
+    }
+
+    /* === NAVEGAÇÃO (HEADER BOOTSTRAP) === */
+    header .navbar {
+      background-color: var(--bs-body-bg) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    }
+
+    .navbar-brand-wrapper h1, .navbar-brand-wrapper h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--bs-emphasis-color);
+    }
+
+    .navbar-nav .nav-link {
+      color: var(--bs-emphasis-color);
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    
+    .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+      color: var(--sd-primary) !important;
+    }
+
+    .navbar-toggler {
+      border: 1px solid rgba(25, 135, 84, 0.5);
+      color: var(--sd-primary);
+    }
+    .navbar-toggler:focus {
+      box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+
+    /* === GRID DE POSTAGENS (CARDS) === */
+    .card {
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: var(--bs-body-bg);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .card-post-grid {
+      border: 0;
+      border-bottom: 4px solid var(--sd-primary) !important;
+    }
+
+    [data-bs-theme="dark"] .card, [data-bs-theme="dark"] aside .widget {
+      background-color: #18181b; 
+      border-color: #27272a !important;
+    }
+    [data-bs-theme="dark"] .post-body-content {
+      color: #d4d4d8;
+    }
+
+    .card-post-grid:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(25, 135, 84, 0.15) !important;
+    }
+
+    .card-title {
+      color: var(--bs-emphasis-color);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .post-title-single {
+      border-left: 6px solid var(--sd-primary);
+      padding-left: 15px;
+      color: var(--bs-emphasis-color);
+    }
+
+    .post-body-content blockquote {
+      border-left: 5px solid var(--sd-primary);
+      background-color: rgba(25, 135, 84, 0.05);
+      padding: 1.2rem;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      margin: 1.5rem 0;
+    }
+    [data-bs-theme="dark"] .post-body-content blockquote {
+      background-color: rgba(25, 135, 84, 0.1);
+    }
+
+    /* === BOTÕES === */
+    .btn-primary, .btn-outline-primary {
+      background-color: var(--sd-primary);
+      border-color: var(--sd-primary);
+      color: #ffffff;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    .btn-primary:hover, .btn-outline-primary:hover {
+      background-color: var(--sd-primary-hover);
+      border-color: var(--sd-primary-hover);
+      color: #ffffff;
+    }
+
+    .btn-outline-primary {
+      background-color: transparent;
+      color: var(--sd-primary);
+    }
+
+    /* === BARRA LATERAL (SIDEBAR) === */
+    aside .widget {
+      background: var(--bs-body-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.05);
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    aside h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--bs-emphasis-color);
+      border-left: 4px solid var(--sd-primary);
+      padding-left: 12px;
+      margin-bottom: 15px;
+    }
+
+    .widget { margin: 0 0 2rem 0; }
+    .status-msg-wrap { display: none; }
+    
+    .list-label-widget-content ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .list-label-widget-content ul li a {
+      background-color: rgba(25, 135, 84, 0.1);
+      color: var(--sd-primary);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+    
+    .list-label-widget-content ul li a:hover {
+      background-color: var(--sd-primary);
+      color: #ffffff;
+    }
+
+    /* === BOTÃO SUBIR AO TOPO (ESTILO VIBRANTE & PREMIUM) === */
+    #btnScrollToTop {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 55px; /* Ligeiramente maior */
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1050;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(30px);
+      /* Gradiente vibrante em vez de cor sólida */
+      background: linear-gradient(135deg, #20c997, var(--sd-primary));
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      cursor: pointer;
+      /* Transição com efeito elástico "bounce" */
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+    }
+
+    /* O que acontece quando ele aparece na tela */
+    #btnScrollToTop.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      /* Inicia o efeito de pulso contínuo */
+      animation: pulseGlow 2s infinite; 
+    }
+
+    /* O que acontece ao passar o rato (Hover) */
+    #btnScrollToTop:hover {
+      background: linear-gradient(135deg, #15a362, var(--sd-primary-hover));
+      transform: translateY(-8px) scale(1.05); /* Sobe e cresce um pouco */
+      box-shadow: 0 10px 25px rgba(25, 135, 84, 0.6);
+      border-color: rgba(255, 255, 255, 0.5);
+      animation: none; /* Para o pulso ao passar o rato */
+    }
+
+    /* Deixar o ícone da seta mais imponente */
+    #btnScrollToTop i {
+      font-size: 2.2rem !important; 
+      transition: transform 0.3s ease;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Pequena sombra na seta */
+    }
+
+    /* A seta dá um "pulo" extra para cima no hover */
+    #btnScrollToTop:hover i {
+      transform: translateY(-4px);
+    }
+
+    /* === KEYFRAMES: EFEITO DE RESPIRAÇÃO (PULSE GLOW) === */
+    @keyframes pulseGlow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(32, 201, 151, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 15px rgba(32, 201, 151, 0); /* A sombra expande e desaparece */
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(32, 201, 151, 0);
+      }
+    }
+
+/* === ESTILIZAÇÃO DE MARCADORES (LISTA E NUVEM) - TECHWIND === */
+    .list-label-widget-content ul,
+    .cloud-label-widget-content {
+      list-style: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .list-label-widget-content ul li,
+    .cloud-label-widget-content .label-size {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+    }
+    
+    .list-label-widget-content ul li a,
+    .cloud-label-widget-content .label-size a,
+    .post-bottom-tags a {
+      display: inline-flex;
+      align-items: center;
+      background: #ffffff;
+      color: var(--sd-text);
+      font-size: 0.85rem !important; /* Bloqueia as letras gigantes da nuvem do Blogger */
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 6px 14px;
+      border-radius: 6px; /* Design mais reto, tipo painel de software */
+      border: 1px solid rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      text-decoration: none !important;
+    }
+    
+    /* Ícone Tech (Hashtag) */
+    .list-label-widget-content ul li a::before,
+    .cloud-label-widget-content .label-size a::before,
+    .post-bottom-tags a::before {
+      content: '\F420'; /* Código do ícone bi-hash do Bootstrap */
+      font-family: 'bootstrap-icons';
+      margin-right: 4px;
+      font-size: 1rem !important;
+      color: var(--sd-primary); /* Verde Elegante */
+      transition: color 0.3s ease;
+    }
+
+    /* Efeito Hover (Levanta e fica Verde) */
+    .list-label-widget-content ul li a:hover,
+    .cloud-label-widget-content .label-size a:hover,
+    .post-bottom-tags a:hover {
+      background: var(--sd-primary);
+      color: #ffffff !important;
+      border-color: var(--sd-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(25, 135, 84, 0.2);
+    }
+    
+    .list-label-widget-content ul li a:hover::before,
+    .cloud-label-widget-content .label-size a:hover::before,
+    .post-bottom-tags a:hover::before {
+      color: #ffffff;
+    }
+    
+    /* Contadores de Posts (Badge Quadrado) */
+    .list-label-widget-content ul li span[dir='ltr'],
+    .cloud-label-widget-content .label-count {
+      background: var(--sd-dark); /* Fundo Preto/Cinza Escuro */
+      color: #ffffff;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: -8px;
+      margin-top: -12px; /* Puxa para cima no cantinho */
+      font-weight: 700;
+      z-index: 2;
+      border: 2px solid var(--sd-bg);
+      display: inline-flex;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    /* === ADAPTAÇÃO PARA DARK MODE === */
+    [data-bs-theme="dark"] .list-label-widget-content ul li a,
+    [data-bs-theme="dark"] .cloud-label-widget-content .label-size a,
+    [data-bs-theme="dark"] .post-bottom-tags a {
+      background: #1e2024;
+      border-color: rgba(255,255,255,0.05);
+      color: #adb5bd;
+    }
+    [data-bs-theme="dark"] .list-label-widget-content ul li span[dir='ltr'],
+    [data-bs-theme="dark"] .cloud-label-widget-content .label-count {
+      border-color: var(--sd-dark);
+      background: #343a40;
+    }
+
+/* --- OTMIZAÇÃO PARA IMAGENS 4K E ALTA DENSIDADE --- */
+img {
+  /* Garante que a imagem nunca ultrapasse o ecrã e mantenha a proporção */
+  max-width: 100%;
+  height: auto;
+  
+  /* Melhora a nitidez em ecrãs de alta densidade (4K/Retina) */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  
+  /* Suaviza as bordas sem perder a definição */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  
+  /* Evita que a imagem fique "lavada" em monitores com muito brilho */
+  filter: contrast(1.02) saturate(1.02);
+}
+
+/* Classe especial para imagens que precisam de nitidez máxima (Ex: Mockups e Prints) */
+.img-4k-sharp {
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0); /* Força renderização pela GPU */
+  font-smoothing: antialiased;
+}
+
+/* Ajuste para imagens em Cards (Nexus, Softdown, PlayerOne) */
+.card-img-top, .post-thumbnail img {
+  object-fit: cover;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* Mantém o padrão cinematográfico */
+}
+
+/* CSS obrigatório para o efeito funcionar */
+.btn, .nav-link, .dropdown-item { 
+  position: relative !important; 
+  overflow: hidden !important; 
+}
+
+.ripple-effect {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border-radius: 50%;
+  animation: ripple-animation 0.6s linear;
+}
+
+@keyframes ripple-animation {
+  from { width: 0px; height: 0px; opacity: 0.5; }
+  to { width: 500px; height: 500px; opacity: 0; }
+}
+
+  ]]></b:skin>
+</head>
+
+<body>
+
+  <div class='top-bar border-bottom py-2' id='topbar-wrapper'>
+    <div class='container d-flex flex-column flex-md-row justify-content-between align-items-center'>
+      <div class='ticker-area w-100 text-center text-md-start'>
+        <b:section id='top-ticker' name='Ticker News' showaddelement='yes'>
+          <b:widget id='HTML1' locked='false' title='' type='HTML'>
+            <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+          </b:widget>
+        </b:section>
+      </div>
+      <div class='social-area flex-shrink-0 mt-2 mt-md-0'>
+        <b:section id='top-social' name='Redes Sociais Topo' showaddelement='yes'/>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <nav class='navbar navbar-expand-lg sticky-top shadow-sm border-bottom border-success border-2'>
+      <div class='container'>
+        
+        <div class='navbar-brand-wrapper'>
+          <b:section id='header-logo' maxwidgets='1' name='Logotipo' showaddelement='yes'>
+            <b:widget id='Header1' locked='false' title='Tecnologia Blog (Cabeçalho)' type='Header'>
+              <b:widget-settings>
+                <b:widget-setting name='displayUrl'/>
+                <b:widget-setting name='displayHeight'>0</b:widget-setting>
+                <b:widget-setting name='sectionWidth'>2249</b:widget-setting>
+                <b:widget-setting name='useImage'>false</b:widget-setting>
+                <b:widget-setting name='shrinkToFit'>false</b:widget-setting>
+                <b:widget-setting name='imagePlacement'>BEHIND</b:widget-setting>
+                <b:widget-setting name='displayWidth'>0</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+
+  <b:if cond='data:useImage'>
+    <b:if cond='data:imagePlacement == &quot;BEHIND&quot;'>
+      <!--
+      Show image as background to text. You can't really calculate the width
+      reliably in JS because margins are not taken into account by any of
+      clientWidth, offsetWidth or scrollWidth, so we don't force a minimum
+      width if the user is using shrink to fit.
+      This results in a margin-width's worth of pixels being cropped. If the
+      user is not using shrink to fit then we expand the header.
+      -->
+      <b:if cond='data:mobile'>
+        <div id='header-inner'>
+          <div class='titlewrapper' style='background: transparent'>
+            <h1 class='title' style='background: transparent; border-width: 0px'>
+              <b:include name='title'/>
+            </h1>
+          </div>
+          <b:include name='description'/>
+        </div>
+      <b:else/>
+        <div expr:style='&quot;background-image: url(\&quot;&quot; + data:sourceUrl + &quot;\&quot;); &quot;                      + &quot;background-position: &quot;                      + data:backgroundPositionStyleStr + &quot;; &quot;                      + data:widthStyleStr                      + &quot;min-height: &quot; + data:height                      + &quot;_height: &quot; + data:height                      + &quot;background-repeat: no-repeat; &quot;' id='header-inner'>
+          <div class='titlewrapper' style='background: transparent'>
+            <h1 class='title' style='background: transparent; border-width: 0px'>
+              <b:include name='title'/>
+            </h1>
+          </div>
+          <b:include name='description'/>
+        </div>
+      </b:if>
+    <b:else/>
+      <!--Show the image only-->
+      <div id='header-inner'>
+        <a expr:href='data:blog.homepageUrl' style='display: block'>
+          <img expr:alt='data:title' expr:height='data:height' expr:id='data:widget.instanceId + &quot;_headerimg&quot;' expr:src='data:sourceUrl' expr:width='data:width' style='display: block'/>
+        </a>
+        <!--Show the description-->
+        <b:if cond='data:imagePlacement == &quot;BEFORE_DESCRIPTION&quot;'>
+          <b:include name='description'/>
+        </b:if>
+      </div>
+    </b:if>
+  <b:else/>
+    <!--No header image -->
+    <div id='header-inner'>
+      <div class='titlewrapper'>
+        <h1 class='title'>
+          <b:include name='title'/>
+        </h1>
+      </div>
+      <b:include name='description'/>
+    </div>
+  </b:if>
+</b:includable>
+              <b:includable id='description'>
+  <div class='descriptionwrapper'>
+    <p class='description'><span><data:description/></span></p>
+  </div>
+</b:includable>
+              <b:includable id='title'>
+  <b:tag cond='data:blog.url != data:blog.homepageUrl' expr:href='data:blog.homepageUrl' name='a'>
+    <data:title/>
+  </b:tag>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+
+        <button aria-controls='mainNavbar' aria-expanded='false' aria-label='Toggle navigation' class='navbar-toggler' data-bs-target='#mainNavbar' data-bs-toggle='collapse' type='button'>
+          <span class='navbar-toggler-icon'/>
+        </button>
+
+        <div class='collapse navbar-collapse' id='mainNavbar'>
+          <div class='me-auto w-100 mt-3 mt-lg-0'>
+            <b:section id='main-menu' name='Menu Principal' showaddelement='yes'>
+              <b:widget id='PageList1' locked='false' title='Páginas' type='PageList' version='1'>
+                <b:widget-settings>
+                  <b:widget-setting name='pageListJson'><![CDATA[{"link1":{"href":"ds","position":1,"title":"ds"},"link0":{"href":"/","position":0,"title":"Página inicial"}}]]></b:widget-setting>
+                  <b:widget-setting name='homeTitle'>Página inicial</b:widget-setting>
+                </b:widget-settings>
+                <b:includable id='main'>
+                  <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
+                    <li class='nav-item'>
+                      <a aria-current='page' class='nav-link active px-3' href='/'><i class='bi bi-house-door me-1'/> Início</a>
+                    </li>
+                    <li class='nav-item'>
+                      <a class='nav-link px-3' href='https://tnews-web.blogspot.com/search/label/hardware'><i class='bi bi-cpu me-1'/> Hardware</a>
+                    </li>
+                    <li class='nav-item'>
+                      <a class='nav-link px-3' href='https://drive.google.com/file/d/1-PBMYMUVFrDpf0X1yrcfd0iz4rMsqeax/view?usp=drive_link'><i class='bi bi-journal-code me-1'/> Documentação</a>
+                    </li>
+                      <li class='nav-item'>
+                      <a class='nav-link px-3' href='https://tnews-web.blogspot.com/search/label/tech'><i class='bi bi-journal-code me-1'/> Tech</a>
+                    </li>
+                     <li class='nav-item'>
+                      <a class='nav-link px-3' href='https://tnews-web.blogspot.com/2026/05/1.html'><i class='bi bi-bug-fill'/> 404 Personalizado</a>
+                    </li>
+                    <li class='nav-item dropdown'>
+                      <a aria-expanded='false' class='nav-link dropdown-toggle px-3' data-bs-toggle='dropdown' href='#' role='button'><i class='bi bi-grid me-1'/> Mais</a>
+                      <ul class='dropdown-menu border-0 shadow-sm'>
+                        <li><a class='dropdown-item' href=''><i class='bi bi-person me-2'/> Sobre Nós</a></li>
+                        <li><a class='dropdown-item' href=''><i class='bi bi-envelope me-2'/> Contacto</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </b:includable>
+              </b:widget>
+            </b:section>
+          </div>
+          
+          <div class='d-flex align-items-center justify-content-center gap-3 mt-3 mt-lg-0 pb-3 pb-lg-0'>
+            <div class='dark-mode-wrapper'>
+               <button class='btn btn-outline-secondary btn-dark-mode d-flex align-items-center justify-content-center' style='width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s;' type='button'>
+                 <i class='bi bi-moon-stars-fill'/>
+               </button>
+            </div>
+            <div class='search-wrapper'>
+               <b:section id='top-search' maxwidgets='1' name='Barra de Pesquisa' showaddelement='yes'/>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </nav>
+  </header>
+
+  <b:if cond='data:view.isHomepage'>
+    <section class='featured-area my-4'>
+      <div class='container'>
+        <b:section id='featured-full' name='Destaque Topo (Opcional)' showaddelement='yes'/>
+        <div class='row g-3 mt-1'>
+          <div class='col-lg-8'>
+            <b:section id='featured-big' name='Destaque Grande' showaddelement='yes'>
+              <b:widget id='HTML99' locked='false' title='' type='HTML' version='1'>
+                <b:widget-settings>
+                  <b:widget-setting name='content'><![CDATA[<div id="carrosselDestaques" class="carousel slide carousel-fade rounded-4 shadow-sm overflow-hidden animate-up" data-bs-ride="carousel" style="border: 1px solid rgba(25, 135, 84, 0.2);">
+  
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carrosselDestaques" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carrosselDestaques" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carrosselDestaques" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+
+  <div class="carousel-inner">
+    
+    <div class="carousel-item active" data-bs-interval="5000">
+      
+      <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=80" class="d-block w-100 object-fit-cover" style="height: 450px;" alt="Destaque 1" />
+      
+      <div class="carousel-caption d-none d-md-block" style="background: linear-gradient(0deg, rgba(33,37,41,0.95) 0%, rgba(33,37,41,0) 100%); bottom: 0; left: 0; right: 0; padding-bottom: 2rem;">
+        <span class="badge mb-2 py-2 px-3" style="background-color: var(--sd-primary);">Novo</span>
+        <h3 class="fw-bold text-white">O Teu Primeiro Grande Destaque</h3>
+        <p class="text-light opacity-75">Uma breve descrição para atrair a atenção do leitor.</p>
+        <a href="#" class="btn btn-sm btn-primary mt-2">Ler Artigo</a>
+      </div>
+    </div>
+
+    <div class="carousel-item" data-bs-interval="5000">
+      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=80" class="d-block w-100 object-fit-cover" style="height: 450px;" alt="Destaque 2" />
+      <div class="carousel-caption d-none d-md-block" style="background: linear-gradient(0deg, rgba(33,37,41,0.95) 0%, rgba(33,37,41,0) 100%); bottom: 0; left: 0; right: 0; padding-bottom: 2rem;">
+        <span class="badge mb-2 py-2 px-3" style="background-color: var(--sd-primary);">Tutorial</span>
+        <h3 class="fw-bold text-white">Segundo Artigo Mais Lido</h3>
+        <p class="text-light opacity-75">Promova os seus melhores tutoriais de tecnologia aqui.</p>
+        <a href="#" class="btn btn-sm btn-primary mt-2">Ler Artigo</a>
+      </div>
+    </div>
+
+    <div class="carousel-item" data-bs-interval="5000">
+      <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=80" class="d-block w-100 object-fit-cover" style="height: 450px;" alt="Destaque 3" />
+      <div class="carousel-caption d-none d-md-block" style="background: linear-gradient(0deg, rgba(33,37,41,0.95) 0%, rgba(33,37,41,0) 100%); bottom: 0; left: 0; right: 0; padding-bottom: 2rem;">
+        <span class="badge mb-2 py-2 px-3" style="background-color: var(--sd-primary);">Importante</span>
+        <h3 class="fw-bold text-white">Terceira Notícia de Impacto</h3>
+        <p class="text-light opacity-75">Mantenha os seus leitores atualizados com as novidades.</p>
+        <a href="#" class="btn btn-sm btn-primary mt-2">Ler Artigo</a>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#carrosselDestaques" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Anterior</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carrosselDestaques" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Próximo</span>
+  </button>
+</div>]]></b:widget-setting>
+                </b:widget-settings>
+                <b:includable id='main'>
+                  <div class='p-5 mb-4 rounded-4 shadow-sm animate-up' style='background: linear-gradient(135deg, var(--sd-dark), #1a1d20); border: 1px solid rgba(25, 135, 84, 0.2);'>
+                    <div class='container-fluid py-2'>
+                      <span class='badge mb-3 py-2 px-3' style='background-color: var(--sd-primary); color: #fff;'><i class='bi bi-star-fill text-warning me-1'/> Bem-vindo</span>
+                      <h1 class='display-5 fw-bold text-white mb-3'>
+                        O teu portal de <span style='color: var(--sd-primary);'>Conteúdos Exclusivos</span>
+                      </h1>
+                      <p class='col-md-10 fs-5 text-secondary mb-4'>
+                        Acompanha as últimas novidades, tutoriais aprofundados e artigos de opinião. Junta-te à nossa comunidade para não perderes nada.
+                      </p>
+                      <div class='d-flex gap-3 flex-wrap'>
+                        <a class='btn btn-primary btn-lg px-4 fw-bold' href='#main'>
+                          Ler Artigos <i class='bi bi-arrow-down-short ms-1'/>
+                        </a>
+                        <a class='btn btn-outline-light btn-lg px-4 fw-bold' href='/p/contato.html'>
+                          <i class='bi bi-envelope-paper me-1'/> Subscrever
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </b:includable>
+              </b:widget>
+            </b:section>
+          </div>
+          <div class='col-lg-4'>
+            <div class='row g-3'>
+              <div class='col-12 col-md-6 col-lg-12'>
+                <b:section id='featured-small-1' name='Destaque Pequeno 1' showaddelement='yes'>
+                  <b:widget id='HTML9' locked='false' title='' type='HTML'>
+                    <b:widget-settings>
+                      <b:widget-setting name='content'><![CDATA[<div id="sliderImagens" class="carousel slide carousel-fade rounded-4 shadow-sm overflow-hidden animate-up" data-bs-ride="carousel" style="border: 2px solid var(--sd-primary);">
+  
+  <div class="carousel-inner">
+    
+    <div class="carousel-item active" data-bs-interval="2000">
+      <img src="COLAR_LINK_DA_IMAGEM_AQUI_1.jpg" class="d-block w-100 object-fit-cover" style="height: 350px;" alt="Slide 1" />
+    </div>
+
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="COLAR_LINK_DA_IMAGEM_AQUI_2.jpg" class="d-block w-100 object-fit-cover" style="height: 350px;" alt="Slide 2" />
+    </div>
+
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="COLAR_LINK_DA_IMAGEM_AQUI_3.jpg" class="d-block w-100 object-fit-cover" style="height: 350px;" alt="Slide 3" />
+    </div>
+
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#sliderImagens" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Anterior</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#sliderImagens" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Próximo</span>
+  </button>
+
+</div>]]></b:widget-setting>
+                    </b:widget-settings>
+                    <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+                  </b:widget>
+                </b:section>
+              </div>
+              <div class='col-12 col-md-6 col-lg-12'>
+                <b:section id='featured-small-2' name='Destaque Pequeno 2' showaddelement='yes'/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </b:if>
+
+  <div class='container my-5'>
+    <div class='row g-4'>
+      
+      <main class='col-lg-8'>
+        
+        <div class='before-post-area mb-4'>
+          <b:section id='before-post-content' name='Antes do Post (Topo)' showaddelement='yes'>
+            <b:widget id='HTML8' locked='false' title='' type='HTML'>
+              <b:widget-settings>
+                <b:widget-setting name='content'><![CDATA[<script>
+//<![CDATA[
+document.addEventListener('DOMContentLoaded', () => {
+  'use strict';
+
+  // 1. Procura o corpo do texto e a área de detalhes (data/autor) do post
+  const postBody = document.querySelector('.post-body-content');
+  
+  // Procura a div exata que criámos no V6 para os metadados do post
+  const metaContainer = document.querySelector('.post-title-single') ? 
+                        document.querySelector('.post-title-single').nextElementSibling : null;
+
+  // 2. Se estivermos dentro de um post e ele tiver texto...
+  if (postBody && metaContainer && metaContainer.classList.contains('gap-3')) {
+    
+    // Conta as palavras (remove espaços em branco extras)
+    const text = postBody.innerText || postBody.textContent;
+    const wordCount = text.trim().split(/\s+/).length;
+
+    // Calcula o tempo (Média: 200 palavras por minuto)
+    const wordsPerMinute = 200;
+    const readingTime = Math.ceil(wordCount / wordsPerMinute);
+
+    // 3. Cria a etiqueta de tempo idêntica às existentes
+    const timeSpan = document.createElement('span');
+    timeSpan.innerHTML = `<i class="bi bi-clock-history text-success me-1"></i> ${readingTime} min de leitura`;
+
+    // 4. Injeta a etiqueta suavemente ao lado da data e autor
+    metaContainer.appendChild(timeSpan);
+  }
+});
+//]]]]><![CDATA[>
+</script>]]></b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+
+        <b:section id='main' name='Postagens' showaddelement='no'>
+          <b:widget id='Blog1' locked='true' title='Postagens no blog' type='Blog' version='2' visible='true'>
+            <b:widget-settings>
+              <b:widget-setting name='showDateHeader'>false</b:widget-setting>
+              <b:widget-setting name='style.textcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='showShareButtons'>true</b:widget-setting>
+              <b:widget-setting name='authorLabel'>Por</b:widget-setting>
+              <b:widget-setting name='showCommentLink'>true</b:widget-setting>
+              <b:widget-setting name='style.urlcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='showAuthor'>false</b:widget-setting>
+              <b:widget-setting name='style.linkcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='style.unittype'>TextAndImage</b:widget-setting>
+              <b:widget-setting name='style.bgcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='timestampLabel'/>
+              <b:widget-setting name='reactionsLabel'/>
+              <b:widget-setting name='showAuthorProfile'>false</b:widget-setting>
+              <b:widget-setting name='style.layout'>1x1</b:widget-setting>
+              <b:widget-setting name='showLabels'>true</b:widget-setting>
+              <b:widget-setting name='showLocation'>true</b:widget-setting>
+              <b:widget-setting name='postLabelsLabel'/>
+              <b:widget-setting name='showTimestamp'>true</b:widget-setting>
+              <b:widget-setting name='postsPerAd'>3</b:widget-setting>
+              <b:widget-setting name='showBacklinks'>false</b:widget-setting>
+              <b:widget-setting name='style.bordercolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='showInlineAds'>true</b:widget-setting>
+              <b:widget-setting name='showReactions'>false</b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main' var='top'>
+                  <b:if cond='data:view.isError'>
+                <div class='container text-center my-5 py-5 error-404-wrapper animate-up'>
+                  <div class='error-icon mb-3'>
+                    <i class='bi bi-robot' style='font-size: 5rem;'/>
+                  </div>
+                  <h1 class='fw-black error-code'>404</h1>
+                  <h2 class='h3 fw-bold mb-3'>Ops! Fim da linha.</h2>
+                  <p class='text-muted mb-5 mx-auto fs-5' style='max-width: 500px;'>
+                    A página que tentaste aceder pode ter sido removida, mudou de nome ou está temporariamente indisponível.
+                  </p>
+                  <a class='btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm' href='/'>
+                    <i class='bi bi-house-door-fill me-2'/> Voltar à Base
+                  </a>
+                </div>
+              </b:if>
+         
+              
+              <b:if cond='data:view.isMultipleItems'>
+                
+                <div class='row row-cols-1 row-cols-md-2 g-4'>
+                  <b:loop values='data:posts' var='post'>
+                    <div class='col'>
+                      <article class='card card-post-grid h-100 shadow-sm'>
+                        
+                        <b:if cond='data:post.featuredImage'>
+                          <div class='ratio ratio-16x9'>
+                            <a expr:href='data:post.url'>
+                              <img class='card-img-top object-fit-cover' expr:alt='data:post.title' expr:src='resizeImage(data:post.featuredImage, 600, &quot;16:9&quot;)' loading='lazy'/>
+                            </a>
+                          </div>
+                        <b:elseif cond='data:post.thumbnailUrl'/>
+                           <div class='ratio ratio-16x9'>
+                            <a expr:href='data:post.url'>
+                              <img class='card-img-top object-fit-cover' expr:alt='data:post.title' expr:src='data:post.thumbnailUrl' loading='lazy'/>
+                            </a>
+                          </div>
+                        <b:else/>
+                          <div class='ratio ratio-16x9' style='background-color: rgba(25, 135, 84, 0.1);'>
+                            <a class='d-flex align-items-center justify-content-center text-decoration-none' expr:href='data:post.url'>
+                              <i class='bi bi-image text-success opacity-50' style='font-size: 3rem;'/>
+                            </a>
+                          </div>
+                        </b:if>
+                        
+                        <div class='card-body d-flex flex-column'>
+                          <b:if cond='data:post.labels'>
+                            <div class='mb-2'>
+                              <b:loop values='data:post.labels' var='label'>
+                                <a class='badge text-decoration-none me-1' expr:href='data:label.url' style='background-color: rgba(25, 135, 84, 0.1); color: var(--sd-primary);'>
+                                  <i class='bi bi-tag-fill me-1'/> <data:label.name/>
+                                </a>
+                              </b:loop>
+                            </div>
+                          </b:if>
+
+                          <h2 class='h5 card-title fw-bold mb-2'>
+                            <a class='text-decoration-none' expr:href='data:post.url' style='color: inherit;'><data:post.title/></a>
+                          </h2>
+
+                          <div class='text-secondary small mb-3 d-flex align-items-center gap-3'>
+                            <span><i class='bi bi-calendar3 text-success me-1'/> <data:post.date/></span>
+                            <span class='d-none d-sm-inline'><i class='bi bi-person text-success me-1'/> <data:post.author.name/></span>
+                          </div>
+
+                          <p class='card-text text-secondary small mb-4'><data:post.snippet/></p>
+                          
+                          <a class='btn btn-outline-primary mt-auto align-self-start stretched-link' expr:href='data:post.url'>
+                            Ler Mais <i class='bi bi-arrow-right-short fs-5 lh-1 align-middle'/>
+                          </a>
+                        </div>
+                      </article>
+                    </div>
+                  </b:loop>
+                </div>
+                
+                <b:include name='nextprev'/>
+
+              <b:else/>
+
+                <b:loop values='data:posts' var='post'>
+                  <article class='card border-0 shadow-sm mb-4' style='border-top: 4px solid var(--sd-primary) !important;'>
+                    
+                    <b:if cond='data:post.featuredImage'>
+                       <img class='card-img-top object-fit-cover' expr:alt='data:post.title' expr:src='resizeImage(data:post.featuredImage, 1200, &quot;16:9&quot;)' style='max-height: 400px;'/>
+                    </b:if>
+
+                    <div class='card-body p-md-5 p-4'>
+                      <h1 class='post-title-single fw-bold mb-3'><data:post.title/></h1>
+                      
+                      <div class='d-flex flex-wrap align-items-center gap-3 text-secondary small border-bottom pb-3 mb-4'>
+                        <span><i class='bi bi-calendar-event text-success me-1'/> <data:post.date/></span>
+                        <span><i class='bi bi-person-circle text-success me-1'/> <data:post.author.name/></span>
+                        <b:if cond='data:post.labels'>
+                           <span class='d-flex gap-1'>
+                             <i class='bi bi-tags text-success me-1'/>
+                             <b:loop values='data:post.labels' var='label'>
+                               <a class='text-secondary text-decoration-none hover-success' expr:href='data:label.url'><data:label.name/></a><b:if cond='not data:label.isLast'>,</b:if>
+                             </b:loop>
+                           </span>
+                        </b:if>
+                      </div>
+
+                      <div class='post-body-content' style='font-size: 1.1rem; line-height: 1.8;'>
+                        <data:post.body/>
+                      </div>
+                      
+                      <div class='post-footer mt-5 pt-4 border-top d-flex justify-content-between align-items-center'>
+                         <div>
+                           <strong class='text-success'><i class='bi bi-share-fill me-2'/>Compartilhar:</strong>
+                           <a class='btn btn-sm btn-outline-secondary rounded-circle ms-2' expr:href='&quot;https://www.facebook.com/sharer.php?u=&quot; + data:post.url' target='_blank'><i class='bi bi-facebook'/></a>
+                           <a class='btn btn-sm btn-outline-secondary rounded-circle ms-1' expr:href='&quot;https://twitter.com/intent/tweet?url=&quot; + data:post.url + &quot;&amp;text=&quot; + data:post.title' target='_blank'><i class='bi bi-twitter-x'/></a>
+                           <a class='btn btn-sm btn-outline-secondary rounded-circle ms-1' expr:href='&quot;https://api.whatsapp.com/send?text=&quot; + data:post.title + &quot; &quot; + data:post.url' target='_blank'><i class='bi bi-whatsapp'/></a>
+                         </div>
+                      </div>
+                    </div>
+                  </article>
+                  
+                  <div class='card border-0 shadow-sm p-4 mt-4'>
+                     <b:include cond='data:post.allowComments' data='post' name='threaded_comments'/>
+                  </div>
+                </b:loop>
+
+              </b:if>
+            </b:includable>
+            <b:includable id='aboutPostAuthor'>
+  <div class='author-name'>
+    <a class='g-profile' expr:href='data:post.author.profileUrl' rel='author' title='author profile'>
+      <span>
+        <data:post.author.name/>
+      </span>
+    </a>
+  </div>
+  <div>
+    <span class='author-desc'>
+      <data:post.author.aboutMe/>
+    </span>
+  </div>
+</b:includable>
+            <b:includable id='addComments'>
+  <a expr:href='data:post.commentsUrl' expr:onclick='data:post.commentsUrlOnclick'>
+    <b:message name='messages.postAComment'/>
+  </a>
+</b:includable>
+            <b:includable id='blogThisShare'>
+  <b:with value='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=270,width=475\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+            <b:includable id='bylineByName' var='byline'>
+  <b:switch var='data:byline.name'>
+  <b:case value='share'/>
+    <b:include cond='data:post.shareUrl' name='postShareButtons'/>
+  <b:case value='comments'/>
+    <b:include cond='data:post.allowComments' name='postCommentsLink'/>
+  <b:case value='location'/>
+    <b:include cond='data:post.location' name='postLocation'/>
+  <b:case value='timestamp'/>
+    <b:include cond='not data:view.isPage' name='postTimestamp'/>
+  <b:case value='author'/>
+    <b:include name='postAuthor'/>
+  <b:case value='labels'/>
+    <b:include cond='data:post.labels' name='postLabels'/>
+  <b:case value='icons'/>
+    <b:include cond='data:post.emailPostUrl' name='emailPostIcon'/>
+  </b:switch>
+</b:includable>
+            <b:includable id='bylineRegion' var='regionItems'>
+  <b:loop values='data:regionItems' var='byline'>
+    <b:include data='byline' name='bylineByName'/>
+  </b:loop>
+</b:includable>
+            <b:includable id='commentAuthorAvatar'>
+  <div class='avatar-image-container'>
+    <img class='author-avatar' expr:src='data:comment.authorAvatarSrc' height='35' width='35'/>
+  </div>
+</b:includable>
+            <b:includable id='commentDeleteIcon' var='comment'>
+  <span expr:class='&quot;item-control &quot; + data:comment.adminClass'>
+    <b:if cond='data:showCmtPopup'>
+      <div class='goog-toggle-button'>
+        <div class='goog-inline-block comment-action-icon'/>
+      </div>
+    <b:else/>
+      <a class='comment-delete' expr:href='data:comment.deleteUrl' expr:title='data:messages.deleteComment'>
+        <img src='https://resources.blogblog.com/img/icon_delete13.gif'/>
+      </a>
+    </b:if>
+  </span>
+</b:includable>
+            <b:includable id='commentForm' var='post'>
+  <div class='comment-form'>
+    <a name='comment-form'/>
+    <h4 id='comment-post-message'><data:messages.postAComment/></h4>
+    <b:if cond='data:this.messages.blogComment != &quot;&quot;'>
+      <p><data:this.messages.blogComment/></p>
+    </b:if>
+    <b:include data='post' name='commentFormIframeSrc'/>
+    <iframe allowtransparency='allowtransparency' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight ?: &quot;90px&quot;' frameborder='0' id='comment-editor' name='comment-editor' src='' width='100%'/>
+    <data:post.cmtfpIframe/>
+    <script type='text/javascript'>
+      BLOG_CMT_createIframe(&#39;<data:post.appRpcRelayPath/>&#39;);
+    </script>
+  </div>
+</b:includable>
+            <b:includable id='commentFormIframeSrc' var='post'>
+  <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+</b:includable>
+            <b:includable id='commentItem' var='comment'>
+  <div class='comment' expr:id='&quot;c&quot; + data:comment.id'>
+    <b:include cond='data:blog.enabledCommentProfileImages' name='commentAuthorAvatar'/>
+
+    <div class='comment-block'>
+      <div class='comment-author'>
+        <b:if cond='data:comment.authorUrl'>
+          <b:message name='messages.authorSaidWithLink'>
+            <b:param expr:value='data:comment.author' name='authorName'/>
+            <b:param expr:value='data:comment.authorUrl' name='authorUrl'/>
+          </b:message>
+        <b:else/>
+          <b:message name='messages.authorSaid'>
+            <b:param expr:value='data:comment.author' name='authorName'/>
+          </b:message>
+        </b:if>
+      </div>
+      <div expr:class='&quot;comment-body&quot; + (data:comment.isDeleted ? &quot; deleted&quot; : &quot;&quot;)'>
+        <data:comment.body/>
+      </div>
+      <div class='comment-footer'>
+        <span class='comment-timestamp'>
+          <a expr:href='data:comment.url' title='comment permalink'>
+            <data:comment.timestamp/>
+          </a>
+          <b:include data='comment' name='commentDeleteIcon'/>
+        </span>
+      </div>
+    </div>
+  </div>
+</b:includable>
+            <b:includable id='commentList' var='comments'>
+  <div id='comments-block'>
+    <b:loop values='data:comments' var='comment'>
+      <b:include data='comment' name='commentItem'/>
+    </b:loop>
+  </div>
+</b:includable>
+            <b:includable id='commentPicker' var='post'>
+  <b:if cond='data:post.showThreadedComments'>
+    <b:include data='post' name='threadedComments'/>
+  <b:else/>
+    <b:include data='post' name='comments'/>
+  </b:if>
+</b:includable>
+            <b:includable id='comments' var='post'>
+  <section expr:class='&quot;comments&quot; + (data:post.embedCommentForm ? &quot; embed&quot; : &quot;&quot;)' expr:data-num-comments='data:post.numberOfComments' id='comments'>
+    <a name='comments'/>
+    <b:if cond='data:post.allowComments'>
+
+      <b:include name='commentsTitle'/>
+
+      <div expr:id='data:widget.instanceId + &quot;_comments-block-wrapper&quot;'>
+        <b:include cond='data:post.comments' data='post.comments' name='commentList'/>
+      </div>
+
+      <b:if cond='data:post.commentPagingRequired'>
+        <div class='paging-control-container'>
+          <b:if cond='data:post.hasOlderLinks'>
+            <a expr:class='data:post.oldLinkClass' expr:href='data:post.oldestLinkUrl'>
+              <data:messages.oldest/>
+            </a>
+            <a expr:class='data:post.oldLinkClass' expr:href='data:post.olderLinkUrl'>
+              <data:messages.older/>
+            </a>
+          </b:if>
+
+          <span class='comment-range-text'>
+            <data:post.commentRangeText/>
+          </span>
+
+          <b:if cond='data:post.hasNewerLinks'>
+            <a expr:class='data:post.newLinkClass' expr:href='data:post.newerLinkUrl'>
+              <data:messages.newer/>
+            </a>
+            <a expr:class='data:post.newLinkClass' expr:href='data:post.newestLinkUrl'>
+              <data:messages.newest/>
+            </a>
+          </b:if>
+        </div>
+      </b:if>
+
+      <div class='footer'>
+        <b:if cond='data:post.embedCommentForm'>
+          <b:if cond='data:post.allowNewComments'>
+            <b:include data='post' name='commentForm'/>
+          <b:else/>
+            <data:post.noNewCommentsText/>
+          </b:if>
+        <b:else/>
+          <b:if cond='data:post.allowComments'>
+            <b:include data='post' name='addComments'/>
+          </b:if>
+        </b:if>
+      </div>
+    </b:if>
+    <b:if cond='data:showCmtPopup'>
+      <div id='comment-popup'>
+        <iframe allowtransparency='allowtransparency' frameborder='0' id='comment-actions' name='comment-actions' scrolling='no'>
+        </iframe>
+      </div>
+    </b:if>
+  </section>
+</b:includable>
+            <b:includable id='commentsLink'>
+  <a class='comment-link' expr:href='data:post.commentsUrl' expr:onclick='data:post.commentsUrlOnclick'>
+    <b:if cond='data:post.numberOfComments &gt; 0'>
+      <b:message name='messages.numberOfComments'>
+        <b:param expr:value='data:post.numberOfComments' name='numComments'/>
+      </b:message>
+    <b:else/>
+      <data:messages.postAComment/>
+    </b:if>
+  </a>
+</b:includable>
+            <b:includable id='commentsLinkIframe'>
+  <!-- G+ comments, no longer available. The includable is retained for backwards-compatibility. -->
+</b:includable>
+            <b:includable id='commentsTitle'>
+  <h3 class='title'><data:messages.comments/></h3>
+</b:includable>
+            <b:includable id='defaultAdUnit'>
+  <ins class='adsbygoogle' data-ad-format='auto' expr:data-ad-client='data:adClientId ?: data:blog.adsenseClientId' expr:data-ad-host='data:blog.adsenseHostId' expr:style='data:style ?: &quot;display: block;&quot;'>
+    <b:attr cond='not data:blog.analytics4' expr:value='data:blog.analyticsAccountNumber' name='data-analytics-uacct'/>
+  </ins>
+  <script>
+   (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</b:includable>
+            <b:includable id='emailPostIcon'>
+  <span class='byline post-icons'>
+    <!-- email post links -->
+    <span class='item-action'>
+      <a expr:href='data:post.emailPostUrl' expr:title='data:messages.emailPost'>
+        <b:include data='{ iconClass: &quot;touch-icon sharing-icon&quot; }' name='emailIcon'/>
+      </a>
+    </span>
+  </span>
+</b:includable>
+            <b:includable id='facebookShare'>
+  <b:with value='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=430,width=640\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+            <b:includable id='feedLinks'>
+  <b:if cond='!data:view.isPost'> <b:if cond='data:feedLinks'>
+      <div class='blog-feeds'>
+        <b:include data='feedLinks' name='feedLinksBody'/>
+      </div>
+    </b:if>
+  <b:else/> <div class='post-feeds'>
+      <b:loop values='data:posts' var='post'>
+        <b:if cond='data:post.allowComments and data:post.feedLinks'>
+          <b:include data='post.feedLinks' name='feedLinksBody'/>
+        </b:if>
+      </b:loop>
+    </div>
+  </b:if>
+</b:includable>
+            <b:includable id='feedLinksBody' var='links'>
+  <div class='feed-links'>
+  <data:messages.subscribeTo/>
+  <b:loop values='data:links' var='f'>
+     <a class='feed-link' expr:href='data:f.url' expr:type='data:f.mimeType' target='_blank'><data:f.name/> (<data:f.feedType/>)</a>
+  </b:loop>
+  </div>
+</b:includable>
+            <b:includable id='footerBylines'>
+  <b:if cond='data:widgets.Blog.first.footerBylines'>
+    <b:loop index='i' values='data:widgets.Blog.first.footerBylines' var='region'>
+      <b:if cond='not data:region.items.empty'>
+        <div expr:class='&quot;post-footer-line post-footer-line-&quot; + (data:i + 1)'>
+          <b:with value='&quot;footer-&quot; + (data:i + 1)' var='regionName'>
+            <b:include data='region.items' name='bylineRegion'/>
+          </b:with>
+        </div>
+      </b:if>
+    </b:loop>
+  </b:if>
+</b:includable>
+            <b:includable id='googlePlusShare'>
+</b:includable>
+            <b:includable id='headerByline'>
+  <b:if cond='data:widgets.Blog.first.headerByline'>
+    <div class='post-header'>
+      <div class='post-header-line-1'>
+        <b:with value='&quot;header-1&quot;' var='regionName'>
+          <b:include data='data:widgets.Blog.first.headerByline.items' name='bylineRegion'/>
+        </b:with>
+      </div>
+    </div>
+  </b:if>
+</b:includable>
+            <b:includable id='homePageLink'>
+  <a class='home-link' expr:href='data:blog.homepageUrl'>
+    <data:messages.home/>
+  </a>
+</b:includable>
+            <b:includable id='iframeComments' var='post'>
+  </b:includable>
+            <b:includable id='inlineAd' var='post'>
+  <b:if cond='!data:view.isPreview'>
+    <b:if cond='data:this.adCode or data:this.adClientId or data:blog.adsenseClientId'>
+      <div class='inline-ad'>
+        <b:if cond='data:this.adCode != &quot;&quot;'>
+          <data:this.adCode/>
+        <b:else/>
+          <b:include cond='data:this.adClientId or data:blog.adsenseClientId' name='defaultAdUnit'/>
+        </b:if>
+      </div>
+    </b:if>
+  <b:else/>
+    <div class='inline-ad'>
+      <div class='inline-ad-placeholder'>
+        <span><b:message name='messages.adsGoHere'/></span>
+      </div>
+    </div>
+  </b:if>
+</b:includable>
+            <b:includable id='linkShare'>
+  <b:with value='&quot;window.prompt(\&quot;Copy to clipboard: Ctrl+C, Enter\&quot;, \&quot;&quot; + data:originalUrl + &quot;\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+            <b:includable id='nextPageLink'>
+  <a class='blog-pager-older-link' expr:href='data:olderPageUrl' expr:id='data:widget.instanceId + &quot;_blog-pager-older-link&quot;' expr:title='data:messages.olderPosts'>
+    <data:messages.olderPosts/>
+  </a>
+</b:includable>
+            <b:includable id='nextprev'>
+              <div class='d-flex justify-content-between mt-5 pt-3 border-top border-secondary-subtle'>
+                <b:if cond='data:newerPageUrl'>
+                  <a class='btn btn-outline-primary fw-bold' expr:href='data:newerPageUrl'><i class='bi bi-arrow-left me-2'/> Mais Recentes</a>
+                <b:else/>
+                  <span/> 
+                </b:if>
+                <b:if cond='data:olderPageUrl'>
+                  <a class='btn btn-outline-primary fw-bold' expr:href='data:olderPageUrl'>Mais Antigos <i class='bi bi-arrow-right ms-2'/></a>
+                </b:if>
+              </div>
+            </b:includable>
+            <b:includable id='otherSharingButton'>
+  <span class='sharing-platform-button sharing-element-other' expr:aria-label='data:messages.shareToOtherApps.escaped' expr:data-url='data:originalUrl' expr:title='data:messages.shareToOtherApps.escaped' role='menuitem' tabindex='-1'>
+    <b:with value='{key: &quot;sharingOther&quot;}' var='platform'>
+      <b:include name='sharingPlatformIcon'/>
+    </b:with>
+    <span class='platform-sharing-text'><data:messages.shareOtherApps.escaped/></span>
+  </span>
+</b:includable>
+            <b:includable id='platformShare'>
+  <a expr:class='&quot;goog-inline-block sharing-&quot; + data:platform.key' expr:data-url='data:originalUrl' expr:href='data:shareUrl + &quot;&amp;target=&quot; + data:platform.target' expr:onclick='data:onclick ? data:onclick : &quot;&quot;' expr:title='data:platform.shareMessage' target='_blank'>
+    <span class='share-button-link-text'>
+      <data:platform.shareMessage/>
+    </span>
+  </a>
+</b:includable>
+            <b:includable id='post' var='post'>
+  <div class='post'>
+    <b:include data='post' name='postMeta'/>
+    <b:include data='post' name='postTitle'/>
+    <b:include name='headerByline'/>
+    <b:if cond='data:view.isSingleItem'>
+      <b:include data='post' name='postBody'/>
+    <b:else/>
+      <b:include data='post' name='postBodySnippet'/>
+      <b:include data='post' name='postJumpLink'/>
+    </b:if>
+    <b:include data='post' name='postFooter'/>
+  </div>
+</b:includable>
+            <b:includable id='postAuthor'>
+  <span class='byline post-author vcard'>
+    <span class='post-author-label'>
+      <data:byline.label/>
+    </span>
+    <span class='fn'>
+      <b:if cond='data:post.author.profileUrl'>
+        <meta expr:content='data:post.author.profileUrl'/>
+        <a class='g-profile' expr:href='data:post.author.profileUrl' rel='author' title='author profile'>
+          <span><data:post.author.name/></span>
+        </a>
+      <b:else/>
+        <span><data:post.author.name/></span>
+      </b:if>
+    </span>
+  </span>
+</b:includable>
+            <b:includable id='postBody' var='post'>
+  <div class='post-body entry-content float-container' expr:id='&quot;post-body-&quot; + data:post.id'>
+    <data:post.body/>
+  </div>
+</b:includable>
+            <b:includable id='postBodySnippet' var='post'>
+  <b:include data='post' name='postBody'/>
+</b:includable>
+            <b:includable id='postCommentsAndAd' var='post'>
+  <article class='post-outer-container'>
+    <div class='post-outer'>
+      <b:include data='post' name='post'/>
+    </div>
+
+    <b:include cond='data:view.isSingleItem' data='post' name='commentPicker'/>
+
+    <b:include cond='data:view.isSingleItem and data:post.includeAd' data='post' name='inlineAd'/>
+  </article>
+
+  <b:include cond='data:view.isMultipleItems and data:post.includeAd' data='post' name='inlineAd'/>
+</b:includable>
+            <b:includable id='postCommentsLink'>
+  <b:if cond='data:view.isMultipleItems'>
+    <span class='byline post-comment-link container'>
+      <b:include cond='data:post.commentSource != 1' name='commentsLink'/>
+    </span>
+  </b:if>
+</b:includable>
+            <b:includable id='postFooter' var='post'>
+  <div class='post-footer'>
+    <b:include name='footerBylines'/>
+    <b:include data='post' name='postFooterAuthorProfile'/>
+  </div>
+</b:includable>
+            <b:includable id='postFooterAuthorProfile' var='post'>
+  <b:if cond='data:post.author.aboutMe and data:view.isPost'>
+    <div class='author-profile'>
+      <b:if cond='data:post.author.authorPhoto.url'>
+        <img class='author-image' expr:src='data:post.author.authorPhoto.url' width='50px'/>
+        <div class='author-about'>
+          <b:include data='post' name='aboutPostAuthor'/>
+        </div>
+      <b:else/>
+        <b:include data='post' name='aboutPostAuthor'/>
+      </b:if>
+    </div>
+  </b:if>
+</b:includable>
+            <b:includable id='postHeader' var='post'>
+  <b:include name='headerByline'/>
+</b:includable>
+            <b:includable id='postJumpLink' var='post'>
+  <div class='jump-link flat-button'>
+    <a expr:href='data:post.url fragment &quot;more&quot;' expr:title='data:post.title'>
+      <b:eval expr='data:blog.jumpLinkMessage'/>
+    </a>
+  </div>
+</b:includable>
+            <b:includable id='postLabels'>
+  <span class='byline post-labels'>
+    <span class='byline-label'><data:byline.label/></span>
+    <b:loop index='i' values='data:post.labels' var='label'>
+      <a expr:href='data:label.url' rel='tag'>
+        <data:label.name/>
+      </a>
+    </b:loop>
+  </span>
+</b:includable>
+            <b:includable id='postLocation'>
+  <span class='byline post-location'>
+    <data:byline.label/>
+    <a expr:href='data:post.location.mapsUrl' target='_blank'><data:post.location.name/></a>
+  </span>
+</b:includable>
+            <b:includable id='postMeta' var='post'>
+  <b:include data='post' name='postMetadataJSON'/>
+</b:includable>
+            <b:includable id='postMetadataJSONImage'>
+  &quot;image&quot;: {
+    &quot;@type&quot;: &quot;ImageObject&quot;,
+    <b:if cond='data:post.featuredImage.isResizable'>
+    &quot;url&quot;: &quot;<b:eval expr='resizeImage(data:post.featuredImage, 1200, &quot;1200:630&quot;)'/>&quot;,
+    &quot;height&quot;: 630,
+    &quot;width&quot;: 1200
+    <b:else/>
+    &quot;url&quot;: &quot;https://blogger.googleusercontent.com/img/b/U2hvZWJveA/AVvXsEgfMvYAhAbdHksiBA24JKmb2Tav6K0GviwztID3Cq4VpV96HaJfy0viIu8z1SSw_G9n5FQHZWSRao61M3e58ImahqBtr7LiOUS6m_w59IvDYwjmMcbq3fKW4JSbacqkbxTo8B90dWp0Cese92xfLMPe_tg11g/w1200/&quot;,
+    &quot;height&quot;: 348,
+    &quot;width&quot;: 1200
+    </b:if>
+  },
+</b:includable>
+            <b:includable id='postMetadataJSONPublisher'>
+ &quot;publisher&quot;: {
+    &quot;@type&quot;: &quot;Organization&quot;,
+    &quot;name&quot;: &quot;Blogger&quot;,
+    &quot;logo&quot;: {
+      &quot;@type&quot;: &quot;ImageObject&quot;,
+      &quot;url&quot;: &quot;https://blogger.googleusercontent.com/img/b/U2hvZWJveA/AVvXsEgfMvYAhAbdHksiBA24JKmb2Tav6K0GviwztID3Cq4VpV96HaJfy0viIu8z1SSw_G9n5FQHZWSRao61M3e58ImahqBtr7LiOUS6m_w59IvDYwjmMcbq3fKW4JSbacqkbxTo8B90dWp0Cese92xfLMPe_tg11g/h60/&quot;,
+      &quot;width&quot;: 206,
+      &quot;height&quot;: 60
+    }
+  },
+</b:includable>
+            <b:includable id='postPagination'>
+  <div class='blog-pager container' id='blog-pager'>
+    <b:include cond='data:newerPageUrl' name='previousPageLink'/>
+    <b:include cond='data:olderPageUrl' name='nextPageLink'/>
+    <b:include cond='data:view.url != data:blog.homepageUrl' name='homePageLink'/>
+  </div>
+</b:includable>
+            <b:includable id='postReactions'>
+  <!-- Reaction feature no longer available. The includable is retained for backwards-compatibility. -->
+</b:includable>
+            <b:includable id='postShareButtons'>
+  <div class='byline post-share-buttons goog-inline-block'>
+    <b:with value='data:sharingId ?: ((data:widget.instanceId ?: &quot;sharing&quot;) + &quot;-&quot; + (data:regionName ?: &quot;byline&quot;) + &quot;-&quot; + data:post.id)' var='sharingId'>
+      <!-- Note: 'sharingButtons' includable is from the default Sharing widget markup. -->
+      <b:include data='{                                                sharingId: data:sharingId,                                                originalUrl: data:post.url,                                                platforms: data:this.sharing.platforms,                                                shareUrl: data:post.shareUrl,                                                shareTitle: data:post.title,                                              }' name='sharingButtons'/>
+    </b:with>
+  </div>
+</b:includable>
+            <b:includable id='postTimestamp'>
+  <span class='byline post-timestamp'>
+    <data:byline.label/>
+    <b:if cond='data:post.url'>
+      <meta expr:content='data:post.url.canonical'/>
+      <a class='timestamp-link' expr:href='data:post.url' rel='bookmark' title='permanent link'>
+        <time class='published' expr:datetime='data:post.date.iso8601' expr:title='data:post.date.iso8601'>
+          <data:post.date/>
+        </time>
+      </a>
+    </b:if>
+  </span>
+</b:includable>
+            <b:includable id='postTitle' var='post'>
+  <a expr:name='data:post.id'/>
+  <b:if cond='data:post.title != &quot;&quot;'>
+    <h3 class='post-title entry-title'>
+      <b:if cond='data:post.link or (data:post.url and data:view.url != data:post.url)'>
+        <a expr:href='data:post.link ?: data:post.url'><data:post.title/></a>
+      <b:else/>
+        <data:post.title/>
+      </b:if>
+    </h3>
+  </b:if>
+</b:includable>
+            <b:includable id='previousPageLink'>
+  <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' expr:id='data:widget.instanceId + &quot;_blog-pager-newer-link&quot;' expr:title='data:messages.newerPosts'>
+    <data:messages.newerPosts/>
+  </a>
+</b:includable>
+            <b:includable id='sharingButton'>
+  <span expr:aria-label='data:platform.shareMessage' expr:class='&quot;sharing-platform-button sharing-element-&quot; + data:platform.key' expr:data-href='data:shareUrl + &quot;&amp;target=&quot; + data:platform.target' expr:data-url='data:originalUrl' expr:title='data:platform.shareMessage' role='menuitem' tabindex='-1'>
+    <b:include name='sharingPlatformIcon'/>
+    <span class='platform-sharing-text'><data:platform.name/></span>
+  </span>
+</b:includable>
+            <b:includable id='sharingButtonContent'>
+  <div class='flat-icon-button ripple'>
+    <b:include name='shareIcon'/>
+  </div>
+</b:includable>
+            <b:includable id='sharingButtons'>
+  <div class='sharing' expr:aria-owns='&quot;sharing-popup-&quot; + data:sharingId' expr:data-title='data:shareTitle'>
+    <button class='sharing-button touch-icon-button' expr:aria-controls='&quot;sharing-popup-&quot; + data:sharingId' expr:aria-label='data:messages.share.escaped' expr:id='&quot;sharing-button-&quot; + data:sharingId' role='button'>
+      <b:include name='sharingButtonContent'/>
+    </button>
+    <b:include name='sharingButtonsMenu'/>
+  </div>
+</b:includable>
+            <b:includable id='sharingButtonsMenu'>
+  <div class='share-buttons-container'>
+    <ul aria-hidden='true' class='share-buttons hidden' expr:aria-label='data:messages.share.escaped' expr:id='&quot;sharing-popup-&quot; + data:sharingId' role='menu'>
+      <b:loop values='(data:platforms ?: data:blog.sharing.platforms) filter (p =&gt; p.key not in {&quot;blogThis&quot;})' var='platform'>
+        <li>
+          <b:include name='sharingButton'/>
+        </li>
+      </b:loop>
+      <li aria-hidden='true' class='hidden'>
+        <b:include name='otherSharingButton'/>
+      </li>
+    </ul>
+  </div>
+</b:includable>
+            <b:includable id='sharingPlatformIcon'>
+  <b:include data='{ iconClass: (&quot;touch-icon sharing-&quot; + data:platform.key) }' expr:name='data:platform.key + &quot;Icon&quot;'/>
+</b:includable>
+            <b:includable id='threadedCommentForm' var='post'>
+  <div class='comment-form'>
+    <a name='comment-form'/>
+    <h4 id='comment-post-message'><data:messages.postAComment/></h4>
+    <b:if cond='data:this.messages.blogComment != &quot;&quot;'>
+      <p><data:this.messages.blogComment/></p>
+    </b:if>
+    <b:include data='post' name='commentFormIframeSrc'/>
+    <iframe allowtransparency='allowtransparency' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight ?: &quot;90px&quot;' frameborder='0' id='comment-editor' name='comment-editor' src='' width='100%'/>
+    <data:post.cmtfpIframe/>
+    <script type='text/javascript'>
+      BLOG_CMT_createIframe(&#39;<data:post.appRpcRelayPath/>&#39;);
+    </script>
+  </div>
+</b:includable>
+            <b:includable id='threadedCommentJs' var='post'>
+  <script async='async' expr:src='data:post.commentSrc' type='text/javascript'/>
+  <b:template-script inline='true' name='threaded_comments'/>
+  <script type='text/javascript'>
+    blogger.widgets.blog.initThreadedComments(
+        <data:post.commentJso/>,
+        <data:post.commentMsgs/>,
+        <data:post.commentConfig/>);
+  </script>
+</b:includable>
+            <b:includable id='threadedComments' var='post'>
+  <section class='comments threaded' expr:data-embed='data:post.embedCommentForm' expr:data-num-comments='data:post.numberOfComments' id='comments'>
+    <a name='comments'/>
+
+    <b:include name='commentsTitle'/>
+
+    <div class='comments-content'>
+      <b:if cond='data:post.embedCommentForm'>
+        <b:include data='post' name='threadedCommentJs'/>
+      </b:if>
+      <div id='comment-holder'>
+         <data:post.commentHtml/>
+      </div>
+    </div>
+
+    <p class='comment-footer'>
+      <b:if cond='data:post.allowNewComments'>
+        <b:include data='post' name='threadedCommentForm'/>
+      <b:else/>
+        <data:post.noNewCommentsText/>
+      </b:if>
+      <b:if cond='data:post.showManageComments'>
+        <b:include data='post' name='manageComments'/>
+      </b:if>
+    </p>
+
+    <b:if cond='data:showCmtPopup'>
+      <div id='comment-popup'>
+        <iframe allowtransparency='allowtransparency' frameborder='0' id='comment-actions' name='comment-actions' scrolling='no'>
+        </iframe>
+      </div>
+    </b:if>
+  </section>
+</b:includable>
+            <b:includable id='threaded_comments' var='post'>
+               <h4 class='mb-4'><i class='bi bi-chat-left-text text-success me-2'/> Comentários</h4>
+               <div class='comments' id='comments'>
+                 <data:post.commentHtml/>
+               </div>
+            </b:includable>
+            <b:includable id='tooltipCss'>
+  <style>
+    .post-body a.b-tooltip-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .post-body a.b-tooltip-container .b-tooltip {
+      display: block !important;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translate(-20%, 1px);
+      visibility: hidden;
+      opacity: 0;
+      z-index: 1;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .post-body a.b-tooltip-container .b-tooltip iframe {
+      width: 200px;
+      height: 198px;
+      max-width: none;
+      border: none;
+      border-radius: 20px;
+      box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (hover: hover) {
+      .post-body a.b-tooltip-container:hover .b-tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+  </style>
+  </b:includable>
+          </b:widget>
+        </b:section>
+
+        <div class='after-post-area mt-5'>
+          <b:section id='after-post-content' name='Depois do Post (Fundo)' showaddelement='yes'>
+            <b:widget id='HTML6' locked='false' title='' type='HTML'>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+
+      </main>
+
+      <aside class='col-lg-4'>
+        <div class='sticky-top' style='top: 80px;'> 
+          <b:section id='sidebar' name='Barra Lateral (Right Bar)' showaddelement='yes'>
+             <b:widget id='HTML7' locked='false' title='' type='HTML'>
+               <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+             </b:widget>
+             <b:widget id='HTML5' locked='false' title='' type='HTML'>
+               <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+             </b:widget>
+           </b:section>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <footer class='bg-dark text-white pt-5 pb-3 mt-auto'>
+    <div class='container'>
+      
+      <div class='row g-4'>
+        <div class='col-md-4'>
+          <b:section id='footer-1' name='Footer Esquerda' showaddelement='yes'>
+            <b:widget id='HTML10' locked='false' title='{Como Instalar o Template}' type='HTML'>
+              <b:widget-settings>
+                <b:widget-setting name='content'><![CDATA[<iframe src="https://drive.google.com/file/d/1x6uv77pTiuZwcolU0ugJkIo2AtGiSuNE/preview" width="100%" height="400" frameborder="0" allow="autoplay" allowfullscreen></iframe>]]></b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+            <b:widget id='HTML4' locked='false' title='' type='HTML'>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+        <div class='col-md-4'>
+          <b:section id='footer-2' name='Footer Centro' showaddelement='yes'>
+            <b:widget id='HTML3' locked='false' title='' type='HTML'>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+        <div class='col-md-4'>
+          <b:section id='footer-3' name='Footer Direita' showaddelement='yes'>
+            <b:widget id='Label1' locked='false' title='Marcadores' type='Label'>
+              <b:widget-settings>
+                <b:widget-setting name='sorting'>FREQUENCY</b:widget-setting>
+                <b:widget-setting name='display'>CLOUD</b:widget-setting>
+                <b:widget-setting name='selectedLabelsList'>hardware,tech</b:widget-setting>
+                <b:widget-setting name='showType'>USER_SELECTED</b:widget-setting>
+                <b:widget-setting name='showFreqNumbers'>true</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2><data:title/></h2>
+  </b:if>
+  <div expr:class='&quot;widget-content &quot; + data:display + &quot;-label-widget-content&quot;'>
+    <b:if cond='data:display == &quot;list&quot;'>
+      <ul>
+        <b:loop values='data:labels' var='label'>
+          <li>
+            <b:if cond='data:blog.url == data:label.url'>
+              <span expr:dir='data:blog.languageDirection'><data:label.name/></span>
+            <b:else/>
+              <a expr:dir='data:blog.languageDirection' expr:href='data:label.url'><data:label.name/></a>
+            </b:if>
+            <b:if cond='data:showFreqNumbers'>
+              <span dir='ltr'>(<data:label.count/>)</span>
+            </b:if>
+          </li>
+        </b:loop>
+      </ul>
+    <b:else/>
+      <b:loop values='data:labels' var='label'>
+        <span expr:class='&quot;label-size label-size-&quot; + data:label.cssSize'>
+          <b:if cond='data:blog.url == data:label.url'>
+            <span expr:dir='data:blog.languageDirection'><data:label.name/></span>
+          <b:else/>
+            <a expr:dir='data:blog.languageDirection' expr:href='data:label.url'><data:label.name/></a>
+          </b:if>
+          <b:if cond='data:showFreqNumbers'>
+            <span class='label-count' dir='ltr'>(<data:label.count/>)</span>
+          </b:if>
+        </span>
+      </b:loop>
+    </b:if>
+    <b:include name='quickedit'/>
+  </div>
+</b:includable>
+            </b:widget>
+            <b:widget id='HTML2' locked='false' title='' type='HTML'>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+      </div>
+
+      <hr class='my-5 border-secondary'/>
+
+      <div class='row justify-content-center py-4'>
+        <div class='col-lg-6 col-md-8'>
+          <b:section id='footer-contact' name='Área de Contato' showaddelement='yes'>
+            <b:widget id='FeaturedPost1' locked='false' title='Postagem em destaque' type='FeaturedPost'>
+              <b:widget-settings>
+                <b:widget-setting name='showSnippet'>true</b:widget-setting>
+                <b:widget-setting name='showPostTitle'>true</b:widget-setting>
+                <b:widget-setting name='postId'>7376549780373444766</b:widget-setting>
+                <b:widget-setting name='showFirstImage'>true</b:widget-setting>
+                <b:widget-setting name='useMostRecentPost'>false</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <!-- Only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <b:include name='content'/>
+
+  <b:include name='quickedit'/>
+</b:includable>
+              <b:includable id='content'>
+  <div class='post-summary'>
+    <b:if cond='data:showPostTitle and data:postTitle != &quot;&quot;'>
+      <h3><a expr:href='data:postUrl'><data:postTitle/></a></h3>
+    </b:if>
+    <b:if cond='data:showSnippet and data:postSummary != &quot;&quot;'>
+      <p>
+        <data:postSummary/>
+      </p>
+    </b:if>
+    <b:if cond='data:showFirstImage and data:postFirstImage != &quot;&quot;'>
+      <img class='image' expr:src='data:postFirstImage'/>
+    </b:if>
+  </div>
+
+  <style type='text/css'>
+    .image {
+      width: 100%;
+    }
+  </style>
+</b:includable>
+            </b:widget>
+            <b:widget id='Translate1' locked='false' title='Translate' type='Translate'>
+              <b:widget-settings>
+                <b:widget-setting name='displayMode'>SIMPLE</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div id='google_translate_element'/>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: &#39;<data:pageLanguage/>&#39;,
+        autoDisplay: &#39;true&#39;,
+        layout: google.translate.TranslateElement.InlineLayout.<data:layout/>
+      }, &#39;google_translate_element&#39;);
+    }
+  </script>
+  <script src='//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'/>
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+            <b:widget id='PopularPosts1' locked='false' title='Postagens mais visitadas' type='PopularPosts' version='1'>
+              <b:widget-settings>
+                <b:widget-setting name='numItemsToShow'>10</b:widget-setting>
+                <b:widget-setting name='showThumbnails'>true</b:widget-setting>
+                <b:widget-setting name='showSnippets'>true</b:widget-setting>
+                <b:widget-setting name='timeRange'>ALL_TIME</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'><h2><data:title/></h2></b:if>
+  <div class='widget-content popular-posts'>
+    <ul>
+      <b:loop values='data:posts' var='post'>
+      <li>
+        <b:if cond='!data:showThumbnails'>
+          <b:if cond='!data:showSnippets'>
+            <!-- (1) No snippet/thumbnail -->
+            <a expr:href='data:post.href'><data:post.title/></a>
+          <b:else/>
+            <!-- (2) Show only snippets -->
+            <div class='item-title'><a expr:href='data:post.href'><data:post.title/></a></div>
+            <div class='item-snippet'><data:post.snippet/></div>
+          </b:if>
+        <b:else/>
+          <!-- (3) Show only thumbnails or (4) Snippets and thumbnails. -->
+          <div expr:class='data:showSnippets ? &quot;item-content&quot; : &quot;item-thumbnail-only&quot;'>
+            <b:if cond='data:post.featuredImage.isResizable or data:post.thumbnail'>
+              <div class='item-thumbnail'>
+                <a expr:href='data:post.href' target='_blank'>
+                  <b:with value='data:post.featuredImage.isResizable                                  ? resizeImage(data:post.featuredImage, 300, &quot;1:1&quot;)                                  : data:post.thumbnail' var='image'>
+                    <img alt='' border='0' expr:src='data:image'/>
+                  </b:with>
+                </a>
+              </div>
+            </b:if>
+            <div class='item-title'><a expr:href='data:post.href'><data:post.title/></a></div>
+            <b:if cond='data:showSnippets'>
+              <div class='item-snippet'><data:post.snippet/></div>
+            </b:if>
+          </div>
+          <div style='clear: both;'/>
+        </b:if>
+      </li>
+      </b:loop>
+    </ul>
+    <b:include name='quickedit'/>
+  </div>
+</b:includable>
+            </b:widget>
+            <b:widget id='Stats1' locked='false' title='Total de visualizações de página' type='Stats'>
+              <b:widget-settings>
+                <b:widget-setting name='showGraphicalCounter'>true</b:widget-setting>
+                <b:widget-setting name='showAnimatedCounter'>false</b:widget-setting>
+                <b:widget-setting name='showSparkline'>true</b:widget-setting>
+                <b:widget-setting name='sparklineStyle'>BLACK_TRANSPARENT</b:widget-setting>
+                <b:widget-setting name='timeRange'>ALL_TIME</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'><h2><data:title/></h2></b:if>
+  <div class='widget-content'>
+    <!-- Content is going to be visible when data will be fetched from server. -->
+    <div expr:id='data:widget.instanceId + &quot;_content&quot;' style='display: none;'>
+      <!-- Counter and image will be injected later via AJAX call. -->
+      <b:if cond='data:showSparkline'>
+        <script src='https://www.gstatic.com/charts/loader.js' type='text/javascript'/>
+        <span expr:id='data:widget.instanceId + &quot;_sparklinespan&quot;' style='display:inline-block; width:75px; height:30px'/>
+      </b:if>
+      <span expr:class='&quot;counter-wrapper &quot; + (data:showGraphicalCounter ? &quot;graph-counter-wrapper&quot; : &quot;text-counter-wrapper&quot;)' expr:id='data:widget.instanceId + &quot;_totalCount&quot;'>
+      </span>
+      <b:include name='quickedit'/>
+    </div>
+  </div>
+</b:includable>
+            </b:widget>
+            <b:widget id='ContactForm1' locked='false' title='Formulário de contato' type='ContactForm' version='1'>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'>
+    <h4 class='text-center mb-4 fw-bold'><i class='bi bi-chat-dots me-2 text-success'/> <data:title/></h4>
+  </b:if>
+  
+  <div class='contact-form-widget'>
+    <div class='form'>
+      <form name='contact-form'>
+        
+        <div class='form-floating mb-3'>
+          <input class='contact-form-name form-control bg-dark text-white border-secondary' expr:id='data:widget.instanceId + &quot;_contact-form-name&quot;' expr:placeholder='data:contactFormNameMsg' name='name' type='text' value=''/>
+          <label class='text-secondary' expr:for='data:widget.instanceId + &quot;_contact-form-name&quot;'>
+            <i class='bi bi-person me-1'/> <data:contactFormNameMsg/>
+          </label>
+        </div>
+        
+        <div class='form-floating mb-3'>
+          <input class='contact-form-email form-control bg-dark text-white border-secondary' expr:id='data:widget.instanceId + &quot;_contact-form-email&quot;' expr:placeholder='data:contactFormEmailMsg' name='email' type='email' value=''/>
+          <label class='text-secondary' expr:for='data:widget.instanceId + &quot;_contact-form-email&quot;'>
+            <i class='bi bi-envelope me-1'/> <data:contactFormEmailMsg/> *
+          </label>
+        </div>
+        
+        <div class='form-floating mb-4'>
+          <textarea class='contact-form-email-message form-control bg-dark text-white border-secondary' expr:id='data:widget.instanceId + &quot;_contact-form-email-message&quot;' expr:placeholder='data:contactFormMessageMsg' name='email-message' style='height: 120px'/>
+          <label class='text-secondary' expr:for='data:widget.instanceId + &quot;_contact-form-email-message&quot;'>
+            <i class='bi bi-pen me-1'/> <data:contactFormMessageMsg/> *
+          </label>
+        </div>
+        
+        <input class='contact-form-button contact-form-button-submit btn btn-primary w-100 py-3 fw-bold' expr:id='data:widget.instanceId + &quot;_contact-form-submit&quot;' expr:value='data:contactFormSendMsg' type='button'/>
+        
+        <div class='text-center mt-3 w-100'>
+          <p class='contact-form-error-message text-danger fw-bold mb-0' expr:id='data:widget.instanceId + &quot;_contact-form-error-message&quot;'/>
+          <p class='contact-form-success-message text-success fw-bold mb-0' expr:id='data:widget.instanceId + &quot;_contact-form-success-message&quot;'/>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+      </div>
+
+      <div class='border-top border-secondary mt-5 pt-4'>
+        <div class='row align-items-center'>
+          <div class='col-md-6 text-center text-md-start mb-3 mb-md-0'>
+            <b:section id='footer-branding' maxwidgets='1' name='Footer Branding (Logo Menor)' showaddelement='yes'/>
+          </div>
+          <div class='col-md-6 text-center text-md-end text-secondary small'>
+            <b:section id='copyright-area' maxwidgets='1' name='Créditos / Copyright' showaddelement='yes'/>
+            &#169; 2026 - Template Base. Todos os direitos reservados.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+  
+  <button id='btnScrollToTop' title='Subir ao Topo'>
+    <i class='bi bi-arrow-up-short fs-3'/>
+  </button>
+
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'/>
+  
+  <script>
+  //<![CDATA[
+  document.addEventListener('DOMContentLoaded', () => {
+    'use strict';
+
+    /* --- 1. SISTEMA DE DARK MODE --- */
+    const getStoredTheme = () => localStorage.getItem('theme');
+    const setStoredTheme = theme => localStorage.setItem('theme', theme);
+    const getPreferredTheme = () => {
+      const storedTheme = getStoredTheme();
+      if (storedTheme) return storedTheme;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    
+    const setTheme = theme => {
+      document.documentElement.setAttribute('data-bs-theme', theme);
+      atualizarIcone(theme);
+    };
+
+    const atualizarIcone = (theme) => {
+      const btnIcone = document.querySelector('.btn-dark-mode i');
+      if (btnIcone) {
+        btnIcone.className = theme === 'dark' ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars-fill text-dark';
+      }
+    };
+
+    setTheme(getPreferredTheme());
+
+    window.alternarTema = () => {
+      const temaAtual = document.documentElement.getAttribute('data-bs-theme');
+      const novoTema = temaAtual === 'dark' ? 'light' : 'dark';
+      setStoredTheme(novoTema);
+      setTheme(novoTema);
+    };
+
+    const toggleBtns = document.querySelectorAll('.btn-dark-mode');
+    toggleBtns.forEach(btn => {
+      btn.addEventListener('click', window.alternarTema);
+    });
+
+    /* --- 2. ANIMAÇÕES DE SCROLL (APENAS GRELHA E SIDEBAR) --- */
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0
+    };
+
+    const scrollObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); 
+        }
+      });
+    }, observerOptions);
+
+    const elementosAnimaveis = document.querySelectorAll('.card-post-grid, aside .widget');
+    elementosAnimaveis.forEach((el, index) => {
+      el.classList.add('animate-up');
+      el.style.transitionDelay = `${(index % 3) * 0.1}s`; 
+      scrollObserver.observe(el);
+    });
+
+    /* --- 3. SCROLL TO TOP --- */
+    const btnScroll = document.getElementById('btnScrollToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        btnScroll.classList.add('show');
+      } else {
+        btnScroll.classList.remove('show');
+      }
+    });
+
+    btnScroll.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+  });
+
+
+  // Corrige o desfoque das imagens dos Posts Populares
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('.PopularPosts img').forEach(img => {
+      // Troca os parâmetros de tamanho baixo (s72, w72) para tamanho grande (s600)
+      let novaSrc = img.src.replace(/\/s[0-9]+(\-c)?\//, '/s600/');
+      novaSrc = novaSrc.replace(/\=s[0-9]+(\-c)?/, '=s600');
+      novaSrc = novaSrc.replace(/\/w[0-9]+\-h[0-9]+[^\/]+\//, '/s600/');
+      img.src = novaSrc;
+    });
+  });
+
+// Ripple Effect Bare-Metal
+document.querySelectorAll('.btn, .nav-link').forEach(button => {
+  button.addEventListener('click', function(e) {
+    let x = e.clientX - e.target.getBoundingClientRect().left;
+    let y = e.clientY - e.target.getBoundingClientRect().top;
+    
+    let ripple = document.createElement('span');
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    ripple.classList.add('ripple-effect');
+    
+    this.appendChild(ripple);
+    
+    setTimeout(() => { ripple.remove(); }, 600);
+  });
+});
+
+  //]]>
+  </script>
+   
+</body>
+</html>

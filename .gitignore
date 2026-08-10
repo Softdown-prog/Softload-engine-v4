@@ -1,0 +1,21 @@
+node_modules/
+env
+.env
+.env.*
+.DS_Store
+npm-debug.log
+*.local
+
+# Saída local de scripts/visual/renderPreview.js (screenshots + HTML de
+# preview) — não é artefato versionado, ver plano de migração de dossiê.
+/.scratch/
+
+# Telemetria interna de compilação (src/core/telemetria.js) — Cano 4 fase 1,
+# dado operacional local, não artefato versionado.
+/logs/
+
+# Gerados pelo stage "build-info" do Dockerfile em build time — nunca devem
+# ser commitados (ver src/services/buildInfo.js)
+/GIT_SHA
+/GIT_DATE
+/BUILD_TIME

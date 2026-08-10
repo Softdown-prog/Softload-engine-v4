@@ -1,0 +1,74 @@
+{
+  "id": "supabase-chatgpt-integration",
+  "slug": "supabase-chatgpt-integration",
+  "categoria": "artificial-intelligence",
+  "pasta": "supabase",
+  "titulo": "Aplicativo Supabase Integrado ao ChatGPT",
+  "descricao": "A integração do Supabase com ChatGPT permite administrar recursos da plataforma utilizando comandos em linguagem natural, incluindo consultas, gerenciamento de banco de dados e operações de desenvolvimento.",
+  "componentes": [
+    {
+      "nome": "technology",
+      "conteudo": "supabase"
+    },
+    {
+      "nome": "feature-type",
+      "conteudo": "natural-language-management"
+    },
+    {
+      "nome": "year",
+      "conteudo": 2026
+    },
+    {
+      "nome": "release-status",
+      "conteudo": "available"
+    },
+    {
+      "nome": "confidence-score",
+      "conteudo": 0.9
+    },
+    {
+      "nome": "related-concepts",
+      "conteudo": [
+        "ai-assisted-development",
+        "infrastructure-as-code"
+      ]
+    },
+    {
+      "nome": "sources",
+      "conteudo": [
+        {
+          "type": "official",
+          "provider": "Supabase",
+          "reference": "Developer Update June 2026"
+        }
+      ]
+    }
+  ],
+  "exemplos": [],
+  "keywords": [
+    "supabase-chatgpt-integration",
+    "supabase",
+    "chatgpt",
+    "integration",
+    "Aplicativo Supabase Integrado ao ChatGPT",
+    "aplicativo",
+    "integrado",
+    "artificial-intelligence",
+    "artificial",
+    "intelligence",
+    "natural-language-management",
+    "natural",
+    "language",
+    "management",
+    "llm",
+    "database-management",
+    "database",
+    "natural-language",
+    "ai-assisted-development",
+    "assisted",
+    "development",
+    "infrastructure-as-code",
+    "infrastructure",
+    "code"
+  ]
+}

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= titulo %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="/css/softload.css" rel="stylesheet">
+    <style>
+        body { background: var(--sl-bg-950); color: var(--sl-text-300); }
+        .admin-topbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1050;
+            height: 56px;
+            background: rgba(15,23,42,0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--sl-bg-800);
+            display: flex; align-items: center; padding: 0 1.5rem; gap: 1rem;
+        }
+        .admin-badge {
+            font-size: 9px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--sl-text-500);
+            border: 1px solid var(--sl-bg-800); padding: 2px 8px; border-radius: 4px;
+        }
+        .section-card {
+            background: rgba(15,23,42,0.6); border: 1px solid var(--sl-bg-800);
+            border-radius: 1rem;
+        }
+        .filter-bar {
+            background: rgba(15,23,42,0.6); border: 1px solid var(--sl-bg-800);
+            border-radius: 1rem; padding: 1rem;
+        }
+        .section-label {
+            font-size: 10px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--sl-text-400);
+        }
+        .user-avatar {
+            width: 28px; height: 28px; min-width: 28px; min-height: 28px;
+            border-radius: 8px;
+            background: var(--sl-bg-800); color: var(--sl-text-400);
+            font-size: 12px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .status-badge {
+            font-size: 9px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.1em; padding: 2px 8px; border-radius: 6px; white-space: nowrap;
+        }
+        .status-premium { background: rgba(34,197,94,0.1); color: #4ade80; }
+        .status-free { background: var(--sl-bg-800); color: var(--sl-text-500); }
+        .plan-badge {
+            font-size: 9px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.08em; padding: 1px 6px; border-radius: 4px; white-space: nowrap;
+        }
+        .plan-studio  { background: rgba(139,92,246,0.15); color: #a78bfa; }
+        .plan-pro     { background: rgba(59,130,246,0.15); color: #60a5fa; }
+        .plan-starter { background: rgba(124,58,237,0.12); color: #c4b5fd; }
+        .plan-free    { background: var(--sl-bg-800); color: var(--sl-text-500); }
+        .credits-micro {
+            font-size: 10px; font-family: monospace; color: var(--sl-text-500);
+            display: flex; gap: 6px; flex-wrap: wrap;
+        }
+        .credits-micro span { white-space: nowrap; }
+        .table > :not(caption) > * > * { background: transparent; color: inherit; }
+        .table thead th {
+            font-size: 9px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.15em; color: var(--sl-text-500);
+            padding: 0.75rem 1rem; border-bottom: 1px solid var(--sl-bg-800);
+        }
+        .table tbody tr { border-color: rgba(30,41,59,0.6); }
+        .table tbody tr:hover { background: rgba(30,41,59,0.3); }
+        .table tbody td { padding: 0.65rem 1rem; vertical-align: middle; border-color: rgba(30,41,59,0.6); }
+        .toast-inline {
+            display: none; padding: 0.75rem 1rem; border-radius: 10px;
+            font-size: 0.875rem; font-weight: 600; margin: 1rem 0 0;
+        }
+        .toast-success { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+        .toast-error   { background: rgba(239,68,68,0.1);  color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+        .btn-activate { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .btn-activate:hover { background: rgba(34,197,94,0.2); color: #4ade80; }
+        .btn-revoke   { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+        .btn-revoke:hover { background: rgba(239,68,68,0.2); color: #f87171; }
+        .btn-credits  { background: rgba(250,204,21,0.1); color: #fbbf24; border: 1px solid rgba(250,204,21,0.3); }
+        .btn-credits:hover { background: rgba(250,204,21,0.2); color: #fbbf24; }
+        .filter-btn {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; border: 1px solid var(--sl-bg-800);
+            background: var(--sl-bg-950); color: var(--sl-text-500);
+            padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: all 0.15s;
+            min-height: 44px;
+        }
+        .filter-btn.active-all, .filter-btn.active-free {
+            background: var(--sl-bg-800); color: #fff;
+        }
+        .filter-btn.active-premium {
+            background: rgba(34,197,94,0.15); color: #4ade80;
+            border-color: rgba(34,197,94,0.35);
+        }
+        /* Modals dark */
+        .modal-content {
+            background: #0f172a; border: 1px solid var(--sl-bg-800);
+        }
+        .modal-header, .modal-footer {
+            border-color: var(--sl-bg-800);
+        }
+        .form-select, .form-control {
+            background: var(--sl-bg-800); border-color: var(--sl-bg-700);
+            color: var(--sl-text-300);
+        }
+        .form-select:focus, .form-control:focus {
+            background: var(--sl-bg-800); border-color: #7c3aed;
+            color: var(--sl-text-300); box-shadow: 0 0 0 2px rgba(124,58,237,0.25);
+        }
+        .plan-info-box {
+            background: rgba(30,41,59,0.6); border: 1px solid var(--sl-bg-700);
+            border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--sl-text-400);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Topbar Admin -->
+<nav class="admin-topbar">
+    <a href="/eu" class="fw-black text-white text-decoration-none sl-brand" style="font-size:1rem">SOFTLOAD<span class="sl-accent">ENGINE</span></a>
+    <span class="admin-badge">Admin</span>
+    <div class="flex-grow-1"></div>
+    <a href="/eu" class="btn btn-sm fw-bold text-uppercase"
+       style="background:var(--sl-bg-800);color:var(--sl-text-300);border:1px solid var(--sl-bg-800);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-speedometer2"></i><span class="d-none d-sm-inline"> Dashboard</span>
+    </a>
+    <a href="/eu/analytics" class="btn btn-sm fw-bold text-uppercase"
+       style="background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.25);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-graph-up-arrow"></i><span class="d-none d-sm-inline"> Analytics</span>
+    </a>
+    <a href="/logout" class="btn btn-sm fw-bold text-uppercase"
+       style="background:transparent;color:#f87171;border:1px solid rgba(239,68,68,0.3);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-box-arrow-right"></i><span class="d-none d-sm-inline"> Sair</span>
+    </a>
+</nav>
+
+<main style="padding-top:56px;" class="px-3 px-md-5 py-4">
+    <div class="mx-auto" style="max-width:1280px">
+
+        <!-- Header -->
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4 mt-2">
+            <div>
+                <h1 class="fw-bolder text-white text-uppercase mb-1" style="font-size:1.5rem;letter-spacing:-0.02em">Gestão de Usuários</h1>
+                <p class="mb-0 small" style="color:var(--sl-text-500)">
+                    <span id="countLabel">0</span> usuários exibidos
+                </p>
+            </div>
+        </div>
+
+        <!-- Busca e filtros -->
+        <div class="filter-bar d-flex align-items-center gap-3 flex-wrap mb-3">
+            <div class="position-relative flex-grow-1" style="min-width:192px">
+                <i class="bi bi-search position-absolute small"
+                   style="left:12px;top:50%;transform:translateY(-50%);color:var(--sl-text-500)"></i>
+                <input type="text" id="searchInput" placeholder="Buscar por e-mail ou nome..."
+                       class="form-control ps-4"
+                       style="background:var(--sl-bg-800);border-color:var(--sl-bg-800);color:var(--sl-text-300)">
+            </div>
+            <div class="d-flex gap-2">
+                <button class="filter-btn active-all" data-filter="">Todos</button>
+                <button class="filter-btn" data-filter="premium">Premium</button>
+                <button class="filter-btn" data-filter="free">Free</button>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toastInline" class="toast-inline"></div>
+
+        <!-- Tabela -->
+        <div class="section-card overflow-hidden">
+            <div class="px-4 py-3" style="border-bottom:1px solid var(--sl-bg-800)">
+                <p class="section-label mb-0">Lista de Usuários</p>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th class="d-none d-md-table-cell">Storage</th>
+                            <th class="d-none d-lg-table-cell">Créditos</th>
+                            <th class="d-none d-lg-table-cell">Criado em</th>
+                            <th>Status / Plano</th>
+                            <th class="text-end">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuariosBody">
+                        <!-- rows rendered by JS -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="px-4 py-5 text-center d-none">
+                    <p class="mb-0 small" style="color:var(--sl-text-500)">Nenhum usuário encontrado.</p>
+                </div>
+            </div>
+            <!-- Paginação cursor-based -->
+            <div id="loadMoreWrap" class="px-4 py-3 border-top text-center <%= nextCursor ? '' : 'd-none' %>"
+                 style="border-color:var(--sl-bg-800)!important">
+                <button id="loadMoreBtn" class="btn btn-sm fw-bold text-uppercase"
+                        style="background:var(--sl-bg-800);color:var(--sl-text-300);border:1px solid var(--sl-bg-700);letter-spacing:0.08em;font-size:11px">
+                    <i class="bi bi-arrow-down-circle me-1"></i> Carregar mais
+                </button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ── Modal: Ativar com seleção de plano ──────────────────────────────── -->
+<div class="modal fade" id="modalAtivar" tabindex="-1" aria-labelledby="modalAtivarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-uppercase" id="modalAtivarLabel" style="font-size:0.85rem;letter-spacing:0.08em">
+          Ativar Plano
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="small mb-3" style="color:var(--sl-text-400)">
+          Usuário: <strong class="text-white" id="ativarEmail">—</strong>
+        </p>
+
+        <label class="form-label fw-bold text-uppercase" style="font-size:10px;letter-spacing:0.1em;color:var(--sl-text-400)">
+          Plano a ativar
+        </label>
+        <select class="form-select mb-3" id="ativarPlano" onchange="atualizarInfoPlano()">
+            <option value="starter">Starter — 500 créditos Gemini / 0 GPT</option>
+            <option value="pro" selected>Pro — 2.000 créditos Gemini / 0 GPT</option>
+            <option value="studio">Studio — 5.500 créditos Gemini / 200 GPT</option>
+        </select>
+
+        <div class="plan-info-box" id="planoInfoBox">
+            <i class="bi bi-info-circle me-1"></i>
+            <span id="planoInfoTexto">Será alocado crédito de acordo com o plano e validade de 30 dias.</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm fw-bold text-uppercase"
+                style="background:var(--sl-bg-800);color:var(--sl-text-400);border:1px solid var(--sl-bg-700);letter-spacing:0.08em;font-size:11px"
+                data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-sm fw-bold text-uppercase btn-activate"
+                style="letter-spacing:0.08em;font-size:11px"
+                onclick="confirmarAtivacao()">
+            <i class="bi bi-check-lg me-1"></i> Ativar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal: Gerenciar créditos ──────────────────────────────────────── -->
+<div class="modal fade" id="modalCreditos" tabindex="-1" aria-labelledby="modalCreditosLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-uppercase" id="modalCreditosLabel" style="font-size:0.85rem;letter-spacing:0.08em">
+          Gerenciar Créditos
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="small mb-3" style="color:var(--sl-text-400)">
+          Usuário: <strong class="text-white" id="creditosEmail">—</strong>
+        </p>
+
+        <div class="row g-3">
+            <div class="col-6">
+                <label class="form-label fw-bold text-uppercase" style="font-size:10px;letter-spacing:0.1em;color:var(--sl-text-400)">
+                    <i class="bi bi-stars me-1" style="color:#60a5fa"></i>Gemini
+                </label>
+                <input type="number" class="form-control" id="inputGemini" min="0" max="99999" placeholder="ex: 2000">
+                <div class="mt-1" style="font-size:10px;color:var(--sl-text-500)">Atual: <span id="creditosGeminiAtual">—</span></div>
+            </div>
+            <div class="col-6">
+                <label class="form-label fw-bold text-uppercase" style="font-size:10px;letter-spacing:0.1em;color:var(--sl-text-400)">
+                    <i class="bi bi-cpu me-1" style="color:#a78bfa"></i>GPT
+                </label>
+                <input type="number" class="form-control" id="inputGpt" min="0" max="99999" placeholder="ex: 200">
+                <div class="mt-1" style="font-size:10px;color:var(--sl-text-500)">Atual: <span id="creditosGptAtual">—</span></div>
+            </div>
+        </div>
+
+        <div class="mt-3 plan-info-box">
+            <i class="bi bi-info-circle me-1"></i>
+            Define o valor absoluto de créditos. Validade renovada para 30 dias. Deixe em branco para não alterar.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm fw-bold text-uppercase"
+                style="background:var(--sl-bg-800);color:var(--sl-text-400);border:1px solid var(--sl-bg-700);letter-spacing:0.08em;font-size:11px"
+                data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-sm fw-bold text-uppercase btn-credits"
+                style="letter-spacing:0.08em;font-size:11px"
+                onclick="confirmarCreditos()">
+            <i class="bi bi-coin me-1"></i> Salvar Créditos
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+    var todos = <%- JSON.stringify(usuarios) %>;
+    var nextCursor = <%- JSON.stringify(nextCursor) %>;
+    var busca = '';
+    var filtroPlano = '';
+    var toastTimer = null;
+
+    // Bootstrap modal instances
+    var modalAtivar   = new bootstrap.Modal(document.getElementById('modalAtivar'));
+    var modalCreditos = new bootstrap.Modal(document.getElementById('modalCreditos'));
+
+    // Estado dos modais
+    var ativarEmailAtual = '';
+    var creditosEmailAtual = '';
+
+    var searchInput  = document.getElementById('searchInput');
+    var countLabel   = document.getElementById('countLabel');
+    var tbody        = document.getElementById('usuariosBody');
+    var emptyState   = document.getElementById('emptyState');
+    var toastEl      = document.getElementById('toastInline');
+    var filterBtns   = document.querySelectorAll('.filter-btn');
+    var loadMoreWrap = document.getElementById('loadMoreWrap');
+    var loadMoreBtn  = document.getElementById('loadMoreBtn');
+
+    var PLANO_INFO = {
+        starter: { gemini: 500,  gpt: 0,   label: 'Starter' },
+        pro:     { gemini: 2000, gpt: 0,   label: 'Pro' },
+        studio:  { gemini: 5500, gpt: 200, label: 'Studio' },
+    };
+
+    function filtrar() {
+        var q = busca.toLowerCase();
+        return todos.filter(function (u) {
+            var matchBusca = !q ||
+                u.email.toLowerCase().includes(q) ||
+                u.nome.toLowerCase().includes(q);
+            var matchPlano = !filtroPlano ||
+                (filtroPlano === 'premium' && u.is_active) ||
+                (filtroPlano === 'free' && !u.is_active);
+            return matchBusca && matchPlano;
+        });
+    }
+
+    function planoBadgeClass(plano) {
+        if (plano === 'studio') return 'plan-studio';
+        if (plano === 'pro')    return 'plan-pro';
+        if (plano === 'starter') return 'plan-starter';
+        return 'plan-free';
+    }
+
+    function renderRow(u) {
+        var initChar = (u.nome || u.email).charAt(0).toUpperCase();
+        var statusClass = u.is_active ? 'status-premium' : 'status-free';
+        var statusText  = u.is_active ? 'Premium' : 'Free';
+        var planoLabel  = (u.plano || 'free').charAt(0).toUpperCase() + (u.plano || 'free').slice(1);
+        var planClass   = planoBadgeClass(u.plano);
+
+        var credGemini = u.creditos    ?? 0;
+        var credGpt    = u.creditos_gpt ?? 0;
+
+        var actionsHtml;
+        if (u.is_active) {
+            actionsHtml =
+                '<button class="btn btn-sm fw-bold text-uppercase btn-revoke me-1" ' +
+                    'onclick="revogarPremium(this)" data-email="' + escHtml(u.email) + '" ' +
+                    'style="font-size:11px;letter-spacing:0.06em">Revogar</button>';
+        } else {
+            actionsHtml =
+                '<button class="btn btn-sm fw-bold text-uppercase btn-activate me-1" ' +
+                    'onclick="abrirAtivacao(\'' + escJs(u.email) + '\')" ' +
+                    'style="font-size:11px;letter-spacing:0.06em">Ativar</button>';
+        }
+        actionsHtml +=
+            '<button class="btn btn-sm fw-bold text-uppercase btn-credits" ' +
+                'onclick="abrirCreditos(\'' + escJs(u.email) + '\',' + credGemini + ',' + credGpt + ')" ' +
+                'style="font-size:11px;letter-spacing:0.06em" title="Gerenciar créditos">' +
+                '<i class="bi bi-coin"></i></button>';
+
+        return '<tr data-email="' + escHtml(u.email) + '">' +
+            '<td><div class="d-flex align-items-center gap-2">' +
+                '<div class="user-avatar">' + escHtml(initChar) + '</div>' +
+                '<div class="overflow-hidden">' +
+                    '<p class="fw-semibold text-white mb-0 text-truncate small">' + escHtml(u.email) + '</p>' +
+                    '<p class="mb-0" style="font-size:10px;color:var(--sl-text-500)">' + escHtml(u.nome) + '</p>' +
+                '</div>' +
+            '</div></td>' +
+            '<td class="d-none d-md-table-cell"><span class="small font-monospace" style="color:var(--sl-text-400)">' + escHtml(u.storage_usado_mb) + ' MB</span></td>' +
+            '<td class="d-none d-lg-table-cell">' +
+                '<div class="credits-micro">' +
+                    '<span title="Gemini"><i class="bi bi-stars" style="color:#60a5fa"></i> ' + credGemini + '</span>' +
+                    '<span title="GPT"><i class="bi bi-cpu" style="color:#a78bfa"></i> ' + credGpt + '</span>' +
+                '</div>' +
+            '</td>' +
+            '<td class="d-none d-lg-table-cell"><span style="font-size:11px;color:var(--sl-text-500)">' + escHtml(u.criado_em) + '</span></td>' +
+            '<td>' +
+                '<div class="d-flex align-items-center gap-1 flex-wrap">' +
+                    '<span class="status-badge ' + statusClass + '">' + statusText + '</span>' +
+                    '<span class="plan-badge ' + planClass + '">' + escHtml(planoLabel) + '</span>' +
+                '</div>' +
+            '</td>' +
+            '<td class="text-end">' + actionsHtml + '</td>' +
+        '</tr>';
+    }
+
+    function render() {
+        var lista = filtrar();
+        countLabel.textContent = lista.length;
+        if (lista.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.classList.remove('d-none');
+        } else {
+            tbody.innerHTML = lista.map(renderRow).join('');
+            emptyState.classList.add('d-none');
+        }
+    }
+
+    function escHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function escJs(str) {
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function mostrarToast(msg, erro) {
+        clearTimeout(toastTimer);
+        toastEl.textContent = msg;
+        toastEl.className = 'toast-inline ' + (erro ? 'toast-error' : 'toast-success');
+        toastEl.style.display = 'block';
+        toastTimer = setTimeout(function () { toastEl.style.display = 'none'; }, 5000);
+    }
+
+    // ── Ativação com plano ────────────────────────────────────────────────
+
+    window.abrirAtivacao = function (email) {
+        ativarEmailAtual = email;
+        document.getElementById('ativarEmail').textContent = email;
+        document.getElementById('ativarPlano').value = 'pro';
+        atualizarInfoPlano();
+        modalAtivar.show();
+    };
+
+    window.atualizarInfoPlano = function () {
+        var plano = document.getElementById('ativarPlano').value;
+        var info  = PLANO_INFO[plano];
+        if (info) {
+            var gptParte = info.gpt > 0 ? ' + ' + info.gpt + ' GPT' : '';
+            document.getElementById('planoInfoTexto').textContent =
+                info.label + ': ' + info.gemini + ' créditos Gemini' + gptParte + ' — validade 30 dias.';
+        }
+    };
+
+    window.confirmarAtivacao = async function () {
+        var plano = document.getElementById('ativarPlano').value;
+        var email = ativarEmailAtual;
+        modalAtivar.hide();
+
+        try {
+            var res = await fetch('/eu/api/usuario/' + encodeURIComponent(email) + '/premium', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ativo: true, plano: plano }),
+            });
+            var data = await res.json();
+            if (!res.ok || data.erro) throw new Error(data.erro || 'Erro desconhecido');
+
+            var u = todos.find(function (u) { return u.email === email; });
+            if (u) { u.is_active = true; u.plano = data.plano; }
+            mostrarToast(email + ' → Plano ' + data.plano + ' ativado com créditos alocados', false);
+            render();
+        } catch (err) {
+            mostrarToast(err.message, true);
+        }
+    };
+
+    // ── Revogar ───────────────────────────────────────────────────────────
+
+    window.revogarPremium = async function (btn) {
+        var email = btn.getAttribute('data-email');
+        if (!confirm('Revogar acesso premium de ' + email + '?')) return;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+        try {
+            var res = await fetch('/eu/api/usuario/' + encodeURIComponent(email) + '/premium', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ativo: false }),
+            });
+            var data = await res.json();
+            if (!res.ok || data.erro) throw new Error(data.erro || 'Erro desconhecido');
+
+            var u = todos.find(function (u) { return u.email === email; });
+            if (u) { u.is_active = false; u.plano = 'free'; }
+            mostrarToast(email + ' → Plano revogado', false);
+            render();
+        } catch (err) {
+            mostrarToast(err.message, true);
+            btn.disabled = false;
+            render();
+        }
+    };
+
+    // ── Créditos ──────────────────────────────────────────────────────────
+
+    window.abrirCreditos = function (email, gemini, gpt) {
+        creditosEmailAtual = email;
+        document.getElementById('creditosEmail').textContent = email;
+        document.getElementById('creditosGeminiAtual').textContent = gemini;
+        document.getElementById('creditosGptAtual').textContent = gpt;
+        document.getElementById('inputGemini').value = gemini;
+        document.getElementById('inputGpt').value = gpt;
+        modalCreditos.show();
+    };
+
+    window.confirmarCreditos = async function () {
+        var email  = creditosEmailAtual;
+        var gemini = document.getElementById('inputGemini').value.trim();
+        var gpt    = document.getElementById('inputGpt').value.trim();
+
+        if (gemini === '' && gpt === '') {
+            mostrarToast('Informe ao menos um valor de crédito.', true);
+            return;
+        }
+
+        modalCreditos.hide();
+
+        try {
+            var body = {};
+            if (gemini !== '') body.gemini = parseInt(gemini, 10);
+            if (gpt    !== '') body.gpt    = parseInt(gpt,    10);
+
+            var res = await fetch('/eu/api/usuario/' + encodeURIComponent(email) + '/creditos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            var data = await res.json();
+            if (!res.ok || data.erro) throw new Error(data.erro || 'Erro desconhecido');
+
+            // Atualiza cache local
+            var u = todos.find(function (u) { return u.email === email; });
+            if (u) {
+                if (data.creditos     !== null && data.creditos     !== undefined) u.creditos     = data.creditos;
+                if (data.creditos_gpt !== null && data.creditos_gpt !== undefined) u.creditos_gpt = data.creditos_gpt;
+            }
+
+            var msg = email + ' → ';
+            if (data.creditos     !== null && data.creditos     !== undefined) msg += 'Gemini=' + data.creditos + ' ';
+            if (data.creditos_gpt !== null && data.creditos_gpt !== undefined) msg += 'GPT=' + data.creditos_gpt;
+            mostrarToast(msg.trim(), false);
+            render();
+        } catch (err) {
+            mostrarToast(err.message, true);
+        }
+    };
+
+    // ── Paginação ─────────────────────────────────────────────────────────
+
+    loadMoreBtn && loadMoreBtn.addEventListener('click', async function () {
+        if (!nextCursor) return;
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Carregando...';
+        try {
+            var res = await fetch('/eu/api/usuarios?cursor=' + encodeURIComponent(nextCursor) + '&limit=50');
+            var data = await res.json();
+            if (!res.ok || data.erro) throw new Error(data.erro || 'Erro desconhecido');
+            todos = todos.concat(data.usuarios);
+            nextCursor = data.nextCursor || null;
+            if (!nextCursor) loadMoreWrap.classList.add('d-none');
+            render();
+        } catch (err) {
+            mostrarToast(err.message, true);
+        } finally {
+            loadMoreBtn.disabled = false;
+            loadMoreBtn.innerHTML = '<i class="bi bi-arrow-down-circle me-1"></i> Carregar mais';
+        }
+    });
+
+    searchInput.addEventListener('input', function () {
+        busca = this.value;
+        render();
+    });
+
+    filterBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            filtroPlano = this.getAttribute('data-filter');
+            filterBtns.forEach(function (b) {
+                b.className = 'filter-btn';
+                var f = b.getAttribute('data-filter');
+                if (f === filtroPlano) {
+                    b.classList.add(f === '' ? 'active-all' : f === 'premium' ? 'active-premium' : 'active-free');
+                }
+            });
+            render();
+        });
+    });
+
+    render();
+})();
+</script>
+</body>
+</html>

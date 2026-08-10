@@ -1,0 +1,837 @@
+<%- include('../../partials/header') %>
+
+<div class="sl-dash-wrapper">
+
+    <%- include('../../partials/dashboard-sidebar', { activePage: 'historico', user: user }) %>
+
+    <main class="flex-grow-1 overflow-auto">
+
+        <div class="sl-topbar d-lg-none">
+            <span class="flex-grow-1 fw-black text-uppercase small" style="letter-spacing:0.05em">Histórico XML</span>
+            <a href="/dashboard/configuracoes" class="btn btn-link p-1" style="color:var(--sl-text-400)" title="Configurações">
+                <i class="bi bi-gear-fill" style="font-size:1.25rem"></i>
+            </a>
+        </div>
+
+        <div class="p-4 p-md-5">
+        <div style="max-width:62rem">
+
+            <%# ── Cabeçalho ──────────────────────────────────────────────── %>
+            <div class="d-flex align-items-start justify-content-between gap-3 mb-5 flex-wrap">
+                <div>
+                    <h1 class="fw-black text-uppercase mb-1" style="font-size:1.15rem;letter-spacing:-0.02em">
+                        Histórico de Compilações
+                    </h1>
+                    <p class="mb-0 small" style="color:var(--sl-text-400)">
+                        Gerencie, visualize e baixe todos os templates gerados na sua conta.
+                    </p>
+                </div>
+                <div class="d-flex gap-2 flex-shrink-0">
+                    <a href="/dashboard/workspace/chat"
+                       class="btn btn-sm fw-black d-flex align-items-center gap-1"
+                       style="background:var(--sl-primary);color:#fff;font-size:.78rem;padding:6px 12px">
+                        <i class="bi bi-plus-lg"></i>
+                        <span class="d-none d-sm-inline">Novo Template</span>
+                    </a>
+                </div>
+            </div>
+
+            <%# ── Stats strip ─────────────────────────────────────────────── %>
+            <% var storagePct = storageLimitMb > 0 ? Math.min(((user.storage_usado_mb || 0) / storageLimitMb) * 100, 100) : 0; %>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-lg-3">
+                    <div class="sl-card px-4 py-3 h-100" style="margin-bottom:0">
+                        <p class="fw-black mb-0" style="font-size:1.6rem;line-height:1">
+                            <%= compilacoes.length %>
+                        </p>
+                        <p class="mb-0 mt-1" style="font-size:.72rem;color:var(--sl-text-400);text-transform:uppercase;letter-spacing:.08em">
+                            Compilações
+                        </p>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="sl-card px-4 py-3 h-100" style="margin-bottom:0">
+                        <p class="fw-black mb-0 d-flex align-items-center gap-2" style="font-size:1.6rem;line-height:1">
+                            <%= totalIA %>
+                            <% if (totalIA > 0) { %>
+                            <span class="badge rounded-pill fw-black"
+                                  style="font-size:7px;letter-spacing:.08em;background:rgba(14,165,233,.15);color:var(--sl-primary);vertical-align:middle">IA</span>
+                            <% } %>
+                        </p>
+                        <p class="mb-0 mt-1" style="font-size:.72rem;color:var(--sl-text-400);text-transform:uppercase;letter-spacing:.08em">
+                            Geradas por IA
+                        </p>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="sl-card px-4 py-3 h-100" style="margin-bottom:0">
+                        <p class="fw-black mb-0" style="font-size:1.6rem;line-height:1">
+                            <%= (user.storage_usado_mb || 0).toFixed(1) %><span style="font-size:.9rem;font-weight:500;color:var(--sl-text-400)"> MB</span>
+                        </p>
+                        <p class="mb-0 mt-1" style="font-size:.72rem;color:var(--sl-text-400);text-transform:uppercase;letter-spacing:.08em">
+                            de <%= storageLimitMb %> MB usados
+                        </p>
+                        <div class="w-100 rounded-pill mt-2" style="height:3px;background:rgba(148,163,184,.15)">
+                            <div class="rounded-pill" style="height:3px;background:<%= storagePct > 85 ? '#f87171' : 'var(--sl-primary)' %>;width:<%= storagePct %>%;transition:width .3s"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="sl-card px-4 py-3 h-100" style="margin-bottom:0">
+                        <% if (compilacoes.length > 0) { %>
+                        <p class="fw-black mb-0 text-truncate" style="font-size:.95rem;line-height:1.3">
+                            <%= compilacoes[0].siteName %>
+                        </p>
+                        <p class="mb-0 mt-1" style="font-size:.72rem;color:var(--sl-text-400)">
+                            <i class="bi bi-clock me-1"></i><%= compilacoes[0].criadoEm.split(' ').slice(0,1).join(' ') %>
+                        </p>
+                        <% } else { %>
+                        <p class="fw-black mb-0" style="font-size:1.4rem;line-height:1;color:var(--sl-text-400)">—</p>
+                        <% } %>
+                        <p class="mb-0 mt-1" style="font-size:.72rem;color:var(--sl-text-400);text-transform:uppercase;letter-spacing:.08em">
+                            Última geração
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <%# ── Filtros ─────────────────────────────────────────────────── %>
+            <% if (compilacoes.length > 0) { %>
+            <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+                <div class="position-relative flex-grow-1" style="max-width:280px">
+                    <i class="bi bi-search position-absolute" style="left:10px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--sl-text-400);pointer-events:none"></i>
+                    <input type="search" id="hist-search"
+                           placeholder="Buscar por nome..."
+                           class="form-control form-control-sm"
+                           style="padding-left:28px;font-size:.82rem;background:var(--sl-bg-900);border-color:var(--bs-border-color);color:var(--bs-body-color)">
+                </div>
+                <div class="d-flex gap-1">
+                    <button type="button" data-filter="all" class="hist-filter-btn active btn btn-sm fw-black"
+                            style="font-size:.72rem;padding:4px 10px;border-radius:20px">Todos</button>
+                    <button type="button" data-filter="ia" class="hist-filter-btn btn btn-sm"
+                            style="font-size:.72rem;padding:4px 10px;border-radius:20px;color:var(--sl-text-400);border-color:var(--bs-border-color)">
+                        <i class="bi bi-stars me-1" style="font-size:.65rem"></i>IA
+                    </button>
+                </div>
+                <p id="hist-count" class="mb-0 ms-auto small" style="color:var(--sl-text-400);white-space:nowrap">
+                    <%= compilacoes.length %> resultado<%= compilacoes.length !== 1 ? 's' : '' %>
+                </p>
+            </div>
+            <% } %>
+
+            <%# ── Estado vazio ─────────────────────────────────────────────── %>
+            <% if (compilacoes.length === 0) { %>
+            <div class="sl-card text-center py-5 px-4">
+                <div class="rounded-3 d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width:52px;height:52px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.15)">
+                    <i class="bi bi-inbox" style="font-size:1.4rem;color:var(--sl-primary)"></i>
+                </div>
+                <h2 class="fw-black mb-1" style="font-size:1rem">Nenhuma compilação ainda</h2>
+                <p class="small mb-4" style="color:var(--sl-text-400);max-width:320px;margin:0 auto 1rem">
+                    Gere seu primeiro template Blogger no Workspace, com a ajuda da IA.
+                </p>
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <a href="/dashboard/workspace/chat" class="btn btn-sm fw-black"
+                       style="background:var(--sl-primary);color:#fff;font-size:.82rem">
+                        <i class="bi bi-stars me-1"></i>Gerar com IA
+                    </a>
+                    <a href="/dashboard/chat" class="btn btn-sm fw-black"
+                       style="background:var(--sl-bg-800);color:var(--sl-text-300);font-size:.82rem">
+                        <i class="bi bi-patch-check me-1"></i>Especialista Blogger
+                    </a>
+                </div>
+            </div>
+            <% } %>
+
+            <%# ── Lista de cards ───────────────────────────────────────────── %>
+            <div id="hist-list">
+            <% compilacoes.forEach(function(c, idx) { %>
+
+            <div class="hist-card sl-card mb-3 p-0 overflow-hidden"
+                 data-nome="<%= c.siteName.toLowerCase() %>"
+                 data-ia="<%= c.geradoPorIA %>"
+                 style="border-left:3px solid <%= c.colorHex %>">
+
+                <div class="px-4 py-3">
+
+                    <%# Top row: título + badges + ações %>
+                    <div class="d-flex align-items-start gap-3 flex-wrap">
+
+                        <%# Swatch + info principal %>
+                        <div class="d-flex align-items-start gap-3 flex-grow-1 min-width-0">
+                            <%# Swatch colorido %>
+                            <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-3 mt-1"
+                                 style="width:36px;height:36px;background:<%= c.colorHex %>18;border:1.5px solid <%= c.colorHex %>40">
+                                <div class="rounded-circle" style="width:12px;height:12px;background:<%= c.colorHex %>"></div>
+                            </div>
+
+                            <%# Nome + badges de metadados %>
+                            <div class="flex-grow-1 min-width-0">
+                                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                    <p class="fw-black mb-0 text-truncate" style="font-size:.92rem">
+                                        <%= c.siteName %>
+                                    </p>
+                                    <% if (c.geradoPorIA) { %>
+                                    <span class="badge rounded-pill fw-black flex-shrink-0"
+                                          style="font-size:7px;letter-spacing:.08em;background:rgba(14,165,233,.15);color:var(--sl-primary);padding:3px 7px">
+                                        <i class="bi bi-stars" style="font-size:.6rem"></i> IA
+                                    </span>
+                                    <% } %>
+                                </div>
+
+                                <%# Badges de atributos %>
+                                <div class="d-flex align-items-center gap-1 flex-wrap">
+                                    <span class="hist-badge" style="background:<%= c.colorHex %>18;color:<%= c.colorHex %>">
+                                        <span class="rounded-circle d-inline-block me-1" style="width:6px;height:6px;background:<%= c.colorHex %>"></span>
+                                        <%= c.colorLabel %>
+                                    </span>
+                                    <% if (c.typographyLabel) { %>
+                                    <span class="hist-badge">
+                                        <i class="bi bi-type me-1" style="font-size:.6rem"></i><%= c.typographyLabel %>
+                                    </span>
+                                    <% } %>
+                                    <% if (c.gridLabel) { %>
+                                    <span class="hist-badge">
+                                        <i class="bi bi-grid me-1" style="font-size:.6rem"></i><%= c.gridLabel %>
+                                    </span>
+                                    <% } %>
+                                    <% if (c.enableSeo) { %>
+                                    <span class="hist-badge" style="background:rgba(34,197,94,.1);color:#22c55e">
+                                        <i class="bi bi-check2-circle me-1" style="font-size:.6rem"></i>SEO
+                                    </span>
+                                    <% } %>
+                                </div>
+
+                                <%# Metadados de tamanho + data %>
+                                <p class="mb-0 mt-2" style="font-size:.7rem;color:var(--sl-text-400)">
+                                    <i class="bi bi-file-zip me-1" style="font-size:.65rem"></i>
+                                    <% if (c.tamanhoBytes >= 1024*1024) { %>
+                                        <%= (c.tamanhoBytes / (1024*1024)).toFixed(1) %> MB
+                                    <% } else { %>
+                                        <%= (c.tamanhoBytes / 1024).toFixed(1) %> KB
+                                    <% } %>
+                                    <span class="mx-1" style="opacity:.4">·</span>
+                                    <i class="bi bi-clock me-1" style="font-size:.65rem"></i><%= c.criadoEm %>
+                                    <% if (c.arquivo) { %>
+                                    <span class="mx-1" style="opacity:.4">·</span>
+                                    <code class="font-monospace" style="font-size:.65rem;opacity:.55"><%= c.arquivo %></code>
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <%# Botões de ação — desktop (d-none d-md-flex) %>
+                        <div class="d-none d-md-flex align-items-center gap-2 flex-shrink-0">
+                            <% if (c.xmlPath) { %>
+                            <a href="/dashboard/preview/<%= c.id %>"
+                               class="btn btn-sm fw-black d-flex align-items-center gap-1"
+                               style="font-size:.72rem;color:var(--sl-primary);background:rgba(14,165,233,.1);border:0;padding:5px 11px">
+                                <i class="bi bi-eye"></i>
+                                <span>Preview</span>
+                            </a>
+                            <% } %>
+                            <a href="/dashboard/compilacao/<%= c.id %>/download"
+                               class="btn btn-sm fw-black d-flex align-items-center gap-1"
+                               style="font-size:.72rem;color:var(--sl-text-300);background:rgba(148,163,184,.1);border:0;padding:5px 11px">
+                                <i class="bi bi-download"></i>
+                                <span>Baixar</span>
+                            </a>
+                            <button type="button"
+                                    class="btn btn-sm fw-black d-flex align-items-center gap-1 hist-btn-importar"
+                                    data-cid="<%= c.id %>"
+                                    style="font-size:.72rem;color:var(--sl-text-300);background:transparent;border:1px solid var(--bs-border-color);padding:4px 10px">
+                                <i class="bi bi-folder-symlink"></i>
+                                <span>Workspace</span>
+                            </button>
+                            <button type="button"
+                                    class="btn btn-sm fw-black d-flex align-items-center justify-content-center hist-btn-deletar"
+                                    data-cid="<%= c.id %>"
+                                    title="Excluir template"
+                                    style="font-size:.72rem;color:#f87171;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);padding:4px 9px;min-width:30px">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <%# Botões mobile (d-flex d-md-none) %>
+                    <div class="d-flex d-md-none gap-2 mt-3 pt-3 flex-wrap" style="border-top:1px solid var(--bs-border-color)">
+                        <% if (c.xmlPath) { %>
+                        <a href="/dashboard/preview/<%= c.id %>"
+                           class="btn btn-sm fw-black flex-grow-1"
+                           style="font-size:.72rem;color:var(--sl-primary);background:rgba(14,165,233,.1);border:0">
+                            <i class="bi bi-eye me-1"></i>Preview
+                        </a>
+                        <% } %>
+                        <a href="/dashboard/compilacao/<%= c.id %>/download"
+                           class="btn btn-sm fw-black flex-grow-1"
+                           style="font-size:.72rem;color:var(--sl-text-300);background:rgba(148,163,184,.1);border:0">
+                            <i class="bi bi-download me-1"></i>Baixar
+                        </a>
+                        <button type="button"
+                                class="btn btn-sm fw-black flex-grow-1 hist-btn-importar"
+                                data-cid="<%= c.id %>"
+                                style="font-size:.72rem;color:var(--sl-text-300);background:transparent;border:1px solid var(--bs-border-color)">
+                            <i class="bi bi-folder-symlink me-1"></i>Workspace
+                        </button>
+                        <button type="button"
+                                class="btn btn-sm fw-black hist-btn-deletar"
+                                data-cid="<%= c.id %>"
+                                style="font-size:.72rem;color:#f87171;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);padding:4px 12px">
+                            <i class="bi bi-trash3 me-1"></i>Excluir
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <% }); %>
+            </div><%# /hist-list %>
+
+            <%# Mensagem sem resultados (filtro) %>
+            <div id="hist-no-results" class="sl-card text-center py-4 px-3" style="display:none">
+                <i class="bi bi-search" style="font-size:1.4rem;color:var(--sl-text-400)"></i>
+                <p class="small mt-2 mb-0" style="color:var(--sl-text-400)">Nenhuma compilação encontrada para este filtro.</p>
+            </div>
+
+        </div>
+        </div>
+
+        <%# ── Histórico de Conversas ──────────────────────────────────────── %>
+        <div class="p-4 p-md-5 pt-0">
+        <div style="max-width:62rem">
+
+        <div class="mt-5" id="chat-history-section">
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                <div>
+                    <h2 class="fw-black text-uppercase mb-1" style="font-size:1.1rem;letter-spacing:-0.02em">Histórico de Conversas</h2>
+                    <p class="mb-0 small" style="color:var(--sl-text-400)">Visualize e gerencie suas conversas com a IA.</p>
+                </div>
+                <div class="d-flex gap-1" id="chat-tab-switcher">
+                    <button type="button" class="chat-tab-btn active btn btn-sm fw-black"
+                            data-chat-type="chat-suporte"
+                            style="font-size:.72rem;padding:4px 12px;border-radius:20px">
+                        <i class="bi bi-patch-check me-1" style="font-size:.65rem"></i>Especialista Blogger
+                    </button>
+                    <button type="button" class="chat-tab-btn btn btn-sm"
+                            data-chat-type="workspace-chat"
+                            style="font-size:.72rem;padding:4px 12px;border-radius:20px;color:var(--sl-text-400);border-color:var(--bs-border-color)">
+                        <i class="bi bi-folder2-open me-1" style="font-size:.65rem"></i>Chat do Workspace
+                    </button>
+                </div>
+            </div>
+
+            <%# Loading state %>
+            <div id="chat-loading" class="sl-card text-center py-4" style="display:none">
+                <div class="spinner-border spinner-border-sm" style="color:var(--sl-primary)" role="status"></div>
+                <p class="small mt-2 mb-0" style="color:var(--sl-text-400)">A carregar conversas...</p>
+            </div>
+
+            <%# Empty state %>
+            <div id="chat-empty" class="sl-card text-center py-5 px-4" style="display:none">
+                <div class="rounded-3 d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width:52px;height:52px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.15)">
+                    <i class="bi bi-chat-square-dots" style="font-size:1.4rem;color:var(--sl-primary)"></i>
+                </div>
+                <h3 class="fw-black mb-1" style="font-size:.95rem">Nenhuma conversa ainda</h3>
+                <p class="small mb-0" style="color:var(--sl-text-400)">Inicie uma conversa no Especialista Blogger ou no Chat do Workspace.</p>
+            </div>
+
+            <%# Error state %>
+            <div id="chat-error" class="sl-card text-center py-4" style="display:none">
+                <i class="bi bi-exclamation-triangle" style="font-size:1.4rem;color:#f87171"></i>
+                <p class="small mt-2 mb-0" style="color:var(--sl-text-400)">Erro ao carregar conversas. Tente novamente.</p>
+            </div>
+
+            <%# Sessions list %>
+            <div id="chat-sessions-list"></div>
+        </div>
+
+        </div>
+        </div>
+
+    </main>
+</div>
+
+<%# Toast de feedback %>
+<div id="hist-toast" class="position-fixed align-items-center gap-2 px-4 py-3 rounded-3 shadow-lg"
+     style="bottom:24px;right:24px;z-index:9999;display:none;font-size:.82rem;font-weight:600;max-width:320px;transition:opacity .3s">
+    <i id="hist-toast-icon" class="bi" style="font-size:1rem"></i>
+    <span id="hist-toast-msg"></span>
+</div>
+
+<style>
+.hist-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: .68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: rgba(148,163,184,.1);
+    color: var(--sl-text-400);
+    white-space: nowrap;
+}
+.hist-filter-btn.active {
+    background: var(--sl-primary) !important;
+    color: #fff !important;
+    border-color: var(--sl-primary) !important;
+}
+.hist-card {
+    transition: box-shadow .2s, transform .2s;
+}
+.hist-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+[data-bs-theme="dark"] .hist-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,.35);
+}
+
+/* ── Chat History ──────────────────────────────────────────────── */
+.chat-tab-btn.active {
+    background: var(--sl-primary) !important;
+    color: #fff !important;
+    border-color: var(--sl-primary) !important;
+}
+.chat-session-row {
+    background: var(--sl-bg-950, #0a0f1a);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 8px;
+    margin-bottom: .5rem;
+    overflow: hidden;
+    transition: box-shadow .2s;
+}
+.chat-session-row:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.chat-session-header {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem 1rem;
+    cursor: pointer;
+    user-select: none;
+}
+.chat-session-preview {
+    flex: 1;
+    min-width: 0;
+    font-size: .82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.chat-session-meta {
+    font-size: .7rem;
+    color: var(--sl-text-400);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.chat-session-messages {
+    border-top: 1px solid var(--bs-border-color);
+    padding: .75rem 1rem;
+    display: none;
+    max-height: 420px;
+    overflow-y: auto;
+}
+.chat-session-messages.open {
+    display: block;
+}
+.chat-msg {
+    margin-bottom: .6rem;
+    font-size: .82rem;
+    line-height: 1.5;
+}
+.chat-msg-label {
+    font-size: .65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: .2rem;
+    opacity: .6;
+}
+.chat-msg.user-msg {
+    text-align: right;
+}
+.chat-msg.user-msg .chat-msg-label { color: var(--sl-primary); }
+.chat-msg.assistant-msg .chat-msg-label { color: #a78bfa; }
+.chat-msg-bubble {
+    display: inline-block;
+    max-width: 85%;
+    padding: .45rem .75rem;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-align: left;
+}
+.user-msg .chat-msg-bubble {
+    background: rgba(14,165,233,.12);
+    color: var(--bs-body-color);
+}
+.assistant-msg .chat-msg-bubble {
+    background: rgba(148,163,184,.08);
+    color: var(--bs-body-color);
+}
+.chat-expand-icon {
+    font-size: .75rem;
+    color: var(--sl-text-400);
+    transition: transform .2s;
+    flex-shrink: 0;
+}
+.chat-expand-icon.open {
+    transform: rotate(180deg);
+}
+.chat-del-btn {
+    background: transparent;
+    border: 1px solid var(--bs-border-color);
+    color: var(--sl-text-400);
+    border-radius: 6px;
+    font-size: .7rem;
+    padding: 3px 8px;
+    line-height: 1;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+}
+.chat-del-btn:hover {
+    color: #f87171;
+    border-color: rgba(248,113,113,.4);
+}
+</style>
+
+<script>
+// Força reload quando a página é restaurada do bfcache do browser (botão Voltar)
+// para garantir que compilações excluídas não reapareçam.
+window.addEventListener('pageshow', function (e) {
+    if (e.persisted) location.reload();
+});
+
+(function () {
+    'use strict';
+
+    // ── Toast ─────────────────────────────────────────────────────────────
+    var toastTimer = null;
+    function histToast(msg, tipo) {
+        var el   = document.getElementById('hist-toast');
+        var icon = document.getElementById('hist-toast-icon');
+        var txt  = document.getElementById('hist-toast-msg');
+        if (!el) return;
+
+        clearTimeout(toastTimer);
+        txt.textContent  = msg;
+        icon.className   = 'bi ' + (tipo === 'ok' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill');
+        el.style.background = tipo === 'ok'
+            ? 'linear-gradient(135deg,#0ea5e9,#2563eb)'
+            : 'linear-gradient(135deg,#f87171,#ef4444)';
+        el.style.color = '#fff';
+        el.style.setProperty('display', 'flex');
+        el.style.opacity = '0';
+        // Força reflow para transição funcionar
+        void el.offsetHeight;
+        el.style.opacity = '1';
+        toastTimer = setTimeout(function () {
+            el.style.opacity = '0';
+            setTimeout(function () { el.style.setProperty('display', 'none'); }, 300);
+        }, 3500);
+    }
+
+    // ── Importar para Workspace ───────────────────────────────────────────
+    document.querySelectorAll('.hist-btn-importar').forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+            var cid = btn.dataset.cid;
+            var original = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+            try {
+                var r = await fetch('/api/workspace/importar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ compilacaoId: cid }),
+                });
+                var d = await r.json();
+                if (!r.ok) {
+                    histToast(d.erro || 'Erro ao importar.', 'erro');
+                    return;
+                }
+                btn.innerHTML = '<i class="bi bi-check2-circle me-1"></i>Importado';
+                btn.style.color = '#22c55e';
+                btn.style.borderColor = 'rgba(34,197,94,.3)';
+                histToast('Projeto "' + d.projeto.nome + '" criado no Workspace!', 'ok');
+            } catch (e) {
+                histToast('Falha de conexão. Tente novamente.', 'erro');
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }
+        });
+    });
+
+    // ── Chat History ─────────────────────────────────────────────────────
+    var chatCurrentType = 'chat-suporte';
+
+    function fmtDate(iso) {
+        if (!iso) return '';
+        try {
+            var d = new Date(iso);
+            return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })
+                + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        } catch (e) { return iso.slice(0, 16).replace('T', ' '); }
+    }
+
+    function escHtml(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function renderSessions(sessions) {
+        var list = document.getElementById('chat-sessions-list');
+        if (!list) return;
+
+        if (!sessions || sessions.length === 0) {
+            list.innerHTML = '';
+            document.getElementById('chat-empty').style.display = '';
+            return;
+        }
+
+        document.getElementById('chat-empty').style.display = 'none';
+
+        var html = sessions.map(function (s) {
+            var preview = (s.firstMessage || 'Conversa sem preview').slice(0, 60);
+            if ((s.firstMessage || '').length > 60) preview += '…';
+            var dateStr = fmtDate(s.updatedAt);
+            var count   = s.messageCount || 0;
+
+            return '<div class="chat-session-row" data-sid="' + escHtml(s.sessionId) + '">'
+                + '<div class="chat-session-header" onclick="chatToggleExpand(this)">'
+                +   '<i class="bi bi-chevron-down chat-expand-icon"></i>'
+                +   '<span class="chat-session-preview">' + escHtml(preview) + '</span>'
+                +   '<span class="chat-session-meta">'
+                +     '<span class="badge rounded-pill me-2" style="background:rgba(14,165,233,.12);color:var(--sl-primary);font-size:.65rem;font-weight:700">'
+                +       count + ' msg'
+                +     '</span>'
+                +     dateStr
+                +   '</span>'
+                +   '<button type="button" class="chat-del-btn ms-2" '
+                +     'onclick="chatDeleteSession(event, \'' + escHtml(s.sessionId) + '\')" '
+                +     'title="Apagar conversa">'
+                +     '<i class="bi bi-trash3"></i>'
+                +   '</button>'
+                + '</div>'
+                + '<div class="chat-session-messages" data-loaded="false" data-sid="' + escHtml(s.sessionId) + '"></div>'
+                + '</div>';
+        }).join('');
+
+        list.innerHTML = html;
+    }
+
+    function chatToggleExpand(headerEl) {
+        // Stop if user clicked the delete button (bubbles up)
+        var messagesDiv = headerEl.nextElementSibling;
+        var icon = headerEl.querySelector('.chat-expand-icon');
+        var isOpen = messagesDiv.classList.contains('open');
+
+        if (isOpen) {
+            messagesDiv.classList.remove('open');
+            icon.classList.remove('open');
+            return;
+        }
+
+        // Open: load messages if not yet fetched
+        messagesDiv.classList.add('open');
+        icon.classList.add('open');
+
+        if (messagesDiv.dataset.loaded === 'true') return;
+
+        var sid  = messagesDiv.dataset.sid;
+        messagesDiv.innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm" style="color:var(--sl-primary)" role="status"></div></div>';
+
+        fetch('/api/chat/sessions/' + encodeURIComponent(sid) + '?type=' + encodeURIComponent(chatCurrentType))
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+            .then(function (data) {
+                messagesDiv.dataset.loaded = 'true';
+                var msgs = (data.session && data.session.messages) || [];
+                if (msgs.length === 0) {
+                    messagesDiv.innerHTML = '<p class="small mb-0" style="color:var(--sl-text-400)">Sem mensagens.</p>';
+                    return;
+                }
+                messagesDiv.innerHTML = msgs.map(function (m) {
+                    var isUser = m.role === 'user';
+                    return '<div class="chat-msg ' + (isUser ? 'user-msg' : 'assistant-msg') + '">'
+                        + '<div class="chat-msg-label">' + (isUser ? 'Você' : 'IA') + '</div>'
+                        + '<div class="chat-msg-bubble">' + escHtml(m.content) + '</div>'
+                        + '</div>';
+                }).join('');
+            })
+            .catch(function () {
+                messagesDiv.innerHTML = '<p class="small mb-0" style="color:#f87171">Erro ao carregar mensagens.</p>';
+            });
+    }
+
+    // Expose as global so inline onclick can reach it
+    window.chatToggleExpand = chatToggleExpand;
+
+    function chatDeleteSession(evt, sid) {
+        evt.stopPropagation();
+        if (!confirm('Apagar esta conversa? Esta ação não pode ser desfeita.')) return;
+
+        var row = document.querySelector('.chat-session-row[data-sid="' + sid + '"]');
+        var delBtn = evt.currentTarget;
+        if (delBtn) { delBtn.disabled = true; delBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>'; }
+
+        fetch('/api/chat/sessions/' + encodeURIComponent(sid) + '?type=' + encodeURIComponent(chatCurrentType), {
+            method: 'DELETE',
+        })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function () {
+            if (row) row.remove();
+            histToast('Conversa apagada.', 'ok');
+            // Show empty state if no rows left
+            var list = document.getElementById('chat-sessions-list');
+            if (list && list.querySelectorAll('.chat-session-row').length === 0) {
+                document.getElementById('chat-empty').style.display = '';
+            }
+        })
+        .catch(function () {
+            histToast('Erro ao apagar. Tente novamente.', 'erro');
+            if (delBtn) { delBtn.disabled = false; delBtn.innerHTML = '<i class="bi bi-trash3"></i>'; }
+        });
+    }
+
+    window.chatDeleteSession = chatDeleteSession;
+
+    function chatLoadSessions(type) {
+        var loadingEl = document.getElementById('chat-loading');
+        var emptyEl   = document.getElementById('chat-empty');
+        var errorEl   = document.getElementById('chat-error');
+        var listEl    = document.getElementById('chat-sessions-list');
+
+        if (loadingEl) loadingEl.style.display = '';
+        if (emptyEl)   emptyEl.style.display   = 'none';
+        if (errorEl)   errorEl.style.display   = 'none';
+        if (listEl)    listEl.innerHTML         = '';
+
+        fetch('/api/chat/sessions?type=' + encodeURIComponent(type))
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+            .then(function (data) {
+                if (loadingEl) loadingEl.style.display = 'none';
+                renderSessions(data.sessions || []);
+            })
+            .catch(function () {
+                if (loadingEl) loadingEl.style.display = 'none';
+                if (errorEl)   errorEl.style.display   = '';
+            });
+    }
+
+    // Tab switcher
+    document.querySelectorAll('.chat-tab-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.chat-tab-btn').forEach(function (b) {
+                b.classList.remove('active');
+                b.style.background  = '';
+                b.style.color       = 'var(--sl-text-400)';
+                b.style.borderColor = 'var(--bs-border-color)';
+            });
+            btn.classList.add('active');
+            chatCurrentType = btn.dataset.chatType;
+            chatLoadSessions(chatCurrentType);
+        });
+    });
+
+    // Load initial sessions on page load
+    chatLoadSessions(chatCurrentType);
+
+    // ── Filtros e busca ───────────────────────────────────────────────────
+    var filtroAtivo = 'all';
+
+    function aplicarFiltros() {
+        var query   = (document.getElementById('hist-search')?.value || '').toLowerCase().trim();
+        var cards   = document.querySelectorAll('.hist-card');
+        var visiveis = 0;
+
+        cards.forEach(function (card) {
+            var nome  = card.dataset.nome || '';
+            var isIA  = card.dataset.ia === 'true';
+
+            var matchSearch = !query || nome.includes(query);
+            var matchFiltro = filtroAtivo === 'all' ||
+                              (filtroAtivo === 'ia' && isIA);
+
+            var visible = matchSearch && matchFiltro;
+            card.style.display = visible ? '' : 'none';
+            if (visible) visiveis++;
+        });
+
+        var countEl   = document.getElementById('hist-count');
+        var noResults = document.getElementById('hist-no-results');
+        if (countEl)   countEl.textContent = visiveis + ' resultado' + (visiveis !== 1 ? 's' : '');
+        if (noResults) noResults.style.display = visiveis === 0 ? '' : 'none';
+    }
+
+    var searchInput = document.getElementById('hist-search');
+    if (searchInput) searchInput.addEventListener('input', aplicarFiltros);
+
+    document.querySelectorAll('.hist-filter-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.hist-filter-btn').forEach(function (b) {
+                b.classList.remove('active');
+                b.style.color  = 'var(--sl-text-400)';
+                b.style.background    = '';
+                b.style.borderColor   = 'var(--bs-border-color)';
+            });
+            btn.classList.add('active');
+            filtroAtivo = btn.dataset.filter;
+            aplicarFiltros();
+        });
+    });
+
+    // ── Excluir compilação ────────────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.hist-btn-deletar');
+        if (!btn) return;
+        var cid = btn.dataset.cid;
+        if (!cid) return;
+
+        if (!confirm('Excluir este template permanentemente? O arquivo ZIP e o XML serão removidos do armazenamento.')) return;
+
+        var originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+        fetch('/dashboard/compilacao/' + cid, {
+            method: 'DELETE',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+            .then(function (res) {
+                if (!res.ok && res.status !== 404 && res.status !== 403) {
+                    return res.json().catch(function () { throw new Error('Erro ' + res.status + ' ao excluir.'); });
+                }
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.erro) throw new Error(data.erro);
+                // Anima e remove o card
+                var card = btn.closest('.hist-card');
+                if (card) {
+                    card.style.transition = 'opacity .25s, transform .25s';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(8px)';
+                    setTimeout(function () {
+                        card.remove();
+                        aplicarFiltros();
+                    }, 250);
+                }
+                histToast('Template excluído com sucesso.', 'ok');
+            })
+            .catch(function (err) {
+                histToast(err.message || 'Erro ao excluir.', 'erro');
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            });
+    });
+
+}());
+</script>
+
+<%- include('../../partials/footer') %>

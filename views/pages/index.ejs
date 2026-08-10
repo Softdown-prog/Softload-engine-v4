@@ -1,0 +1,800 @@
+<%- include('../partials/header') %>
+
+<style>
+/* ── Hero animations ───────────────────────────────────────────────── */
+@keyframes heroFloat   { 0%,100%{transform:translateY(0)}  50%{transform:translateY(-8px)} }
+@keyframes compileFlash{ 0%,100%{opacity:1}                50%{opacity:.4}                 }
+@keyframes cursorBlink { 0%,100%{opacity:1}                50%{opacity:0}                  }
+.hero-float    { animation: heroFloat    6s ease-in-out infinite; }
+.compile-pulse { animation: compileFlash 1.4s ease-in-out infinite; }
+.cursor        { animation: cursorBlink  1s step-end infinite; }
+.chip-item { transition: border-color .2s, background .2s; }
+.chip-item:hover { border-color:rgba(56,189,248,.4)!important; background:rgba(56,189,248,.06)!important; }
+.feat-card:hover { border-color:rgba(56,189,248,.25)!important; box-shadow:0 0 30px -10px rgba(56,189,248,.2); }
+
+/* [data-hero="panel"] (desktop, d-lg-flex) recebe transform contínuo pra
+   sempre via GSAP (flutuação, ver home-hero-anim.js) e tem box-shadow
+   duplo pesado (glow desfocado) — sem will-change o navegador tende a
+   repintar a sombra a cada frame da animação infinita em vez de só
+   compositar. */
+[data-hero="panel"] { will-change: transform; }
+
+/* ── Terminal chat ─────────────────────────────────────────────────── */
+@keyframes termFade  { to { opacity:1; transform:translateY(0); } }
+.term-line { opacity:0; transform:translateY(5px); animation:termFade .28s ease forwards; }
+@keyframes thinkDot  { 0%,60%,100%{opacity:.2;transform:translateY(0)} 30%{opacity:1;transform:translateY(-3px)} }
+.think-dot:nth-child(1){ animation:thinkDot 1.1s ease-in-out       infinite; }
+.think-dot:nth-child(2){ animation:thinkDot 1.1s ease-in-out  .15s  infinite; }
+.think-dot:nth-child(3){ animation:thinkDot 1.1s ease-in-out  .30s  infinite; }
+
+/* ── Demo indicator dots ───────────────────────────────────────────── */
+.demo-dot { width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .3s;cursor:pointer;flex-shrink:0; }
+.demo-dot.active { background:#38bdf8;width:18px;border-radius:3px; }
+
+/* ── Cap items (JS sets opacity/transform for graceful degradation) ── */
+.cap-item { transition: border-color .2s, background .2s; }
+.cap-item:hover { border-color:rgba(56,189,248,.2)!important; background:rgba(15,23,42,.8)!important; }
+.cap-icon { transition:transform .2s; }
+.cap-item:hover .cap-icon { transform:scale(1.1); }
+
+/* ── Ticker ────────────────────────────────────────────────────────── */
+@keyframes tickerMove { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.ticker-track { display:flex; width:max-content; animation:tickerMove 32s linear infinite; }
+.ticker-wrap:hover .ticker-track { animation-play-state:paused; }
+
+/* ── Chat fade transition ──────────────────────────────────────────── */
+#iaChatArea { transition:opacity .35s ease; }
+
+/* ── Hero clip-mask (revelação linha-a-linha) ──────────────────────── */
+/* padding-bottom no mask: (1) cria respiro visual entre as duas linhas
+   do h1 em todos os tamanhos, (2) evita corte de descenders no
+   overflow:hidden durante a animação. */
+.hero-mask        { display:block; padding-bottom:0.18em; }
+.hero-mask__inner { display:block; }
+
+/* ── Anti-FOUC ─────────────────────────────────────────────────────────
+   Estados iniciais aplicados SÓ quando .js-anim está no <html> (armado
+   por script síncrono antes do paint). Sem JS de animação, sem GSAP ou
+   com prefers-reduced-motion → a classe nunca entra/é removida e tudo
+   aparece imediatamente. O GSAP assume o controlo via estilos inline. */
+.js-anim .hero-mask                       { overflow:hidden; }
+.js-anim .hero-mask__inner                { transform:translateY(110%); }
+.js-anim [data-hero="badge"],
+.js-anim [data-hero="lead"],
+.js-anim [data-hero="cta"],
+.js-anim [data-hero="trust"],
+.js-anim [data-hero="panel"]              { opacity:0; }
+.js-anim [data-hero="chips"] .chip-item   { opacity:0; }
+</style>
+<script>
+/* Anti-FOUC: arma os estados iniciais do hero antes de o browser pintar.
+   Removido por /js/home-hero-anim.js assim que o GSAP assume — ou no
+   failsafe abaixo, caso o script de animação não chegue a correr. */
+(function () {
+    var mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq && mq.matches) return;                       // respeita menos movimento
+    document.documentElement.classList.add('js-anim');
+    window.addEventListener('load', function () {
+        setTimeout(function () {                          // failsafe: revela se nada assumiu
+            document.documentElement.classList.remove('js-anim');
+        }, 1500);
+    });
+})();
+</script>
+
+<main class="min-vh-100 sl-pt-nav" style="background:var(--sl-bg-950);color:var(--sl-text-300)">
+
+    <% if (typeof query !== 'undefined' && query.conta === 'apagada') { %>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+        <div id="toastContaApagada" class="d-flex align-items-center gap-3 rounded-3 px-4 py-3 shadow-lg"
+             style="background:rgba(15,23,42,.97);border:1px solid rgba(34,197,94,.3);color:#4ade80;min-width:280px">
+            <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+            <div>
+                <p class="fw-bold mb-0 small">Conta excluída com sucesso.</p>
+                <p class="mb-0" style="font-size:11px;opacity:.7">Todos os seus dados foram removidos permanentemente.</p>
+            </div>
+            <button onclick="document.getElementById('toastContaApagada').remove()"
+                    class="btn btn-link p-0 ms-auto" style="color:#4ade80;line-height:1" aria-label="Fechar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+    <script>setTimeout(function(){var t=document.getElementById('toastContaApagada');if(t)t.remove();},6000);</script>
+    <% } %>
+
+    <!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+    <section class="position-relative overflow-hidden" style="padding-top:6.5rem;padding-bottom:5rem">
+        <div class="position-absolute" style="inset:0;background-image:linear-gradient(rgba(14,165,233,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(14,165,233,.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0"></div>
+        <div class="position-absolute" style="width:700px;height:700px;background:radial-gradient(circle,rgba(14,165,233,.14),transparent 65%);top:-180px;left:-120px;pointer-events:none;z-index:0"></div>
+        <div class="position-absolute" style="width:500px;height:500px;background:radial-gradient(circle,rgba(99,102,241,.1),transparent 65%);bottom:-80px;right:5%;pointer-events:none;z-index:0"></div>
+
+        <div class="container" style="max-width:1280px;position:relative;z-index:1">
+            <div class="row align-items-center g-5">
+
+                <!-- LEFT: Copy -->
+                <div class="col-lg-6 col-xl-5">
+                    <div data-hero="badge" class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border mb-4 font-monospace"
+                         style="background:rgba(14,165,233,.07);border-color:rgba(14,165,233,.2)!important;font-size:11px;color:var(--sl-primary-light)">
+                        <span class="sl-pulse rounded-circle" style="width:6px;height:6px;background:var(--sl-primary-light);flex-shrink:0;display:inline-block"></span>
+                        IA ESPECIALISTA BLOGGER · ONLINE
+                    </div>
+                    <h1 class="fw-bolder text-white mb-4" style="font-size:clamp(2rem,5vw,3.6rem);letter-spacing:-.03em;line-height:1.15;font-weight:900">
+                        <span class="hero-mask"><span class="hero-mask__inner" data-hero-line>Crie templates Blogger</span></span>
+                        <span class="hero-mask"><span class="hero-mask__inner" data-hero-line>profissionais <span style="background:linear-gradient(90deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">com IA</span></span></span>
+                    </h1>
+                    <p data-hero="lead" class="mb-4" style="font-size:1.05rem;color:var(--sl-text-400);line-height:1.75;max-width:480px">
+                        Editor visual + IA especialista + compilador XML + automação de SEO para Blogspot.
+                    </p>
+                    <div data-hero="chips" class="d-flex flex-wrap gap-2 mb-5">
+                        <span class="chip-item px-3 py-1 rounded-pill border font-monospace" style="font-size:11px;color:var(--sl-text-300);border-color:rgba(74,222,128,.25)!important;background:rgba(74,222,128,.05)"><span style="color:#4ade80">●</span> Compilador XML</span>
+                        <span class="chip-item px-3 py-1 rounded-pill border font-monospace" style="font-size:11px;color:var(--sl-text-300);border-color:rgba(56,189,248,.25)!important;background:rgba(56,189,248,.05)"><span style="color:#38bdf8">●</span> IA Blogger</span>
+                        <span class="chip-item px-3 py-1 rounded-pill border font-monospace" style="font-size:11px;color:var(--sl-text-300);border-color:rgba(251,146,60,.25)!important;background:rgba(251,146,60,.05)"><span style="color:#fb923c">●</span> SEO Automático</span>
+                        <span class="chip-item px-3 py-1 rounded-pill border font-monospace" style="font-size:11px;color:var(--sl-text-300);border-color:rgba(251,191,36,.25)!important;background:rgba(251,191,36,.05)"><span style="color:#fbbf24">●</span> AdSense Ready</span>
+                        <span class="chip-item px-3 py-1 rounded-pill border font-monospace" style="font-size:11px;color:var(--sl-text-300);border-color:rgba(129,140,248,.25)!important;background:rgba(129,140,248,.05)"><span style="color:#818cf8">●</span> Gadgets</span>
+                        <span class="chip-item px-3 py-1 rounded-pill border font-monospace" style="font-size:11px;color:var(--sl-text-300);border-color:rgba(244,114,182,.25)!important;background:rgba(244,114,182,.05)"><span style="color:#f472b6">●</span> Workspace Pro</span>
+                        <span class="chip-item px-3 py-1 rounded-pill border font-monospace" style="font-size:11px;color:var(--sl-text-300);border-color:rgba(34,211,238,.25)!important;background:rgba(34,211,238,.05)"><span style="color:#22d3ee">●</span> Estrutura Real</span>
+                    </div>
+                    <div data-hero="cta" class="d-flex flex-column flex-sm-row gap-3">
+                        <a href="/register" class="btn btn-sl-primary fw-bold px-5 py-3 d-flex align-items-center gap-2 justify-content-center"
+                           style="font-size:1rem;box-shadow:0 0 40px -8px rgba(56,189,248,.5)">
+                            Criar grátis
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        </a>
+                        <a href="#ia-pode" class="btn fw-bold px-5 py-3 d-flex align-items-center gap-2 justify-content-center"
+                           style="background:rgba(255,255,255,.03);border:1px solid var(--sl-bg-800);color:var(--sl-text-300);font-size:1rem">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Ver demonstração
+                        </a>
+                    </div>
+                    <p data-hero="trust" class="mt-4 mb-0 small" style="color:var(--sl-text-500)">
+                        <svg class="me-1" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="vertical-align:middle"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        Sem cartão de crédito · Templates XML reais para Blogspot
+                    </p>
+                </div>
+
+                <!-- RIGHT: Mockup Panel -->
+                <div class="col-lg-6 col-xl-7 d-none d-lg-flex justify-content-center">
+                    <div data-hero="panel" class="position-relative w-100" style="max-width:620px">
+                        <div class="rounded-4 overflow-hidden" style="background:#080e1c;border:1px solid rgba(56,189,248,.18);box-shadow:0 0 100px -25px rgba(56,189,248,.3),0 30px 80px -20px rgba(0,0,0,.7)">
+                            <div class="d-flex align-items-center gap-3 px-4 py-3" style="background:rgba(255,255,255,.02);border-bottom:1px solid rgba(255,255,255,.05)">
+                                <div class="d-flex gap-1">
+                                    <span class="rounded-circle" style="width:10px;height:10px;background:#ff5f57"></span>
+                                    <span class="rounded-circle" style="width:10px;height:10px;background:#febc2e"></span>
+                                    <span class="rounded-circle" style="width:10px;height:10px;background:#28c840"></span>
+                                </div>
+                                <div class="d-flex ms-3 rounded-2 overflow-hidden" style="border:1px solid rgba(255,255,255,.07)">
+                                    <span class="px-3 py-1 font-monospace" style="font-size:11px;color:#38bdf8;background:rgba(56,189,248,.1);border-right:1px solid rgba(255,255,255,.07)">Workspace</span>
+                                    <span class="px-3 py-1 font-monospace" style="font-size:11px;color:rgba(255,255,255,.35);border-right:1px solid rgba(255,255,255,.07)">Chat IA</span>
+                                    <span class="px-3 py-1 font-monospace" style="font-size:11px;color:rgba(255,255,255,.35)">Preview</span>
+                                </div>
+                                <div class="ms-auto">
+                                    <span class="compile-pulse rounded-pill px-2 py-1 font-monospace" style="font-size:10px;background:rgba(74,222,128,.1);color:#4ade80">● COMPILANDO</span>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <div class="rounded-3 overflow-hidden" style="background:#050a14;border:1px solid rgba(255,255,255,.06)">
+                                            <div class="d-flex align-items-center gap-2 px-3 py-2" style="background:rgba(255,255,255,.02);border-bottom:1px solid rgba(255,255,255,.05)">
+                                                <span class="rounded-circle" style="width:6px;height:6px;background:rgba(56,189,248,.5)"></span>
+                                                <span class="font-monospace" style="font-size:10px;color:rgba(255,255,255,.3)">template.xml</span>
+                                                <span class="ms-auto rounded-pill px-2 font-monospace" style="font-size:9px;background:rgba(99,102,241,.15);color:#818cf8">Blogger XML</span>
+                                            </div>
+                                            <pre class="mb-0 px-4 py-3" style="font-size:11.5px;line-height:1.85;overflow:hidden;font-family:'Courier New',monospace"><code><span style="color:#6272a4">&lt;!-- IA: Tech Blog Pro — SEO ✓ AdSense ✓ --&gt;</span>
+<span style="color:#ff79c6">&lt;b:section</span> <span style="color:#50fa7b">id</span>=<span style="color:#f1fa8c">'header'</span> <span style="color:#50fa7b">maxwidgets</span>=<span style="color:#f1fa8c">'1'</span> <span style="color:#50fa7b">showaddelement</span>=<span style="color:#f1fa8c">'no'</span><span style="color:#ff79c6">&gt;</span>
+  <span style="color:#ff79c6">&lt;b:widget</span> <span style="color:#50fa7b">id</span>=<span style="color:#f1fa8c">'Header1'</span> <span style="color:#50fa7b">type</span>=<span style="color:#f1fa8c">'Header'</span> <span style="color:#50fa7b">locked</span>=<span style="color:#f1fa8c">'true'</span><span style="color:#ff79c6">&gt;</span>
+    <span style="color:#8be9fd">&lt;b:includable id='main'&gt;</span>
+      <span style="color:#ff79c6">&lt;data:blog.pageTitle/&gt;</span>
+    <span style="color:#8be9fd">&lt;/b:includable&gt;</span>
+  <span style="color:#ff79c6">&lt;/b:widget&gt;</span>
+<span style="color:#ff79c6">&lt;/b:section&gt;</span><span class="cursor" style="color:#38bdf8">▌</span></code></pre>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-7">
+                                        <div class="d-flex gap-2 align-items-start mb-3">
+                                            <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 fw-bold"
+                                                 style="width:30px;height:30px;background:linear-gradient(135deg,#38bdf8,#6366f1);font-size:10px;color:white;font-family:monospace">IA</div>
+                                            <div class="rounded-3 px-3 py-2 flex-fill" style="background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.15)">
+                                                <p class="mb-0" style="font-size:11.5px;color:var(--sl-text-300);line-height:1.6">Template <strong style="color:#38bdf8">Tech Blog Pro</strong> gerado. SEO ativo, 4 slots AdSense, sidebar com gadgets.<span class="cursor" style="color:#38bdf8;font-size:10px"> ▌</span></p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2 align-items-start justify-content-end">
+                                            <div class="rounded-3 px-3 py-2" style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.15);max-width:85%">
+                                                <p class="mb-0" style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">"blog de tecnologia, foco em AdSense, tema escuro"</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-5">
+                                        <div class="d-flex flex-column gap-2 h-100 justify-content-center">
+                                            <div class="d-flex align-items-center justify-content-between rounded-3 px-3 py-2" style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15)">
+                                                <span style="font-size:10px;color:rgba(255,255,255,.4);font-family:monospace">SEO Score</span>
+                                                <span class="fw-bold font-monospace" style="color:#4ade80;font-size:1rem">98</span>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between rounded-3 px-3 py-2" style="background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.15)">
+                                                <span style="font-size:10px;color:rgba(255,255,255,.4);font-family:monospace">AdSense</span>
+                                                <span class="fw-bold font-monospace" style="color:#fb923c;font-size:1rem">4 slots</span>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between rounded-3 px-3 py-2" style="background:rgba(129,140,248,.05);border:1px solid rgba(129,140,248,.15)">
+                                                <span style="font-size:10px;color:rgba(255,255,255,.4);font-family:monospace">LCP</span>
+                                                <span class="fw-bold font-monospace" style="color:#818cf8;font-size:1rem">0.8s</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 px-4 py-3" style="border-top:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.01)">
+                                <span class="font-monospace" style="font-size:10px;color:#4ade80">✓ Compilado em 320ms</span>
+                                <div class="ms-auto d-flex gap-2">
+                                    <span class="rounded-2 px-2 py-1 font-monospace" style="font-size:9px;background:rgba(56,189,248,.08);color:#38bdf8;border:1px solid rgba(56,189,248,.15)">Preview</span>
+                                    <span class="rounded-2 px-2 py-1 font-monospace" style="font-size:9px;background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.15)">↓ Baixar .xml</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating mobile frame -->
+                        <div class="position-absolute d-none d-xl-block" style="bottom:-24px;right:-52px;width:110px;z-index:2">
+                            <div class="rounded-4 overflow-hidden" style="background:#050a14;border:2px solid rgba(56,189,248,.25);box-shadow:0 20px 50px rgba(0,0,0,.6)">
+                                <div class="text-center py-1" style="background:rgba(56,189,248,.04);border-bottom:1px solid rgba(255,255,255,.05)">
+                                    <span class="rounded-pill d-inline-block" style="width:28px;height:4px;background:rgba(255,255,255,.1)"></span>
+                                </div>
+                                <div class="px-2 pt-2 pb-3">
+                                    <div class="rounded-1 mb-2" style="height:36px;background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(99,102,241,.15));border:1px solid rgba(56,189,248,.1)"></div>
+                                    <div class="rounded-1 mb-1" style="height:5px;background:rgba(255,255,255,.08);width:90%"></div>
+                                    <div class="rounded-1 mb-1" style="height:5px;background:rgba(255,255,255,.06);width:70%"></div>
+                                    <div class="rounded-1 mb-2" style="height:5px;background:rgba(255,255,255,.04);width:85%"></div>
+                                    <div class="d-flex gap-1">
+                                        <div class="rounded-1 flex-fill" style="height:28px;background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.15)"></div>
+                                        <div class="rounded-1 flex-fill" style="height:28px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.15)"></div>
+                                    </div>
+                                    <div class="mt-2 text-center"><span class="font-monospace" style="font-size:7px;color:rgba(255,255,255,.3)">mobile preview</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating badge top-left -->
+                        <div class="position-absolute d-none d-xl-block" style="top:-18px;left:-28px;z-index:2">
+                            <div class="rounded-3 px-3 py-2 d-flex align-items-center gap-2" style="background:rgba(5,10,20,.95);border:1px solid rgba(74,222,128,.25);box-shadow:0 8px 30px rgba(0,0,0,.4)">
+                                <svg width="14" height="14" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span class="font-monospace" style="font-size:10px;color:#4ade80;white-space:nowrap">Estrutura Blogger real</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════ FEATURES ═══════════════════════════════════ -->
+    <section id="features" class="py-5 border-top" style="border-color:var(--sl-bg-900)!important;padding-top:5rem!important;padding-bottom:5rem!important">
+        <div class="container" style="max-width:1200px">
+            <div class="text-center mb-5">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border mb-3 font-monospace"
+                     style="background:var(--sl-bg-900);border-color:var(--sl-bg-800)!important;font-size:11px;color:var(--sl-text-400)">O QUE NINGUÉM MAIS ENTREGA</div>
+                <h2 class="fw-bolder text-white mb-2" style="font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;letter-spacing:-.02em">
+                    Não é só um gerador.<br>
+                    <span style="background:linear-gradient(90deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">É a plataforma completa do Blogger.</span>
+                </h2>
+                <p style="color:var(--sl-text-500);max-width:540px;margin:0 auto;font-size:1rem">
+                    Construída por quem conhece a estrutura interna do Blogspot — do XML aos gadgets.
+                </p>
+            </div>
+            <div class="row g-4">
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="feat-card h-100 rounded-4 border p-4" style="background:rgba(15,23,42,.5);border-color:var(--sl-bg-800)!important;backdrop-filter:blur(20px)">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center mb-4" style="width:48px;height:48px;background:rgba(56,189,248,.1);color:#38bdf8">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                        </div>
+                        <h3 class="fw-bold text-white mb-2" style="font-size:1.05rem">IA Especialista em Blogger</h3>
+                        <p class="small mb-0" style="color:var(--sl-text-400);line-height:1.75">Chat treinado com a estrutura real do Blogspot: <code style="color:#38bdf8;background:rgba(56,189,248,.08);padding:1px 4px;border-radius:3px">b:section</code>, <code style="color:#38bdf8;background:rgba(56,189,248,.08);padding:1px 4px;border-radius:3px">b:widget</code>, variáveis condicionais e gadgets. Não é um ChatGPT genérico.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="feat-card h-100 rounded-4 border p-4" style="background:rgba(15,23,42,.5);border-color:var(--sl-bg-800)!important;backdrop-filter:blur(20px)">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center mb-4" style="width:48px;height:48px;background:rgba(74,222,128,.1);color:#4ade80">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </div>
+                        <h3 class="fw-bold text-white mb-2" style="font-size:1.05rem">Compilador XML de Templates</h3>
+                        <p class="small mb-0" style="color:var(--sl-text-400);line-height:1.75">Motor Node.js que monta e valida o XML em milissegundos. Gera um arquivo <code style="color:#4ade80;background:rgba(74,222,128,.08);padding:1px 4px;border-radius:3px">.xml</code> pronto para importar no Blogspot — com módulos, grid e tipografia customizáveis.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="feat-card h-100 rounded-4 border p-4" style="background:rgba(15,23,42,.5);border-color:var(--sl-bg-800)!important;backdrop-filter:blur(20px)">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center mb-4" style="width:48px;height:48px;background:rgba(251,146,60,.1);color:#fb923c">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </div>
+                        <h3 class="fw-bold text-white mb-2" style="font-size:1.05rem">SEO + AdSense Automático</h3>
+                        <p class="small mb-0" style="color:var(--sl-text-400);line-height:1.75">Meta tags, Open Graph, Schema.org e posicionamento estratégico de anúncios AdSense embutidos no template. Seu blog nasce SEO-ready.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="feat-card h-100 rounded-4 border p-4" style="background:rgba(15,23,42,.5);border-color:var(--sl-bg-800)!important;backdrop-filter:blur(20px)">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center mb-4" style="width:48px;height:48px;background:rgba(129,140,248,.1);color:#818cf8">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>
+                        </div>
+                        <h3 class="fw-bold text-white mb-2" style="font-size:1.05rem">Gadgets e Automação de Widgets</h3>
+                        <p class="small mb-0" style="color:var(--sl-text-400);line-height:1.75">Sidebar, header, rodapé, posts relacionados e widgets de categorias com estrutura nativa <code style="color:#818cf8;background:rgba(129,140,248,.08);padding:1px 4px;border-radius:3px">b:widget</code> do Blogger, sem gambiarras.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="feat-card h-100 rounded-4 border p-4" style="background:rgba(15,23,42,.5);border-color:var(--sl-bg-800)!important;backdrop-filter:blur(20px)">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center mb-4" style="width:48px;height:48px;background:rgba(244,114,182,.1);color:#f472b6">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+                        </div>
+                        <h3 class="fw-bold text-white mb-2" style="font-size:1.05rem">Workspace Completo</h3>
+                        <p class="small mb-0" style="color:var(--sl-text-400);line-height:1.75">Editor visual, histórico com download, preview mobile em tempo real, chat IA e gestão de armazenamento — tudo em um painel unificado.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="feat-card h-100 rounded-4 border p-4" style="background:rgba(15,23,42,.5);border-color:var(--sl-bg-800)!important;backdrop-filter:blur(20px)">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center mb-4" style="width:48px;height:48px;background:rgba(34,211,238,.1);color:#22d3ee">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        </div>
+                        <h3 class="fw-bold text-white mb-2" style="font-size:1.05rem">Templates Testados em Produção</h3>
+                        <p class="small mb-0" style="color:var(--sl-text-400);line-height:1.75">Chassis (Boutique, MagTech, MegaGame) construídos sobre estrutura Blogger real. Core Web Vitals aprovado, responsivos e prontos para monetização.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════ O QUE A IA CONSEGUE FAZER ══════════════════════════════ -->
+    <section id="ia-pode" class="py-5 position-relative overflow-hidden" style="border-top:1px solid rgba(255,255,255,.04);padding-top:5rem!important;padding-bottom:5rem!important">
+
+        <!-- Subtle gradient wash -->
+        <div class="position-absolute" style="inset:0;background:linear-gradient(180deg,transparent 0%,rgba(99,102,241,.04) 50%,transparent 100%);pointer-events:none"></div>
+        <div class="position-absolute" style="width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.07),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none"></div>
+
+        <div class="container position-relative" style="max-width:1200px">
+
+            <!-- Section header -->
+            <div class="text-center mb-5">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border mb-3 font-monospace"
+                     style="background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.2)!important;font-size:11px;color:#818cf8">
+                    <span class="sl-pulse rounded-circle" style="width:6px;height:6px;background:#818cf8;flex-shrink:0;display:inline-block"></span>
+                    O QUE A IA CONSEGUE FAZER
+                </div>
+                <h2 class="fw-bolder text-white mb-2" style="font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;letter-spacing:-.02em">
+                    A IA que entende Blogger<br>
+                    <span style="background:linear-gradient(90deg,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">por dentro</span>
+                </h2>
+                <p style="color:var(--sl-text-500);max-width:520px;margin:0 auto;font-size:1rem">
+                    Não é um ChatGPT com prompt básico. É uma IA com conhecimento real da estrutura XML do Blogspot — testada em produção.
+                </p>
+            </div>
+
+            <!-- Two-column: terminal demo + capability list -->
+            <div class="row g-5 align-items-start mb-5">
+
+                <!-- LEFT: Animated Chat Demo -->
+                <div class="col-lg-7">
+                    <div class="rounded-4 overflow-hidden position-relative" style="background:#080e1c;border:1px solid rgba(129,140,248,.18);box-shadow:0 0 80px -30px rgba(99,102,241,.3),0 30px 80px -20px rgba(0,0,0,.5)">
+
+                        <!-- Window chrome -->
+                        <div class="d-flex align-items-center gap-3 px-4 py-3" style="background:rgba(255,255,255,.02);border-bottom:1px solid rgba(255,255,255,.05)">
+                            <div class="d-flex gap-1">
+                                <span class="rounded-circle" style="width:10px;height:10px;background:#ff5f57"></span>
+                                <span class="rounded-circle" style="width:10px;height:10px;background:#febc2e"></span>
+                                <span class="rounded-circle" style="width:10px;height:10px;background:#28c840"></span>
+                            </div>
+                            <span class="font-monospace ms-2" style="font-size:11px;color:rgba(255,255,255,.3)">Chat IA · Softload Engine</span>
+                            <div class="ms-auto d-flex align-items-center gap-2" id="demoIndicators"></div>
+                        </div>
+
+                        <!-- Chat messages area -->
+                        <div id="iaChatArea" class="p-4" style="min-height:330px;max-height:330px;overflow:hidden;position:relative"></div>
+
+                        <!-- Input bar -->
+                        <div class="d-flex align-items-center gap-3 px-4 py-3" style="border-top:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.01)">
+                            <div class="rounded-2 px-2 py-1 flex-shrink-0" style="background:rgba(129,140,248,.08);border:1px solid rgba(129,140,248,.15)">
+                                <span class="font-monospace" style="font-size:10px;color:#818cf8">você</span>
+                            </div>
+                            <span id="iaInputText" class="flex-fill font-monospace" style="font-size:12.5px;color:var(--sl-text-300);min-height:18px;white-space:nowrap;overflow:hidden"></span>
+                            <span class="cursor" style="color:#818cf8;font-size:14px">▌</span>
+                            <div class="rounded-2 p-2 ms-2 flex-shrink-0" style="background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.2);cursor:pointer">
+                                <svg width="14" height="14" fill="none" stroke="#818cf8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Capability checklist -->
+                <div class="col-lg-5">
+                    <div class="d-flex flex-column gap-2" id="capList">
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(74,222,128,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Corrigir XML quebrado</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Detecta e corrige b:section, b:widget e b:includable</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(56,189,248,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#38bdf8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Gerar widgets Blogger nativos</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Sidebar, header, rodapé e posts relacionados</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(129,140,248,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#818cf8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Criar homepage completa</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Grid de posts, destaque e paginação nativa</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(251,146,60,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#fb923c" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">SEO automático</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Meta tags, Open Graph, Twitter Card e canonical</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(251,191,36,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#fbbf24" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Schema JSON-LD</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">BlogPosting, BreadcrumbList e Organization</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(251,146,60,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#fb923c" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Estrutura AdSense</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Slots 300×250, 728×90 e responsive units</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(34,211,238,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#22d3ee" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Menu responsivo mobile</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Hamburger nativo sem dependências externas</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(100,116,139,.15)">
+                                <svg width="15" height="15" fill="none" stroke="#94a3b8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Dark mode nativo</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">prefers-color-scheme + toggle com localStorage</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(74,222,128,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#4ade80" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Compactação CSS</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Remove espaços sem quebrar especificidade</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(244,114,182,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#f472b6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Correção mobile</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Overflow, viewports e imagens responsivas</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(129,140,248,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#818cf8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Sidebar com gadgets</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">Posts populares, categorias e busca b:widget real</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                        <div class="cap-item d-flex gap-3 align-items-center p-3 rounded-3" style="border:1px solid rgba(255,255,255,.06);background:rgba(15,23,42,.5)">
+                            <div class="cap-icon rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:rgba(56,189,248,.1)">
+                                <svg width="15" height="15" fill="none" stroke="#38bdf8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div class="flex-fill">
+                                <p class="fw-semibold mb-0 text-white" style="font-size:13px">Open Graph dinâmico</p>
+                                <p class="mb-0" style="font-size:11px;color:var(--sl-text-500)">og:image via data:post.featuredImage do Blogger</p>
+                            </div>
+                            <span style="color:#4ade80;font-size:13px;flex-shrink:0">✓</span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Template ticker strip -->
+            <div class="ticker-wrap rounded-3 overflow-hidden" style="border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.01)">
+                <div class="ticker-track py-3 gap-3">
+                    <!-- First set -->
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">⚡ Tech Blog Pro</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🎮 MegaGame</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🛍 Boutique Store</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">📰 MagTech News</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🌙 Dark Magazine</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">⚽ Sports Hub</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🍕 Food &amp; Travel</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🎵 Portfolio Clean</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">💼 E-commerce BR</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">📱 Minimal Blog</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🔬 Science Daily</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">💰 Finance Pro</span>
+                    <!-- Second set (duplicate for seamless loop) -->
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">⚡ Tech Blog Pro</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🎮 MegaGame</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🛍 Boutique Store</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">📰 MagTech News</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🌙 Dark Magazine</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">⚽ Sports Hub</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🍕 Food &amp; Travel</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🎵 Portfolio Clean</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">💼 E-commerce BR</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">📱 Minimal Blog</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">🔬 Science Daily</span>
+                    <span class="flex-shrink-0 rounded-pill px-4 py-2 font-monospace" style="font-size:11px;color:var(--sl-text-400);border:1px solid rgba(255,255,255,.07);background:rgba(15,23,42,.5);white-space:nowrap">💰 Finance Pro</span>
+                </div>
+            </div>
+
+            <!-- Bottom CTA -->
+            <div class="text-center mt-5 pt-2">
+                <a href="/register" class="btn btn-sl-primary fw-bold px-5 py-3 me-3" style="font-size:1rem;box-shadow:0 0 40px -8px rgba(56,189,248,.4)">
+                    Começar gratuitamente
+                </a>
+                <a href="/login" class="btn fw-bold px-4 py-3" style="background:rgba(255,255,255,.03);border:1px solid var(--sl-bg-800);color:var(--sl-text-400);font-size:1rem">
+                    Já tenho conta
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<script>
+(function() {
+    'use strict';
+
+    /* ── Terminal chat demo ──────────────────────────────────────────── */
+    var DEMOS = [
+        {
+            user: 'Corrija o XML quebrado do meu template',
+            lines: [
+                { t: 'text',  c: 'Analisando estrutura XML do template...' },
+                { t: 'warn',  c: 'b:section \'main\' sem atributo maxwidgets' },
+                { t: 'warn',  c: 'b:includable id duplicado no widget Footer' },
+                { t: 'ok',    c: '2 erros corrigidos · compilando...' },
+                { t: 'code',  c: "&lt;b:section id='main' maxwidgets='3'\n  showaddelement='yes'&gt;" }
+            ]
+        },
+        {
+            user: 'Adicione SEO completo ao meu blog',
+            lines: [
+                { t: 'text',  c: 'Gerando meta tags e Open Graph...' },
+                { t: 'ok',    c: 'og:title, og:description, og:image — ok' },
+                { t: 'ok',    c: 'Schema JSON-LD: BlogPosting — ok' },
+                { t: 'ok',    c: 'Twitter Card e canonical URL — ok' },
+                { t: 'code',  c: "&lt;meta property='og:title'\n  content='&lt;data:blog.pageTitle/&gt;'&gt;" }
+            ]
+        },
+        {
+            user: 'Crie widgets AdSense para sidebar e header',
+            lines: [
+                { t: 'text',  c: 'Calculando posições otimizadas para CPM...' },
+                { t: 'ok',    c: '300×250 sidebar — acima do fold' },
+                { t: 'ok',    c: '728×90 leaderboard — header' },
+                { t: 'ok',    c: 'Responsive unit — entre posts' },
+                { t: 'code',  c: "&lt;b:widget id='AdSense1'\n  type='AdSense' locked='false'&gt;" }
+            ]
+        },
+        {
+            user: 'Gere menu responsivo mobile para o blog',
+            lines: [
+                { t: 'text',  c: 'Detectando breakpoints do template...' },
+                { t: 'ok',    c: 'Hamburger menu nativo construído' },
+                { t: 'ok',    c: 'CSS @media queries inseridos' },
+                { t: 'ok',    c: 'Toggle JS sem dependências externas' },
+                { t: 'code',  c: '@media (max-width:768px) {\n  .nav-desktop { display:none; }\n  .nav-mobile  { display:block; } }' }
+            ]
+        },
+        {
+            user: 'Adicione dark mode automático ao template',
+            lines: [
+                { t: 'text',  c: 'Detectando variáveis de cor do template...' },
+                { t: 'ok',    c: 'Paleta escura gerada (22 variáveis CSS)' },
+                { t: 'ok',    c: 'prefers-color-scheme configurado' },
+                { t: 'ok',    c: 'Toggle manual com localStorage' },
+                { t: 'code',  c: '@media (prefers-color-scheme: dark) {\n  :root { --bg:#0a0f1e;\n    --text:#e2e8f0; } }' }
+            ]
+        }
+    ];
+
+    var chatArea  = document.getElementById('iaChatArea');
+    var inputEl   = document.getElementById('iaInputText');
+    var indicators= document.getElementById('demoIndicators');
+    if (!chatArea || !inputEl || !indicators) return;
+
+    /* build indicator dots */
+    DEMOS.forEach(function(_, i) {
+        var d = document.createElement('span');
+        d.className = 'demo-dot' + (i === 0 ? ' active' : '');
+        d.addEventListener('click', function() { startDemo(i); });
+        indicators.appendChild(d);
+    });
+
+    var timers = [];
+    function sched(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function clearAll() { timers.forEach(clearTimeout); timers = []; }
+
+    function av() {
+        return '<div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#818cf8,#38bdf8);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;font-family:monospace">IA</div>';
+    }
+
+    function addMsg(type, content) {
+        var el = document.createElement('div');
+        el.className = 'term-line mb-2';
+        if (type === 'user') {
+            el.className += ' d-flex justify-content-end';
+            el.innerHTML = '<div class="rounded-3 px-3 py-2" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.18);max-width:85%"><p class="mb-0" style="font-size:12.5px;color:rgba(255,255,255,.7)">' + content + '</p></div>';
+        } else if (type === 'thinking') {
+            el.id = 'thinkEl';
+            el.innerHTML = '<div class="d-flex gap-2 align-items-center">' + av() + '<div class="rounded-3 px-3 py-2" style="background:rgba(129,140,248,.07);border:1px solid rgba(129,140,248,.12)"><span class="think-dot" style="display:inline-block;width:5px;height:5px;background:#818cf8;border-radius:50%;margin:0 2px"></span><span class="think-dot" style="display:inline-block;width:5px;height:5px;background:#818cf8;border-radius:50%;margin:0 2px"></span><span class="think-dot" style="display:inline-block;width:5px;height:5px;background:#818cf8;border-radius:50%;margin:0 2px"></span></div></div>';
+        } else if (type === 'text') {
+            el.innerHTML = '<div class="d-flex gap-2 align-items-start">' + av() + '<div class="rounded-3 px-3 py-2" style="background:rgba(129,140,248,.07);border:1px solid rgba(129,140,248,.12);max-width:90%"><p class="mb-0" style="font-size:12.5px;color:var(--sl-text-300);line-height:1.6">' + content + '</p></div></div>';
+        } else if (type === 'ok') {
+            el.innerHTML = '<div class="d-flex gap-2 align-items-center ms-5 ps-2"><span style="color:#4ade80;font-size:12px">✓</span><span style="font-size:12px;color:rgba(255,255,255,.6)">' + content + '</span></div>';
+        } else if (type === 'warn') {
+            el.innerHTML = '<div class="d-flex gap-2 align-items-center ms-5 ps-2"><span style="color:#fbbf24;font-size:12px">⚠</span><span style="font-size:12px;color:rgba(255,255,255,.55)">' + content + '</span></div>';
+        } else if (type === 'code') {
+            el.innerHTML = '<div class="ms-5 ps-2 mt-1"><div class="rounded-3 overflow-hidden" style="background:#050a14;border:1px solid rgba(255,255,255,.07)"><pre class="mb-0 px-3 py-2" style="font-size:11px;color:#50fa7b;line-height:1.7;font-family:monospace;white-space:pre">' + content + '</pre></div></div>';
+        }
+        chatArea.appendChild(el);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function typeInInput(text, done) {
+        var i = 0;
+        inputEl.textContent = '';
+        function step() {
+            inputEl.textContent = text.slice(0, ++i);
+            if (i < text.length) sched(step, 26);
+            else if (done) sched(done, 180);
+        }
+        step();
+    }
+
+    function startDemo(idx) {
+        clearAll();
+        chatArea.innerHTML = '';
+        inputEl.textContent = '';
+
+        /* update dots */
+        document.querySelectorAll('.demo-dot').forEach(function(d, i) {
+            d.classList.toggle('active', i === idx);
+        });
+
+        var demo = DEMOS[idx];
+        var t = 0;
+
+        /* 1 — type user message in input bar */
+        sched(function() {
+            typeInInput(demo.user, function() {
+                /* 2 — move to chat */
+                inputEl.textContent = '';
+                addMsg('user', demo.user);
+
+                /* 3 — thinking dots */
+                sched(function() {
+                    addMsg('thinking', '');
+
+                    /* 4 — remove thinking, show IA lines */
+                    sched(function() {
+                        var th = document.getElementById('thinkEl');
+                        if (th) th.remove();
+
+                        demo.lines.forEach(function(line, i) {
+                            sched(function() {
+                                addMsg(line.t, line.c);
+                            }, i * 370);
+                        });
+
+                        /* 5 — wait, then fade out and run next */
+                        var fadeDelay = demo.lines.length * 370 + 2000;
+                        sched(function() {
+                            chatArea.style.opacity = '0';
+                        }, fadeDelay);
+                        sched(function() {
+                            chatArea.style.opacity = '1';
+                            chatArea.innerHTML = '';
+                            startDemo((idx + 1) % DEMOS.length);
+                        }, fadeDelay + 380);
+
+                    }, 650);
+                }, 300);
+            });
+        }, t + 400);
+    }
+
+    /* Espera a timeline de entrada do hero (GSAP, ver home-hero-anim.js)
+       terminar antes de começar a demo — as duas animando ao mesmo tempo
+       logo após o load é a causa real do travamento no desktop. Delay
+       fixo (900ms) foi trocado por um evento, já que a duração real da
+       timeline de entrada não é garantida.
+       Rede de segurança: se home-hero-anim.js falhar ao carregar/executar
+       por qualquer motivo, o evento nunca chega — o timeout garante que a
+       demo começa mesmo assim. */
+    var demoIniciado = false;
+    function iniciarDemoUmaVez() {
+        if (demoIniciado) return;
+        demoIniciado = true;
+        startDemo(0);
+    }
+    document.addEventListener('sl:hero-entrance-done', iniciarDemoUmaVez);
+    sched(iniciarDemoUmaVez, 3000);
+
+    /* ── IntersectionObserver: cap items ─────────────────────────────── */
+    /* NOTA: os feature cards (.feat-card) são revelados via GSAP
+       ScrollTrigger com scrub — ver /js/home-hero-anim.js. */
+    var capItems = document.querySelectorAll('.cap-item');
+    if ('IntersectionObserver' in window) {
+        var capObs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) {
+                if (e.isIntersecting) {
+                    e.target.style.opacity = '1';
+                    e.target.style.transform = 'translateX(0)';
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -20px 0px' });
+
+        capItems.forEach(function(el, i) {
+            el.style.opacity = '0';
+            el.style.transform = 'translateX(28px)';
+            el.style.transition = 'opacity .45s ease ' + (i * 48) + 'ms, transform .45s ease ' + (i * 48) + 'ms';
+            capObs.observe(el);
+        });
+    }
+
+})();
+</script>
+
+<%# ── GSAP + ScrollTrigger (estáveis, via jsdelivr — já na allowlist do CSP) ── %>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="/js/home-hero-anim.js"></script>
+
+<%- include('../partials/footer') %>

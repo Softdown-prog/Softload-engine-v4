@@ -1,0 +1,59 @@
+{
+  "id": "blog",
+  "slug": "blog",
+  "titulo": "Blog",
+
+  "categoria": "conteudo",
+
+  "prioridade": 10,
+
+  "frameworks": [
+    "php",
+    "django",
+    "flask",
+    "ejs"
+  ],
+
+  "objetivo": "Publicação contínua de artigos e gerenciamento de conteúdo.",
+
+  "componentes": [
+    "header",
+    "topbar",
+    "navbar",
+    "hero",
+    "featured-post",
+    "posts-grid",
+    "sidebar",
+    "newsletter",
+    "autor-box",
+    "comentarios",
+    "posts-relacionados",
+    "breadcrumbs",
+    "paginacao",
+    "footer"
+  ],
+
+  "seo": [
+    "open-graph",
+    "twitter-cards",
+    "schema-org",
+    "canonical",
+    "rss",
+    "sitemap"
+  ],
+
+  "widgets": [
+    "categorias",
+    "tags",
+    "posts-populares",
+    "posts-recentes",
+    "arquivo",
+    "busca"
+  ],
+
+  "workers":[
+    "htmlWorker",
+    "cssWorker",
+    "jsWorker"
+  ]
+}

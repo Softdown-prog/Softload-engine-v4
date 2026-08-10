@@ -1,0 +1,32 @@
+{
+  "id":"flask",
+
+  "slug":"flask",
+
+  "categoria":"backend",
+
+  "linguagem":"Python",
+
+  "estrutura":[
+    "app.py",
+    "templates",
+    "static",
+    "routes",
+    "models"
+  ],
+
+  "template_engine":"Jinja2",
+
+  "casos_de_uso":[
+    "Dashboard",
+    "Landing",
+    "Sistema interno",
+    "Painel administrativo",
+    "SaaS"
+  ],
+
+  "validadores":[
+    "python",
+    "jinja2"
+  ]
+}

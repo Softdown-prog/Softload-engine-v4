@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= titulo %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="/css/softload.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body { background: var(--sl-bg-950); color: var(--sl-text-300); }
+        .admin-topbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1050;
+            height: 56px;
+            background: rgba(15,23,42,0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--sl-bg-800);
+            display: flex; align-items: center; padding: 0 1.5rem; gap: 1rem;
+        }
+        .admin-badge {
+            font-size: 9px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--sl-text-500);
+            border: 1px solid var(--sl-bg-800); padding: 2px 8px; border-radius: 4px;
+        }
+        .kpi-card {
+            background: rgba(15,23,42,0.6); border: 1px solid var(--sl-bg-800);
+            border-radius: 1rem; padding: 1.25rem;
+        }
+        .section-card {
+            background: rgba(15,23,42,0.6); border: 1px solid var(--sl-bg-800);
+            border-radius: 1rem;
+        }
+        .section-label {
+            font-size: 10px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--sl-text-400);
+        }
+        .status-badge {
+            font-size: 9px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.1em; padding: 2px 8px; border-radius: 6px;
+        }
+        .status-premium { background: rgba(34,197,94,0.1); color: #4ade80; }
+        .status-free { background: var(--sl-bg-800); color: var(--sl-text-500); }
+        .finance-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.75rem 0; border-bottom: 1px solid var(--sl-bg-800);
+        }
+        .finance-row:last-child { border-bottom: none; }
+        .pulse-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #22c55e; display: inline-block; animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+        }
+        .workers-link {
+            font-size: 10px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--sl-primary);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+        }
+        .workers-link:hover { opacity: .8; }
+    </style>
+</head>
+<body>
+
+<!-- Topbar Admin -->
+<nav class="admin-topbar">
+    <span class="fw-black text-white sl-brand" style="font-size:1rem">SOFTLOAD<span class="sl-accent">ENGINE</span></span>
+    <span class="admin-badge">Admin</span>
+    <div class="flex-grow-1"></div>
+    <span class="d-none d-sm-flex align-items-center gap-2" style="font-size:10px;color:var(--sl-text-500)">
+        <span class="pulse-dot" id="pollingDot"></span>
+        Auto-refresh 30s
+    </span>
+    <a href="/eu/sol" class="btn btn-sm fw-bold text-uppercase"
+       style="background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-sun-fill"></i> Sol
+    </a>
+    <a href="/eu/usuarios" class="btn btn-sm fw-bold text-uppercase"
+       style="background:var(--sl-bg-800);color:var(--sl-text-300);border:1px solid var(--sl-bg-800);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-people"></i> Usuários
+    </a>
+    <a href="/eu/analytics" class="btn btn-sm fw-bold text-uppercase"
+       style="background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.25);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-graph-up-arrow"></i> Analytics
+    </a>
+    <a href="/logout" class="btn btn-sm fw-bold text-uppercase"
+       style="background:transparent;color:#f87171;border:1px solid rgba(239,68,68,0.3);letter-spacing:0.08em;font-size:11px">
+        <i class="bi bi-box-arrow-right"></i> Sair
+    </a>
+</nav>
+
+<main style="padding-top:56px;" class="px-3 px-md-5 py-4" id="adminMain">
+    <div class="mx-auto" style="max-width:1280px">
+
+        <!-- Header -->
+        <div class="mb-4 mt-2">
+            <h1 class="fw-bolder text-white text-uppercase mb-1" style="font-size:1.5rem;letter-spacing:-0.02em">Painel de Controle</h1>
+            <p class="mb-0 small" style="color:var(--sl-text-500)">
+                Visão geral do sistema · Operador: <span style="color:var(--sl-primary)"><%= user.email %></span>
+            </p>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3">
+                <div class="kpi-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <i class="bi bi-people fs-5" style="color:var(--sl-primary)"></i>
+                        <span class="admin-badge">Total</span>
+                    </div>
+                    <p class="fw-bolder text-white mb-1" style="font-size:1.5rem" id="kpiTotal"><%= kpis.totalUsuarios %></p>
+                    <p class="mb-0 small" style="color:var(--sl-text-500)">Usuários cadastrados</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="kpi-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <i class="bi bi-shield-check fs-5" style="color:#22c55e"></i>
+                        <span class="admin-badge">Premium</span>
+                    </div>
+                    <p class="fw-bolder text-white mb-1" style="font-size:1.5rem" id="kpiPremium"><%= kpis.totalPremium %></p>
+                    <p class="mb-0 small" style="color:var(--sl-text-500)">
+                        Receita est. R$ <span id="kpiReceita"><%= kpis.receitaEstimada %></span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="kpi-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <i class="bi bi-hdd fs-5" style="color:#a855f7"></i>
+                        <span class="admin-badge">Storage</span>
+                    </div>
+                    <p class="fw-bolder text-white mb-1" style="font-size:1.5rem">
+                        <span id="kpiStorage"><%= kpis.storageTotal %></span>
+                        <span class="fw-normal small" style="color:var(--sl-text-500)">MB</span>
+                    </p>
+                    <p class="mb-0 small" style="color:var(--sl-text-500)">Uso total no GCS</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="kpi-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <i class="bi bi-lightning-charge fs-5" style="color:#eab308"></i>
+                        <span class="admin-badge">Compilações</span>
+                    </div>
+                    <p class="fw-bolder text-white mb-1" style="font-size:1.5rem" id="kpiCompilacoes"><%= kpis.compilacoesTotal %></p>
+                    <p class="mb-0 small" style="color:var(--sl-text-500)">
+                        <% if (kpis.expirando7dias > 0) { %>
+                            <span style="color:#eab308;font-weight:700"><%= kpis.expirando7dias %> expira em 7 dias</span>
+                        <% } else { %>
+                            Templates gerados no total
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deploy em produção — confirma qual commit este container está rodando -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3"
+                     style="background:rgba(15,23,42,0.6);border:1px solid var(--sl-bg-800);border-radius:12px;padding:1rem 1.25rem">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-box-seam" style="color:#38bdf8;font-size:1.2rem"></i>
+                        <div>
+                            <p class="mb-0 fw-bolder text-white" style="font-size:.875rem">
+                                Deploy em produção
+                                <% if (buildInfo.gitSha === 'dev-local') { %>
+                                    <span class="status-badge status-free ms-1">Rodando local</span>
+                                <% } %>
+                            </p>
+                            <p class="mb-0 small" style="color:var(--sl-text-500)" id="deployInfoLine">
+                                commit <code style="color:#38bdf8"><%= buildInfo.gitSha %></code>
+                                <% if (buildInfo.gitDate) { %>
+                                    · commitado em <%= new Date(buildInfo.gitDate).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) %>
+                                <% } %>
+                                <% if (buildInfo.buildTime) { %>
+                                    · imagem buildada em <%= new Date(buildInfo.buildTime).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) %>
+                                <% } %>
+                            </p>
+                        </div>
+                    </div>
+                    <a href="https://github.com/Softdown-prog/softload-engine-v3/commit/<%= buildInfo.gitSha %>"
+                       target="_blank" rel="noopener" class="workers-link flex-shrink-0"
+                       style="<%= buildInfo.gitSha === 'dev-local' ? 'pointer-events:none;opacity:.4' : '' %>">
+                        <i class="bi bi-github"></i> Ver commit
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Links rápidos: Workers -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-6">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 h-100"
+                     style="background:rgba(15,23,42,0.6);border:1px solid var(--sl-bg-800);border-radius:12px;padding:1rem 1.25rem">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-shield-check" style="color:#a855f7;font-size:1.2rem"></i>
+                        <div>
+                            <p class="mb-0 fw-bolder text-white" style="font-size:.875rem">Sentinel Monitor</p>
+                            <p class="mb-0 small" style="color:var(--sl-text-500)">Saúde, memória e diagnósticos</p>
+                        </div>
+                    </div>
+                    <a href="/workers" class="workers-link flex-shrink-0">
+                        <i class="bi bi-arrow-right-circle"></i> Abrir
+                    </a>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 h-100"
+                     style="background:rgba(15,23,42,0.6);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:1rem 1.25rem">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-bug-fill" style="color:#f87171;font-size:1.2rem"></i>
+                        <div>
+                            <p class="mb-0 fw-bolder text-white" style="font-size:.875rem">Error Log 24h</p>
+                            <p class="mb-0 small" style="color:var(--sl-text-500)">Monitoramento automático do SaaS</p>
+                        </div>
+                    </div>
+                    <a href="/workerlog" style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#f87171;text-decoration:none;display:inline-flex;align-items:center;gap:4px" class="flex-shrink-0">
+                        <i class="bi bi-arrow-right-circle"></i> Abrir
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-lg-6">
+                <div class="section-card p-4">
+                    <p class="section-label mb-4">Distribuição de Planos</p>
+                    <div class="d-flex align-items-center justify-content-center" style="height:220px">
+                        <canvas id="chartPlanos"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="section-card p-4">
+                    <p class="section-label mb-3">Resumo Financeiro</p>
+                    <div class="finance-row">
+                        <span class="small" style="color:var(--sl-text-400)">Usuários Premium</span>
+                        <span class="fw-bolder text-white small" id="finPremium"><%= kpis.totalPremium %></span>
+                    </div>
+                    <div class="finance-row">
+                        <span class="small" style="color:var(--sl-text-400)">Usuários Free</span>
+                        <span class="fw-bolder text-white small" id="finFree"><%= kpis.totalFree %></span>
+                    </div>
+                    <div class="finance-row">
+                        <span class="small" style="color:var(--sl-text-400)">Receita Estimada Mensal</span>
+                        <span class="fw-bolder small" style="color:#4ade80">R$ <span id="finReceita"><%= kpis.receitaEstimada %></span></span>
+                    </div>
+                    <div class="finance-row">
+                        <span class="small" style="color:var(--sl-text-400)">Taxa de Conversão</span>
+                        <span class="fw-bolder small" style="color:var(--sl-primary-light)" id="finConversao">
+                            <%= kpis.totalUsuarios > 0 ? ((kpis.totalPremium / kpis.totalUsuarios) * 100).toFixed(1) : 0 %>%
+                        </span>
+                    </div>
+                    <% if (kpis.expirando7dias > 0) { %>
+                    <div class="finance-row" style="border-bottom:none">
+                        <span class="small" style="color:var(--sl-text-400)">Expirando em 7 dias</span>
+                        <span class="fw-bolder small" style="color:#eab308"><%= kpis.expirando7dias %></span>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saúde das APIs + Auditoria Recente -->
+        <div class="row g-3 mb-4">
+            <!-- Saúde do Sistema -->
+            <div class="col-12 col-lg-5">
+                <div class="section-card h-100">
+                    <div class="px-4 py-3" style="border-bottom:1px solid var(--sl-bg-800)">
+                        <p class="section-label mb-0">Saúde das APIs de IA</p>
+                    </div>
+                    <div class="px-4 py-3" id="saudeContainer">
+                        <p class="small mb-0" style="color:var(--sl-text-500)">Carregando...</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Auditoria Recente -->
+            <div class="col-12 col-lg-7">
+                <div class="section-card h-100">
+                    <div class="d-flex align-items-center justify-content-between px-4 py-3"
+                         style="border-bottom:1px solid var(--sl-bg-800)">
+                        <p class="section-label mb-0">Auditoria Recente</p>
+                        <button onclick="carregarLogs()" class="btn btn-sm"
+                                style="background:transparent;color:var(--sl-text-500);border:1px solid var(--sl-bg-800);font-size:10px;letter-spacing:.08em;font-weight:700;text-transform:uppercase">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                    <div id="logsContainer" style="max-height:280px;overflow-y:auto">
+                        <p class="small px-4 py-3 mb-0" style="color:var(--sl-text-500)">Carregando...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela: últimas contas -->
+        <div class="section-card">
+            <div class="d-flex align-items-center justify-content-between px-4 py-3"
+                 style="border-bottom:1px solid var(--sl-bg-800)">
+                <p class="section-label mb-0">Últimas Contas Criadas</p>
+                <a href="/eu/usuarios" class="fw-bolder text-uppercase text-decoration-none"
+                   style="font-size:10px;color:var(--sl-primary);letter-spacing:0.08em">Ver todos →</a>
+            </div>
+
+            <% if (recentes.length === 0) { %>
+                <div class="px-4 py-5 text-center">
+                    <p class="mb-0 small" style="color:var(--sl-text-500)">Nenhum usuário cadastrado.</p>
+                </div>
+            <% } else { %>
+                <div>
+                    <% recentes.forEach((u, idx) => { %>
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap px-4 py-3"
+                             style="<%= idx < recentes.length - 1 ? 'border-bottom:1px solid rgba(30,41,59,0.6)' : '' %>">
+                            <div class="d-flex align-items-center gap-3 overflow-hidden">
+                                <div class="d-flex align-items-center justify-content-center fw-bolder flex-shrink-0"
+                                     style="width:28px;height:28px;border-radius:8px;background:var(--sl-bg-800);color:var(--sl-text-400);font-size:12px">
+                                    <%= u.nome.charAt(0).toUpperCase() %>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <p class="fw-semibold text-white mb-0 text-truncate small"><%= u.email %></p>
+                                    <p class="mb-0" style="font-size:10px;color:var(--sl-text-500)"><%= u.nome %> · <%= u.criado_em %></p>
+                                </div>
+                            </div>
+                            <span class="status-badge flex-shrink-0 <%= u.is_active ? 'status-premium' : 'status-free' %>">
+                                <%= u.is_active ? 'Premium' : 'Free' %>
+                            </span>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+    var kpis = {
+        totalUsuarios:    <%- JSON.stringify(kpis.totalUsuarios) %>,
+        totalPremium:     <%- JSON.stringify(kpis.totalPremium) %>,
+        totalFree:        <%- JSON.stringify(kpis.totalFree) %>,
+        storageTotal:     <%- JSON.stringify(kpis.storageTotal) %>,
+        compilacoesTotal: <%- JSON.stringify(kpis.compilacoesTotal) %>,
+        expirando7dias:   <%- JSON.stringify(kpis.expirando7dias) %>,
+        receitaEstimada:  <%- JSON.stringify(kpis.receitaEstimada) %>
+    };
+
+    var chartPlanos = null;
+
+    function renderChart() {
+        var ctx = document.getElementById('chartPlanos');
+        if (!ctx) return;
+        chartPlanos = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Premium', 'Free'],
+                datasets: [{
+                    data: [kpis.totalPremium, kpis.totalFree],
+                    backgroundColor: ['rgba(34,197,94,0.8)', 'rgba(71,85,105,0.6)'],
+                    borderColor:     ['rgba(34,197,94,1)',   'rgba(71,85,105,1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#94a3b8', font: { size: 11, weight: '700' }, padding: 16 }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    }
+
+    function updateDOM(data) {
+        kpis = data;
+        document.getElementById('kpiTotal').textContent       = data.totalUsuarios;
+        document.getElementById('kpiPremium').textContent     = data.totalPremium;
+        document.getElementById('kpiReceita').textContent     = data.receitaEstimada;
+        document.getElementById('kpiStorage').textContent     = data.storageTotal;
+        document.getElementById('kpiCompilacoes').textContent = data.compilacoesTotal;
+        document.getElementById('finPremium').textContent     = data.totalPremium;
+        document.getElementById('finFree').textContent        = data.totalFree;
+        document.getElementById('finReceita').textContent     = data.receitaEstimada;
+        var conv = data.totalUsuarios > 0
+            ? ((data.totalPremium / data.totalUsuarios) * 100).toFixed(1) + '%'
+            : '0%';
+        document.getElementById('finConversao').textContent = conv;
+
+        if (chartPlanos) {
+            chartPlanos.data.datasets[0].data = [data.totalPremium, data.totalFree];
+            chartPlanos.update();
+        }
+    }
+
+    async function autoRefresh() {
+        try {
+            var res = await fetch('/eu/api/kpis');
+            if (res.ok) updateDOM(await res.json());
+        } catch (_) {}
+    }
+
+    renderChart();
+    setInterval(autoRefresh, 30000);
+
+    // ── Saúde das APIs ─────────────────────────────────────────────────────
+    async function carregarSaude() {
+        var el = document.getElementById('saudeContainer');
+        try {
+            var res = await fetch('/eu/api/saude');
+            var d = await res.json();
+            var html = '';
+            var apis = [
+                { nome: 'Gemini Flash', key: 'gemini_flash', icon: 'bi-stars',     cor: '#60a5fa' },
+                { nome: 'Gemini Lite',  key: 'gemini_lite',  icon: 'bi-lightning', cor: '#34d399' },
+                { nome: 'GPT',          key: 'gpt',          icon: 'bi-cpu',       cor: '#a78bfa' },
+            ];
+            apis.forEach(function(a) {
+                var info = d.apis[a.key];
+                var ok   = info && info.chave;
+                var statusColor = ok ? '#4ade80' : '#f87171';
+                var statusIcon  = ok ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
+                html += '<div class="d-flex align-items-start gap-3 py-2" style="border-bottom:1px solid var(--sl-bg-800)">' +
+                    '<i class="' + a.icon + ' mt-1 flex-shrink-0" style="color:' + a.cor + '"></i>' +
+                    '<div class="flex-grow-1 overflow-hidden">' +
+                        '<div class="d-flex align-items-center gap-2 mb-1 flex-wrap">' +
+                            '<span class="fw-bold text-white" style="font-size:.8rem">' + a.nome + '</span>' +
+                            '<code style="font-size:9px;color:var(--sl-text-500)">' + escHtml(info ? info.modelo : '—') + '</code>' +
+                            (info && info.uso ? '<span style="font-size:9px;color:var(--sl-text-600)">' + escHtml(info.uso) + '</span>' : '') +
+                        '</div>' +
+                        '<div class="d-flex align-items-center gap-1">' +
+                            '<i class="' + statusIcon + '" style="color:' + statusColor + ';font-size:11px"></i>' +
+                            '<span style="font-size:11px;color:' + statusColor + '">' + escHtml(ok ? 'Chave configurada' : (info ? info.status : 'indisponível')) + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            });
+            html += '<div class="pt-2"><span style="font-size:10px;color:var(--sl-text-500)">Ambiente: ' + escHtml(d.ambiente || '—') + '</span></div>';
+            el.innerHTML = html;
+
+            // Atualiza a linha de deploy se o SHA mudou sob o próprio admin
+            // (ex: um redeploy aconteceu enquanto a aba ficou aberta).
+            var deployEl = document.getElementById('deployInfoLine');
+            if (deployEl && d.deploy && d.deploy.gitSha) {
+                var partes = ['commit <code style="color:#38bdf8">' + escHtml(d.deploy.gitSha) + '</code>'];
+                if (d.deploy.gitDate) {
+                    partes.push('commitado em ' + escHtml(new Date(d.deploy.gitDate).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })));
+                }
+                if (d.deploy.buildTime) {
+                    partes.push('imagem buildada em ' + escHtml(new Date(d.deploy.buildTime).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })));
+                }
+                deployEl.innerHTML = partes.join(' · ');
+            }
+        } catch (e) {
+            el.innerHTML = '<p class="small mb-0" style="color:#f87171">Erro ao verificar saúde.</p>';
+        }
+    }
+
+    // ── Auditoria ──────────────────────────────────────────────────────────
+    var TIPO_LABELS = {
+        plano_ativado:        { label: 'Plano ativado',    cor: '#4ade80' },
+        plano_revogado:       { label: 'Plano revogado',   cor: '#f87171' },
+        creditos_atualizados: { label: 'Créditos',         cor: '#fbbf24' },
+        erro_gpt:             { label: 'Erro GPT',         cor: '#fb923c' },
+        erro_gemini:          { label: 'Erro Gemini',      cor: '#fb923c' },
+    };
+
+    window.carregarLogs = async function() {
+        var el = document.getElementById('logsContainer');
+        try {
+            var res = await fetch('/eu/api/logs?limit=20');
+            var d = await res.json();
+            if (!d.logs || d.logs.length === 0) {
+                el.innerHTML = '<p class="small px-4 py-3 mb-0" style="color:var(--sl-text-500)">Nenhuma ação registrada ainda.</p>';
+                return;
+            }
+            var html = '';
+            d.logs.forEach(function(l) {
+                var meta = TIPO_LABELS[l.tipo] || { label: l.tipo, cor: 'var(--sl-text-400)' };
+                var alvo = l.detalhes?.email_alvo || '';
+                var extras = '';
+                if (l.tipo === 'plano_ativado' && l.detalhes?.plano) extras = ' → ' + l.detalhes.plano;
+                if (l.tipo === 'creditos_atualizados') {
+                    var g = l.detalhes?.gemini; var p = l.detalhes?.gpt;
+                    if (g != null) extras += ' Gem=' + g;
+                    if (p != null) extras += ' GPT=' + p;
+                }
+                if (l.tipo === 'erro_gpt' || l.tipo === 'erro_gemini') {
+                    extras = ' — ' + (l.detalhes?.categoria || '') + ': ' + (l.detalhes?.erro || '').slice(0, 60);
+                }
+                var ts = l.criado_em ? new Date(l.criado_em).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+                html += '<div class="d-flex align-items-center gap-2 px-4 py-2" style="border-bottom:1px solid rgba(30,41,59,0.6)">' +
+                    '<span style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:' + meta.cor + ';white-space:nowrap;min-width:90px">' + meta.label + '</span>' +
+                    '<span class="text-white fw-semibold text-truncate" style="font-size:11px;flex:1">' + escHtml(alvo) + escHtml(extras) + '</span>' +
+                    '<span style="font-size:10px;color:var(--sl-text-500);white-space:nowrap">' + ts + '</span>' +
+                '</div>';
+            });
+            el.innerHTML = html;
+        } catch(e) {
+            el.innerHTML = '<p class="small px-4 py-3 mb-0" style="color:#f87171">Erro ao carregar auditoria.</p>';
+        }
+    };
+
+    function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    carregarSaude();
+    carregarLogs();
+    setInterval(carregarSaude, 60000);
+    setInterval(carregarLogs,  30000);
+})();
+</script>
+</body>
+</html>

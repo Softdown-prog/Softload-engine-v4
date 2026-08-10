@@ -1,0 +1,927 @@
+<%- include('../../partials/header') %>
+
+<div class="sl-dash-wrapper" style="height:100dvh;overflow:hidden">
+
+    <%- include('../../partials/dashboard-sidebar', { activePage: 'solaris', user: user }) %>
+
+    <main class="flex-grow-1 d-flex flex-column overflow-hidden">
+
+        <%# Topbar mobile %>
+        <div class="sl-topbar d-lg-none flex-shrink-0">
+            <span class="sl-solaris-icon flex-shrink-0" style="width:20px;height:20px" aria-hidden="true"><%- include('../../partials/solaris-icon-svg') %></span>
+            <span class="flex-grow-1 fw-black text-uppercase small" style="letter-spacing:0.05em">Solaris Code</span>
+            <button onclick="slHistoricoOpen()" class="btn btn-link p-1 ms-1" style="color:var(--sl-text-400)" title="Histórico de conversas">
+                <i class="bi bi-clock-history" style="font-size:1.2rem"></i>
+            </button>
+            <a href="/dashboard/configuracoes" title="Configurações" class="btn btn-link p-1 ms-1" style="color:var(--sl-text-400)">
+                <i class="bi bi-gear-fill" style="font-size:1.2rem"></i>
+            </a>
+        </div>
+
+        <%# Área do chat %>
+        <div id="sl-chat-area" class="flex-grow-1 d-flex flex-column p-0 p-md-3 p-lg-4" style="overflow:hidden;min-height:0">
+
+            <%# Cabeçalho %>
+            <div class="sl-chat-controls-bar d-flex align-items-center gap-3 mb-0 mb-lg-3 flex-shrink-0 px-3 px-lg-0 py-2 py-lg-0">
+                <div class="d-none d-lg-flex align-items-center justify-content-center rounded-3 flex-shrink-0 sl-solaris-icon"
+                     style="width:40px;height:40px;background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(168,85,247,.2));border:1px solid rgba(99,102,241,.25)">
+                    <%- include('../../partials/solaris-icon-svg', { size: 20 }) %>
+                </div>
+                <div class="d-none d-lg-block">
+                    <h1 class="fw-black text-uppercase mb-0 d-flex align-items-center gap-2" style="font-size:1.1rem;letter-spacing:-0.02em">
+                        Solaris Code
+                        <span class="badge rounded-pill fw-black text-uppercase"
+                              style="font-size:8px;letter-spacing:0.08em;background:rgba(99,102,241,.15);color:#818cf8">IA</span>
+                    </h1>
+                    <p class="mb-0 small" style="color:var(--sl-text-400)">Arquiteto de front-end/back-end leve — motor independente do Compiler Blogger</p>
+                </div>
+                <div class="ms-auto d-flex align-items-center gap-2 flex-shrink-0">
+                    <span id="sl-gemini-credits" class="d-none d-sm-flex align-items-center gap-1" style="font-size:.68rem;font-weight:700;color:var(--sl-text-400);font-variant-numeric:tabular-nums;white-space:nowrap">
+                        <i class="bi bi-lightning-charge-fill" style="font-size:.58rem;color:#818cf8"></i>
+                        <span id="sl-gemini-credits-val"><%= typeof creditosGemini !== 'undefined' ? creditosGemini.toLocaleString('pt-BR') : 0 %></span>
+                        <span style="color:var(--sl-text-600);font-weight:400">/</span>
+                        <span style="color:var(--sl-text-500)"><%= typeof creditosGeminiTotal !== 'undefined' ? creditosGeminiTotal.toLocaleString('pt-BR') : 0 %></span>
+                    </span>
+                    <button onclick="slHistoricoOpen()" class="btn btn-sm d-flex align-items-center gap-1"
+                            style="font-size:.78rem;color:var(--sl-text-400);border:1px solid var(--bs-border-color);background:transparent;padding:4px 10px">
+                        <i class="bi bi-clock-history" style="font-size:.85rem"></i>
+                        <span class="d-none d-sm-inline">Histórico</span>
+                    </button>
+                    <button id="sl-chat-novo-btn" class="btn btn-sm d-flex align-items-center gap-1"
+                            disabled
+                            style="font-size:.78rem;color:var(--sl-text-400);border:1px solid var(--bs-border-color);background:transparent;padding:4px 10px">
+                        <i class="bi bi-plus-circle" style="font-size:.85rem"></i>
+                        <span class="d-none d-sm-inline">Nova conversa</span>
+                    </button>
+                </div>
+            </div>
+
+            <%# Card principal %>
+            <div class="sl-card d-flex flex-column flex-grow-1" style="overflow:hidden;min-height:0;padding:0;margin-bottom:0">
+
+                <%# Estado vazio / sugestões %>
+                <div id="sl-chat-empty" class="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-center p-3 p-md-4"
+                     style="overflow-y:auto;min-height:0">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center mb-2 mb-md-3 flex-shrink-0 sl-solaris-icon"
+                         style="width:48px;height:48px;background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(168,85,247,.15));border:1px solid rgba(99,102,241,.2)">
+                        <%- include('../../partials/solaris-icon-svg', { size: 24 }) %>
+                    </div>
+                    <h2 class="fw-black mb-1" style="font-size:1rem;letter-spacing:-0.02em">Como posso ajudar?</h2>
+                    <p class="small mb-3 d-none d-sm-block" style="color:var(--sl-text-400);max-width:340px;line-height:1.55">
+                        Brainstorm de projeto, HTML5/CSS3/JS ES6+ puro. Descreva o objetivo e eu guio o levantamento — framework, estrutura, estilo.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center flex-shrink-0" style="max-width:460px">
+                        <button class="sl-chat-suggestion">Quero criar uma landing page de SaaS</button>
+                        <button class="sl-chat-suggestion">Como estruturar um projeto HTML5/CSS3 do zero</button>
+                        <button class="sl-chat-suggestion d-none d-sm-inline-flex">Revisar um trecho de JavaScript</button>
+                        <button class="sl-chat-suggestion d-none d-sm-inline-flex">Boas práticas de CSS responsivo</button>
+                    </div>
+                </div>
+
+                <%# Lista de mensagens %>
+                <div id="sl-chat-messages-wrap" class="flex-grow-1 p-2 p-md-3"
+                     style="overflow-y:auto;flex-direction:column;gap:10px;display:none;min-height:0;scroll-behavior:smooth;opacity:0;transition:opacity .2s ease">
+                </div>
+
+                <%# Área de input %>
+                <div class="flex-shrink-0 px-3 py-3" style="border-top:1px solid var(--bs-border-color)">
+                    <div class="sl-chat-input-area">
+                        <button id="sl-chat-upload-btn" type="button" class="sl-chat-upload-btn" title="Anexar projeto (.zip) para análise" aria-label="Anexar projeto para análise">
+                            <i class="bi bi-paperclip" style="font-size:1rem"></i>
+                        </button>
+                        <input id="sl-chat-file-input" type="file" accept=".zip" hidden>
+                        <textarea
+                            id="sl-chat-input"
+                            class="sl-chat-textarea"
+                            placeholder="Descreva o que você quer construir..."
+                            rows="1"
+                            maxlength="6000"
+                        ></textarea>
+                        <button id="sl-chat-send" class="sl-chat-send-btn" disabled aria-label="Enviar mensagem">
+                            <i id="sl-chat-send-icon" class="bi bi-send-fill" style="font-size:.9rem"></i>
+                        </button>
+                    </div>
+                    <p class="mb-0 mt-2 text-center d-none d-sm-block" style="font-size:.7rem;color:var(--sl-text-500)">
+                        <kbd class="rounded px-1" style="font-size:.65rem;background:rgba(148,163,184,.1);border:1px solid var(--bs-border-color)">Enter</kbd>
+                        enviar &nbsp;·&nbsp;
+                        <kbd class="rounded px-1" style="font-size:.65rem;background:rgba(148,163,184,.1);border:1px solid var(--bs-border-color)">Shift+Enter</kbd>
+                        nova linha
+                    </p>
+                </div>
+
+            </div><%# /card %>
+
+        </div><%# /chat area %>
+
+    </main>
+</div>
+
+<%# ── Toast leve (upload ainda sem lógica, histórico sem conexão etc.) ────── %>
+<div id="sl-toast" class="sl-toast" role="status" aria-live="polite"></div>
+
+<%# ── Drawer histórico de conversas ──────────────────────────────────────── %>
+<div id="sl-hist-overlay"
+     style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.55);backdrop-filter:blur(2px)"
+     onclick="slHistoricoClose()"></div>
+
+<div id="sl-hist-drawer"
+     style="position:fixed;top:0;left:0;bottom:0;width:min(340px,92vw);z-index:401;
+            background:var(--sl-bg-900);border-right:1px solid var(--sl-bg-800);
+            transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1);
+            overflow:hidden;display:flex;flex-direction:column">
+
+    <div class="d-flex align-items-center gap-2 px-3 py-3 flex-shrink-0"
+         style="border-bottom:1px solid var(--sl-bg-800)">
+        <i class="bi bi-clock-history" style="color:#818cf8;font-size:1rem"></i>
+        <span class="fw-black text-uppercase flex-grow-1" style="font-size:.85rem;letter-spacing:-.01em">Histórico</span>
+        <button onclick="slHistoricoClose()"
+                style="background:none;border:none;color:var(--sl-text-400);font-size:1.1rem;cursor:pointer;padding:2px;line-height:1">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div id="sl-hist-list" style="flex:1;overflow-y:auto;padding:8px"></div>
+</div>
+
+<style>
+.sl-hist-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    transition: background .15s, border-color .15s;
+}
+.sl-hist-item:hover, .sl-hist-item:active {
+    background: rgba(99,102,241,.08);
+    border-color: rgba(99,102,241,.2);
+}
+.sl-hist-preview {
+    font-size: .82rem;
+    color: var(--sl-text-300);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sl-hist-meta {
+    font-size: .7rem;
+    color: var(--sl-text-400);
+    margin-top: 3px;
+    display: flex;
+    gap: 8px;
+}
+.sl-solaris-icon { color: #818cf8; display: inline-flex; align-items: center; justify-content: center; }
+.sl-solaris-icon svg { width: 100%; height: 100%; }
+
+.sl-chat-upload-btn {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--bs-border-color);
+    background: transparent;
+    color: var(--sl-text-400);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.sl-chat-upload-btn:hover {
+    background: rgba(99,102,241,.08);
+    border-color: rgba(99,102,241,.3);
+    color: #818cf8;
+}
+.sl-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%) translateY(12px);
+    z-index: 500;
+    background: var(--sl-bg-900);
+    border: 1px solid var(--bs-border-color);
+    color: var(--bs-body-color);
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: .8rem;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+}
+.sl-toast.sl-toast-show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+</style>
+
+<%# Mermaid — renderiza blocos ```mermaid``` do chat como diagrama SVG. %>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<script>
+(function () {
+    'use strict';
+
+    if (window.mermaid) {
+        mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: 'strict',
+            theme: document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'default',
+        });
+    }
+
+    function mountMermaid(container) {
+        if (!window.mermaid || !container) return;
+        const nodes = container.querySelectorAll('.mermaid');
+        if (!nodes.length) return;
+        mermaid.run({ nodes: nodes }).catch(function (err) {
+            console.error('[mermaid] falha ao renderizar diagrama:', err);
+        });
+    }
+
+    const chatEmpty   = document.getElementById('sl-chat-empty');
+    const chatWrap    = document.getElementById('sl-chat-messages-wrap');
+    const chatInput   = document.getElementById('sl-chat-input');
+    const chatSend    = document.getElementById('sl-chat-send');
+    const chatIcon    = document.getElementById('sl-chat-send-icon');
+    const chatNovoBtn = document.getElementById('sl-chat-novo-btn');
+    const uploadBtn   = document.getElementById('sl-chat-upload-btn');
+    const fileInput   = document.getElementById('sl-chat-file-input');
+    const toastEl     = document.getElementById('sl-toast');
+    const geminiCreditsVal = document.getElementById('sl-gemini-credits-val');
+
+    let isLoading           = false;
+    let messagesSent        = 0;
+    let conversationHistory = [];
+    let currentSessionId    = null;
+    let statusEl            = null;
+    let statusHistory       = [];
+    let currentAbortController = null; // permite parar a geração em andamento
+
+    const HIST_TYPE = 'solaris-chat';
+
+    // Solaris (Fase 0/2) é Flash-only pro chat conversacional — sem seletor
+    // de modelo (isso muda quando o motor tiver mais de um papel exposto
+    // ao usuário via chat, ver src/solaris/README.md).
+    const currentModel = { id: 'solaris-flash', label: 'Solaris', icon: '<span class="sl-solaris-icon" style="width:14px;height:14px;vertical-align:-2px"><%- include('../../partials/solaris-icon-svg') %></span>' };
+
+    // ── Toast leve — usado por validações rápidas (ex.: anexo fora do formato)
+    let toastTimer = null;
+    function slToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('sl-toast-show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toastEl.classList.remove('sl-toast-show'); }, 2600);
+    }
+
+    function debitarContadorUI(tokens) {
+        if (!tokens || !tokens.total || !geminiCreditsVal) return;
+        const debited = Math.ceil(tokens.total / 1000);
+        var cur = parseInt(geminiCreditsVal.textContent.replace(/\./g,'').replace(/,/g,'').replace(/\s/g,'') || '0', 10);
+        geminiCreditsVal.textContent = Math.max(0, cur - debited).toLocaleString('pt-BR');
+    }
+
+    // ── Copy code — global pois é chamado via onclick no HTML renderizado
+    window.slCopyCode = function (uid) {
+        const pre  = document.getElementById(uid);
+        if (!pre) return;
+        const code = pre.querySelector('code');
+        const text = code ? code.textContent : pre.textContent;
+        navigator.clipboard.writeText(text).then(function () {
+            const icon = document.getElementById('slcbi_' + uid);
+            if (icon) {
+                icon.className = 'bi bi-check2';
+                setTimeout(function () { icon.className = 'bi bi-clipboard'; }, 2000);
+            }
+        }).catch(function () {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;opacity:0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        });
+    };
+
+    // ── Markdown → HTML seguro com suporte a blocos de código
+    function renderMarkdown(raw) {
+        let html = raw
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+
+        const blocks = [];
+        html = html.replace(/```(\w*)\r?\n?([\s\S]*?)```/g, function (_, lang, code) {
+            const idx = blocks.length;
+            blocks.push({ lang: lang || 'code', code: code.replace(/\r?\n$/, '') });
+            return '\x00CB' + idx + '\x00';
+        });
+
+        html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*([^*\n]+)\*/g,     '<em>$1</em>');
+        html = html.replace(/`([^`\n]+)`/g,
+            '<code style="font-family:monospace;font-size:.85em;background:rgba(148,163,184,.12);padding:1px 5px;border-radius:3px">$1</code>');
+        html = html.replace(/^[\-•]\s+(.+)$/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>)/s, '<ul style="margin:.4em 0 .4em 1.1em;padding:0">$1</ul>');
+        html = html.replace(/\n/g, '<br>');
+
+        html = html.replace(/\x00CB(\d+)\x00/g, function (_, idx) {
+            const b = blocks[parseInt(idx)];
+            if (b.lang.toLowerCase() === 'mermaid') {
+                return '<div class="sl-mermaid-block"><div class="mermaid">' + b.code + '</div></div>';
+            }
+            const uid = 'slcb_' + Math.random().toString(36).slice(2, 8);
+            return '<div class="sl-code-block">' +
+                '<div class="sl-code-header">' +
+                    '<span class="sl-code-lang">' + b.lang + '</span>' +
+                    '<button class="sl-code-copy-btn" type="button" onclick="slCopyCode(\'' + uid + '\')" aria-label="Copiar">' +
+                        '<i class="bi bi-clipboard" id="slcbi_' + uid + '"></i><span>Copiar</span>' +
+                    '</button>' +
+                '</div>' +
+                '<pre class="sl-code-pre" id="' + uid + '"><code>' + b.code + '</code></pre>' +
+            '</div>';
+        });
+
+        return html;
+    }
+
+    function resizeInput() {
+        chatInput.style.height = 'auto';
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+        if (!isLoading) chatSend.disabled = chatInput.value.trim().length === 0;
+    }
+
+    // Revela a área de mensagens com fade (opacity), não um corte seco de
+    // display — evita o "pulo" perceptível comum em chats novos, quando a
+    // 1ª mensagem troca o estado vazio (centralizado) pela lista de
+    // mensagens (ancorada no topo) num único frame sem transição nenhuma.
+    function revealMessages() {
+        if (messagesSent === 0) {
+            chatEmpty.classList.add('d-none');
+            chatWrap.style.display = 'flex';
+            // Força um reflow antes de subir a opacidade — sem isso o
+            // navegador às vezes já aplica display:flex + opacity:1 no
+            // mesmo frame e a transição não roda (o "pulo" some
+            // silenciosamente virando um corte seco de qualquer jeito).
+            void chatWrap.offsetHeight;
+            chatWrap.style.opacity = '1';
+            chatNovoBtn.disabled   = false;
+        }
+        messagesSent++;
+    }
+
+    function showStatus(label) {
+        if (messagesSent === 0) {
+            chatEmpty.classList.add('d-none');
+            chatWrap.style.display = 'flex';
+            void chatWrap.offsetHeight;
+            chatWrap.style.opacity = '1';
+        }
+        statusHistory.push(label);
+        if (!statusEl) {
+            statusEl = document.createElement('div');
+            statusEl.className = 'sl-status-wrap';
+            chatWrap.appendChild(statusEl);
+        }
+        const modelIcon = currentModel.icon || '<i class="bi bi-stars"></i>';
+        statusEl.innerHTML = statusHistory.slice(0, -1).map(function (l) {
+            return '<div class="sl-status-pill sl-status-past">' +
+                '<span class="sl-status-pill-icon">' + modelIcon + '</span>' +
+                '<span>' + l + '</span>' +
+            '</div>';
+        }).join('') +
+        '<div class="sl-status-pill">' +
+            '<div class="sl-status-scan"></div>' +
+            '<span class="sl-status-pill-icon">' + modelIcon + '</span>' +
+            '<span>' + label + '</span>' +
+            '<span class="sl-status-dots"><span></span><span></span><span></span></span>' +
+        '</div>';
+        chatWrap.scrollTop = chatWrap.scrollHeight;
+    }
+
+    function hideStatus() {
+        if (statusEl) { statusEl.remove(); statusEl = null; }
+    }
+
+    function createStreamBubble() {
+        revealMessages();
+        const row = document.createElement('div');
+        row.className = 'sl-msg-row assistant';
+
+        const header = document.createElement('div');
+        header.className = 'sl-msg-header';
+        header.innerHTML = (currentModel.icon || '') + ' ' + currentModel.label;
+
+        const content = document.createElement('div');
+        content.className = 'sl-msg-content';
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'sl-stream-text';
+        const cursor   = document.createElement('span');
+        cursor.className = 'sl-stream-cursor';
+        content.appendChild(textSpan);
+        content.appendChild(cursor);
+
+        row.appendChild(header);
+        row.appendChild(content);
+        chatWrap.appendChild(row);
+        chatWrap.scrollTop = chatWrap.scrollHeight;
+        return { bubble: row, textSpan, cursor, content };
+    }
+
+    function addBubble(role, content) {
+        revealMessages();
+        const row = document.createElement('div');
+        row.className = 'sl-msg-row ' + role;
+        const msgContent = document.createElement('div');
+        msgContent.className = 'sl-msg-content';
+        if (role === 'assistant') {
+            const header = document.createElement('div');
+            header.className = 'sl-msg-header';
+            header.innerHTML = (currentModel.icon || '') + ' ' + currentModel.label;
+            row.appendChild(header);
+            msgContent.innerHTML = renderMarkdown(content);
+            mountMermaid(msgContent);
+        } else {
+            msgContent.textContent = content;
+        }
+        row.appendChild(msgContent);
+        chatWrap.appendChild(row);
+        chatWrap.scrollTop = chatWrap.scrollHeight;
+    }
+
+    function appendMsgFooter(row, plainText, stepCount) {
+        const footer = document.createElement('div');
+        footer.className = 'sl-msg-footer';
+        if (stepCount > 0) {
+            footer.innerHTML =
+                '<span class="sl-msg-sources">' +
+                    '<i class="bi bi-lightning-charge-fill" style="font-size:.6rem;color:#818cf8"></i>' +
+                    stepCount + ' ' + (stepCount === 1 ? 'etapa' : 'etapas') +
+                '</span>';
+        }
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'sl-msg-copy-btn';
+        copyBtn.innerHTML = '<i class="bi bi-clipboard" style="font-size:.7rem"></i> Copiar';
+        copyBtn.addEventListener('click', function () {
+            navigator.clipboard.writeText(plainText).then(function () {
+                copyBtn.innerHTML = '<i class="bi bi-check2" style="font-size:.7rem"></i> Copiado';
+                setTimeout(function () {
+                    copyBtn.innerHTML = '<i class="bi bi-clipboard" style="font-size:.7rem"></i> Copiar';
+                }, 2000);
+            }).catch(function () {
+                const ta = document.createElement('textarea');
+                ta.value = plainText;
+                ta.style.cssText = 'position:fixed;opacity:0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            });
+        });
+        footer.appendChild(copyBtn);
+        row.appendChild(footer);
+    }
+
+    function setLoading(state) {
+        isLoading = state;
+        chatSend.disabled      = state ? false : chatInput.value.trim().length === 0;
+        chatIcon.className     = state ? 'bi bi-stop-fill' : 'bi bi-send-fill';
+        chatIcon.style.fontSize = '.9rem';
+        chatSend.setAttribute('aria-label', state ? 'Parar geração' : 'Enviar mensagem');
+    }
+
+    function pararGeracao() {
+        if (currentAbortController) currentAbortController.abort();
+    }
+
+    function slChatNovo() {
+        if (isLoading) return;
+        conversationHistory = [];
+        messagesSent        = 0;
+        currentSessionId    = null;
+        statusEl            = null;
+        statusHistory       = [];
+        chatWrap.innerHTML  = '';
+        chatWrap.style.display  = 'none';
+        chatWrap.style.opacity  = '0';
+        chatEmpty.classList.remove('d-none');
+        chatInput.value         = '';
+        chatInput.style.height  = 'auto';
+        chatSend.disabled       = true;
+        chatNovoBtn.disabled    = true;
+    }
+
+    async function slChatSend() {
+        const msg = chatInput.value.trim();
+        if (!msg || isLoading) return;
+
+        setLoading(true);
+        statusHistory = [];
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+
+        conversationHistory.push({ role: 'user', content: msg });
+        addBubble('user', msg);
+
+        let bubble = null, textSpan = null, cursor = null, streamContent = null;
+        let streamText = '';
+        let renderedText = ''; // texto já flushado em spans .sl-chunk — nunca reescrito, só acrescido
+        let codeGenPill = null; // pill animada "Gerando css..." enquanto o fence está aberto
+
+        const controller = new AbortController();
+        currentAbortController = controller;
+
+        try {
+            const resp = await fetch('/dashboard/solaris/chat/stream', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                // slice(0, -1) remove a própria mensagem atual (empurrada em
+                // conversationHistory.push logo acima) antes de enviar.
+                body:    JSON.stringify({ message: msg, history: conversationHistory.slice(0, -1).slice(-20), sessionId: currentSessionId }),
+                signal:  controller.signal,
+            });
+
+            if (!resp.ok) {
+                conversationHistory.pop();
+                hideStatus();
+                if (resp.status === 401) { addBubble('assistant', 'Sessão expirada. Recarregue a página e faça login novamente.'); return; }
+                if (resp.status === 429) { addBubble('assistant', 'Limite de mensagens atingido. Aguarde antes de continuar.'); return; }
+                if (resp.status === 402) {
+                    const err402 = await resp.json().catch(function () { return {}; });
+                    var msg402 = err402.error || err402.erro || 'Seus créditos acabaram. Acesse /dashboard/upgrade para renovar.';
+                    addBubble('assistant', '⚠️ ' + msg402);
+                    return;
+                }
+                const err = await resp.json().catch(function () { return {}; });
+                addBubble('assistant', err.error || err.erro || 'Erro ao processar a mensagem. Tente novamente.');
+                return;
+            }
+
+            const reader  = resp.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer    = '';
+
+            outer: while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+
+                let idx;
+                while ((idx = buffer.indexOf('\n\n')) !== -1) {
+                    const block = buffer.slice(0, idx);
+                    buffer      = buffer.slice(idx + 2);
+                    const dLine = block.match(/^data: (.+)$/m);
+                    if (!dLine) continue;
+
+                    let event;
+                    try { event = JSON.parse(dLine[1]); } catch (_) { continue; }
+
+                    if (event.type === 'status') {
+                        showStatus(event.label);
+
+                    } else if (event.type === 'chunk') {
+                        hideStatus();
+                        if (!bubble) {
+                            const s = createStreamBubble();
+                            bubble = s.bubble; textSpan = s.textSpan; cursor = s.cursor; streamContent = s.content;
+                        }
+                        streamText += event.text;
+
+                        // Filtra o marcador [[SOLARIS_GERAR:{...}]] do texto exibido durante
+                        // o streaming — o backend processa ele no evento "done" (dispara a
+                        // geração de verdade), nunca deve aparecer pro usuário. Tudo a partir
+                        // de "[[SOLARIS_GERAR:" fica oculto até o done substituir pelo texto
+                        // final já limpo (event.reply).
+                        var displayText = streamText;
+                        var markerIdx = streamText.indexOf('[[SOLARIS_GERAR:');
+                        if (markerIdx !== -1) {
+                            displayText = streamText.slice(0, markerIdx).trimEnd();
+                        }
+
+                        // Detecta se há um fence ``` aberto (sem fechar) no texto acumulado.
+                        // Se sim: oculta o código bruto e mostra pill animada "Gerando lang..."
+                        var openFences = (displayText.match(/```/g) || []).length;
+                        var visibleTarget;
+                        if (openFences % 2 !== 0) {
+                            var lastFencePos = displayText.lastIndexOf('```');
+                            var textBefore   = displayText.slice(0, lastFencePos).trimEnd();
+                            var fenceHeader  = displayText.slice(lastFencePos).match(/```(\w*)/);
+                            var codeLang     = (fenceHeader && fenceHeader[1]) ? fenceHeader[1] : 'código';
+                            visibleTarget = textBefore;
+                            if (!codeGenPill) {
+                                codeGenPill = document.createElement('div');
+                                codeGenPill.className = 'sl-code-gen-pill';
+                                streamContent.insertBefore(codeGenPill, cursor);
+                            }
+                            codeGenPill.innerHTML =
+                                '<div class="sl-status-scan"></div>' +
+                                '<i class="bi bi-code-slash" style="font-size:.78rem;color:var(--sl-primary);flex-shrink:0"></i>' +
+                                '<span>Gerando <strong>' + codeLang + '</strong>...</span>' +
+                                '<span class="sl-status-dots"><span></span><span></span><span></span></span>';
+                        } else {
+                            if (codeGenPill) { codeGenPill.remove(); codeGenPill = null; }
+                            visibleTarget = displayText;
+                        }
+
+                        // Acrescenta só o trecho NOVO num span próprio com fade-in — nunca
+                        // reescreve o que já apareceu (senão o texto já lido re-anima a
+                        // cada chunk).
+                        if (visibleTarget.length > renderedText.length) {
+                            var novoTrecho = visibleTarget.slice(renderedText.length);
+                            var chunkSpan = document.createElement('span');
+                            chunkSpan.className = 'sl-chunk';
+                            chunkSpan.textContent = novoTrecho;
+                            textSpan.appendChild(chunkSpan);
+                            renderedText = visibleTarget;
+                        } else if (visibleTarget.length < renderedText.length) {
+                            textSpan.textContent = visibleTarget;
+                            renderedText = visibleTarget;
+                        }
+                        chatWrap.scrollTop = chatWrap.scrollHeight;
+
+                    } else if (event.type === 'done') {
+                        const stepCount = statusHistory.length;
+                        hideStatus();
+                        if (cursor) cursor.remove();
+                        codeGenPill = null;
+                        var finalReply = event.reply || streamText;
+                        if (bubble && streamContent) {
+                            streamContent.innerHTML = renderMarkdown(finalReply);
+                            mountMermaid(streamContent);
+                            appendMsgFooter(bubble, finalReply, stepCount);
+                        } else if (bubble) {
+                            bubble.innerHTML = renderMarkdown(finalReply);
+                            mountMermaid(bubble);
+                        } else {
+                            addBubble('assistant', finalReply);
+                            appendMsgFooter(chatWrap.lastElementChild, finalReply, stepCount);
+                        }
+                        // ZIP pra baixar — duas origens possíveis, mesmo mecanismo:
+                        // projeto gerado de verdade (Fase 3 — usuário confirmou o
+                        // manifesto) OU projeto anexado que acabou de ter uma
+                        // mudança de arquivo aplicada (Fase 2d, ver
+                        // pipeline/projectEditor.js). Em ambos os casos o ZIP vem
+                        // em base64 no próprio evento "done", sem rota de download
+                        // nem upload nenhum: monta um link data: URI direto na
+                        // bolha, o navegador baixa igual a qualquer link normal.
+                        if (event.zip && event.zip.base64) {
+                            var zipRow = bubble || chatWrap.lastElementChild;
+                            if (zipRow) {
+                                var zipLink = document.createElement('a');
+                                zipLink.href = 'data:application/zip;base64,' + event.zip.base64;
+                                zipLink.download = event.zip.nome || 'projeto-solaris.zip';
+                                zipLink.className = 'sl-chat-preview-btn';
+                                zipLink.style.cssText = 'margin-top:10px;display:inline-flex;align-items:center;gap:6px;' +
+                                    'padding:7px 16px;border-radius:20px;border:1px solid #818cf8;' +
+                                    'background:rgba(99,102,241,.1);color:#818cf8;font-size:.8rem;font-weight:700;text-decoration:none';
+                                var totalArq = event.zip.totalArquivos || 0;
+                                zipLink.innerHTML = '<i class="bi bi-file-earmark-zip-fill"></i><span>Baixar projeto (' + totalArq + ' ' + (totalArq === 1 ? 'arquivo' : 'arquivos') + ')</span>';
+                                zipRow.appendChild(zipLink);
+                            }
+                        }
+
+                        chatWrap.scrollTop = chatWrap.scrollHeight;
+                        conversationHistory.push({ role: 'assistant', content: finalReply });
+                        if (event.sessionId) currentSessionId = event.sessionId;
+                        if (event.tokens) debitarContadorUI(event.tokens);
+                        break outer;
+
+                    } else if (event.type === 'error') {
+                        hideStatus();
+                        conversationHistory.pop();
+                        const errMsg = '⚠️ ' + (event.message || 'Erro ao processar.');
+                        if (bubble && streamContent) { if (cursor) cursor.remove(); streamContent.innerHTML = renderMarkdown(errMsg); mountMermaid(streamContent); }
+                        else if (bubble) { if (cursor) cursor.remove(); bubble.innerHTML = renderMarkdown(errMsg); mountMermaid(bubble); }
+                        else addBubble('assistant', errMsg);
+                        break outer;
+                    }
+                }
+            }
+
+        } catch (err) {
+            hideStatus();
+            if (err && err.name === 'AbortError') {
+                // Parado pelo usuário — finaliza com o que já foi gerado, sem
+                // tratar como erro. Se nada chegou a ser gerado, desfaz o
+                // turno (como se a mensagem não tivesse sido enviada).
+                if (cursor) cursor.remove();
+                if (codeGenPill) { codeGenPill.remove(); codeGenPill = null; }
+                var textoParcial = streamText.trim();
+                if (textoParcial) {
+                    if (bubble && streamContent) { streamContent.innerHTML = renderMarkdown(textoParcial); mountMermaid(streamContent); appendMsgFooter(bubble, textoParcial, statusHistory.length); }
+                    else if (bubble) { bubble.innerHTML = renderMarkdown(textoParcial); mountMermaid(bubble); }
+                    conversationHistory.push({ role: 'assistant', content: textoParcial });
+                } else {
+                    conversationHistory.pop();
+                    if (bubble) bubble.remove();
+                }
+            } else {
+                conversationHistory.pop();
+                const errMsg = 'Falha de conexão. Verifique sua internet e tente novamente.';
+                if (bubble && streamContent) { if (cursor) cursor.remove(); streamContent.innerHTML = renderMarkdown(errMsg); mountMermaid(streamContent); }
+                else if (bubble) { if (cursor) cursor.remove(); bubble.innerHTML = renderMarkdown(errMsg); mountMermaid(bubble); }
+                else addBubble('assistant', errMsg);
+
+                const retryWrap = document.createElement('div');
+                retryWrap.className = 'mt-2';
+                const retryBtn = document.createElement('button');
+                retryBtn.type = 'button';
+                retryBtn.className = 'btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1';
+                retryBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Tentar novamente';
+                retryBtn.addEventListener('click', function () {
+                    chatInput.value = msg;
+                    resizeInput();
+                    slChatSend();
+                });
+                retryWrap.appendChild(retryBtn);
+                (bubble || chatWrap.lastElementChild).appendChild(retryWrap);
+            }
+        } finally {
+            currentAbortController = null;
+            setLoading(false);
+            chatSend.disabled = chatInput.value.trim().length === 0;
+        }
+    }
+
+    // ── Anexo de arquivo — envia um .zip pra POST /dashboard/solaris/upload,
+    // que extrai com segurança (nunca executa nada do que veio no zip) e
+    // devolve o framework detectado (ver src/solaris/README.md).
+    const FRAMEWORK_LABELS = {
+        'html5': 'HTML5', 'bootstrap5': 'Bootstrap 5', 'php': 'PHP',
+        'flask': 'Flask', 'django': 'Django', 'node-express': 'Node/Express', 'ejs': 'EJS',
+    };
+    function labelFramework(id) { return FRAMEWORK_LABELS[id] || id; }
+
+    function formatarResultadoUpload(data) {
+        let md = '';
+        if (data.framework) {
+            md += `Analisei o projeto enviado — parece ser **${labelFramework(data.framework)}**.\n\n`;
+        } else {
+            md += 'Analisei o projeto enviado, mas não deu pra apostar num framework único — os sinais ficaram empatados entre mais de uma opção.\n\n';
+        }
+        md += `Total de arquivos: ${data.totalArquivos}.\n`;
+        const candidatosComEvidencia = (data.candidatos || []).filter((c) => c.score > 0);
+        if (candidatosComEvidencia.length) {
+            md += '\n**Candidatos avaliados:**\n';
+            candidatosComEvidencia.forEach((c) => {
+                md += `- ${labelFramework(c.framework)} (score ${c.score}): ${c.evidencias.join('; ')}\n`;
+            });
+        }
+        if (data.analiseIA) {
+            md += `\n\n${data.analiseIA}`;
+        }
+        if (data.temProjeto) {
+            md += '\n\n_Pode perguntar sobre um arquivo específico do projeto daqui pra frente — ele fica anexado a esta conversa._';
+        }
+        return md;
+    }
+
+    uploadBtn.addEventListener('click', function () {
+        if (isLoading) return;
+        fileInput.click();
+    });
+    fileInput.addEventListener('change', async function () {
+        if (!fileInput.files || !fileInput.files.length) return;
+        const arquivo = fileInput.files[0];
+        fileInput.value = '';
+        if (isLoading) return;
+        if (!/\.zip$/i.test(arquivo.name)) {
+            slToast('Envie um arquivo .zip do seu projeto.');
+            return;
+        }
+
+        addBubble('user', 'Enviei o arquivo "' + arquivo.name + '" para análise.');
+        setLoading(true);
+        showStatus('Analisando o projeto enviado...');
+        try {
+            const formData = new FormData();
+            formData.append('arquivo', arquivo);
+            // Manda a sessão atual (se já existir) pro upload ficar anexado
+            // a ela — permite perguntar sobre um arquivo específico depois,
+            // num turno de chat seguinte (ver tools/projectStorage.js). Se
+            // ainda não há sessão (1ª mensagem da conversa é o upload), o
+            // servidor cria uma nova e devolve em data.sessionId abaixo.
+            if (currentSessionId) formData.append('sessionId', currentSessionId);
+            const resp = await fetch('/dashboard/solaris/upload', { method: 'POST', body: formData });
+            const data = await resp.json().catch(function () { return null; });
+            if (!resp.ok || !data || data.ok === false) {
+                const msg = (data && data.error) || 'Não consegui processar o arquivo enviado.';
+                addBubble('assistant', 'Não consegui analisar o projeto: ' + msg);
+                return;
+            }
+            if (data.sessionId) currentSessionId = data.sessionId;
+            addBubble('assistant', formatarResultadoUpload(data));
+        } catch (err) {
+            console.error('[SOLARIS-UPLOAD]', err);
+            addBubble('assistant', 'Falha de conexão ao enviar o arquivo. Tente novamente.');
+        } finally {
+            hideStatus();
+            setLoading(false);
+        }
+    });
+
+    // ── Histórico de conversas ────────────────────────────────────────────
+    window.slHistoricoOpen = function () {
+        document.getElementById('sl-hist-overlay').style.display = 'block';
+        document.getElementById('sl-hist-drawer').style.transform = 'translateX(0)';
+        slHistoricoLoad();
+    };
+
+    window.slHistoricoClose = function () {
+        document.getElementById('sl-hist-overlay').style.display = 'none';
+        document.getElementById('sl-hist-drawer').style.transform = 'translateX(-100%)';
+    };
+
+    async function slHistoricoLoad() {
+        var list = document.getElementById('sl-hist-list');
+        list.innerHTML = '<p style="padding:14px 12px;color:var(--sl-text-400);font-size:.82rem">Carregando...</p>';
+        try {
+            var r = await fetch('/api/chat/sessions?type=' + HIST_TYPE);
+            var d = await r.json();
+            var sessions = d.sessions || [];
+            if (!sessions.length) {
+                list.innerHTML = '<p style="padding:14px 12px;color:var(--sl-text-400);font-size:.82rem">Nenhuma conversa salva ainda.</p>';
+                return;
+            }
+            list.innerHTML = sessions.map(function (s) {
+                var dt = new Date(s.updatedAt);
+                var dateStr = dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) +
+                              ' ' + dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                var preview = (s.firstMessage || '(sem mensagem)').slice(0, 72);
+                return '<div class="sl-hist-item" onclick="slHistoricoCarregar(\'' + s.sessionId + '\')">' +
+                    '<div class="sl-hist-preview">' + preview + '</div>' +
+                    '<div class="sl-hist-meta"><span>' + dateStr + '</span><span>' + (s.messageCount || 0) + ' msgs</span></div>' +
+                '</div>';
+            }).join('');
+        } catch (e) {
+            list.innerHTML = '<p style="padding:14px 12px;color:#f87171;font-size:.82rem">Erro ao carregar histórico.</p>';
+        }
+    }
+
+    window.slHistoricoCarregar = async function (sessionId) {
+        if (isLoading) return;
+        var list = document.getElementById('sl-hist-list');
+        list.innerHTML = '<p style="padding:14px 12px;color:var(--sl-text-400);font-size:.82rem">Carregando conversa...</p>';
+        try {
+            var r = await fetch('/api/chat/sessions/' + sessionId + '?type=' + HIST_TYPE);
+            if (!r.ok) throw new Error('not found');
+            var d = await r.json();
+            var session = d.session;
+
+            slChatNovo();
+            currentSessionId = session.sessionId;
+            (session.messages || []).forEach(function (msg) {
+                if (msg.role !== 'user' && msg.role !== 'assistant') return;
+                conversationHistory.push({ role: msg.role, content: msg.content });
+                addBubble(msg.role, msg.content);
+            });
+            if (session.messages && session.messages.length) chatNovoBtn.disabled = false;
+            slHistoricoClose();
+            chatInput.focus();
+        } catch (e) {
+            list.innerHTML = '<p style="padding:14px 12px;color:#f87171;font-size:.82rem">Erro ao carregar conversa.</p>';
+        }
+    };
+
+    chatSend.addEventListener('click', function () {
+        if (isLoading) pararGeracao(); else slChatSend();
+    });
+    chatNovoBtn.addEventListener('click', slChatNovo);
+    chatInput.addEventListener('input', resizeInput);
+    chatInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            if ('ontouchstart' in window) return;
+            e.preventDefault();
+            if (!isLoading && !chatSend.disabled) slChatSend();
+        }
+    });
+
+    if ('ontouchstart' in window) {
+        chatInput.addEventListener('focus', function () {
+            setTimeout(function () { window.scrollTo(0, 0); }, 150);
+        });
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', function () {
+                window.scrollTo(0, 0);
+                chatWrap.scrollTop = chatWrap.scrollHeight;
+            });
+        }
+    }
+    document.querySelectorAll('.sl-chat-suggestion').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            chatInput.value = btn.textContent.trim();
+            resizeInput();
+            chatInput.focus();
+            slChatSend();
+        });
+    });
+}());
+</script>
+
+<%- include('../../partials/footer') %>

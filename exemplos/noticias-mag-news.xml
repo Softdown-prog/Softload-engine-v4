@@ -1,0 +1,2898 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultmessages='true' b:layoutsVersion='3' b:responsive='true' lang='pt-br' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+<head>
+  <b:include data='blog' name='all-head-content'/>
+  <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+  <title><data:blog.pageTitle/></title>
+
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'/>
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css' rel='stylesheet'/>
+  
+  <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&amp;family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&amp;display=swap' rel='stylesheet'/>
+
+  <b:skin><![CDATA[
+ 
+    /*
+    -----------------------------------------------
+    Blogger Template Style
+    Nome: MAG News (Editorial Premium)
+    Design: Branco Papel, Preto Nanquim e Azul Elétrico
+ ----------------------------------------------- */
+
+/* * GRUPO: CORES DO TEMA
+ * ---------------------------------------------------------
+ */
+<Group description="Cores Principais" title="Cores do Tema">
+   <Variable name="mag.primary" description="Cor Principal (Destaque)" type="color" default="#0d6efd" value="#0d6efd"/>
+   <Variable name="mag.secondary" description="Cor Secundária" type="color" default="#6c757d" value="#6c757d"/>
+   <Variable name="mag.body.bg" description="Fundo do Site" type="color" default="#ffffff" value="#ffffff"/>
+   <Variable name="mag.card.bg" description="Fundo dos Cards/Widgets" type="color" default="#f8f9fa" value="#f8f9fa"/>
+</Group>
+
+<Group description="Tipografia e Textos" title="Textos e Fontes">
+   <Variable name="mag.text.color" description="Cor do Texto" type="color" default="#212529" value="#212529"/>
+   <Variable name="mag.title.color" description="Cor dos Títulos" type="color" default="#1a1a1a" value="#1a1a1a"/>
+   <Variable name="mag.link.color" description="Cor dos Links" type="color" default="#0d6efd" value="#0d6efd"/>
+   
+   /* Fontes */
+   <Variable name="mag.font.body" description="Fonte do Texto" type="font" default="normal normal 16px Inter, sans-serif" value="normal normal 16px Inter, sans-serif"/>
+   <Variable name="mag.font.title" description="Fonte dos Títulos" type="font" default="normal bold 24px 'Playfair Display', serif" value="normal bold 24px &#39;Playfair Display&#39;, serif"/>
+</Group>
+
+<Group description="Layout e Bordas" title="Design">
+   <Variable name="mag.border.radius" description="Arredondamento (px)" type="string" default="8px" value="8px"/>
+   <Variable name="mag.border.color" description="Cor das Bordas" type="color" default="#dee2e6" value="#dee2e6"/>
+</Group>
+
+:root {
+  /* Cores Mapeadas */
+  --mag-primary: $(mag.primary);
+  --mag-secondary: $(mag.secondary);
+  --mag-bg: $(mag.body.bg);
+  --mag-card-bg: $(mag.card.bg);
+  
+  /* Textos */
+  --mag-text: $(mag.text.color);
+  --mag-title: $(mag.title.color);
+  --mag-link: $(mag.link.color);
+  
+  /* Fontes (O Blogger entrega o valor completo da fonte aqui) */
+  --font-body: $(mag.font.body.family);
+  --font-title: $(mag.font.title.family);
+  
+  /* Design */
+  --radius: $(mag.border.radius);
+  --border-color: $(mag.border.color);
+}
+
+/* Aplicação Global Inicial */
+body {
+  background-color: var(--mag-bg);
+  font-family: var(--font-body);
+  color: var(--mag-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  color: var(--mag-title);
+}
+
+a {
+  color: var(--mag-link);
+}
+
+
+    :root {
+      --mag-primary: #2563eb; /* Azul Elétrico */
+      --mag-dark: #111827;    /* Preto Nanquim */
+      --mag-bg: #f9fafb;      /* Branco Papel/Cinza clarinho */
+      --mag-surface: #ffffff;
+      --mag-text: #374151;
+      --mag-title: #030712;
+      --mag-border: #e5e7eb;
+      
+      --font-title: 'Playfair Display', serif;
+      --font-text: 'Inter', sans-serif;
+    }
+
+    [data-bs-theme="dark"] {
+      --mag-bg: #0f172a;
+      --mag-surface: #1e293b;
+      --mag-text: #cbd5e1;
+      --mag-title: #f8fafc;
+      --mag-border: #334155;
+      --mag-dark: #0f172a;
+    }
+
+    body { background-color: var(--mag-bg); color: var(--mag-text); font-family: var(--font-text); -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, h4, h5, h6, .playfair { font-family: var(--font-title); color: var(--mag-title); }
+    a { color: var(--mag-primary); text-decoration: none; transition: color 0.3s; }
+    a:hover { color: #1d4ed8; }
+
+    /* === TOPO (DATE & SOCIAL) === */
+    .top-bar { background-color: var(--mag-dark); color: #9ca3af; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
+    .top-bar a { color: #d1d5db; } .top-bar a:hover { color: #fff; }
+
+    /* === CABEÇALHO (EDITORIAL STYLE) === */
+    header { background-color: var(--mag-surface); padding-top: 2rem; }
+    .header-logo h1 { font-size: clamp(3rem, 6vw, 4.5rem); font-weight: 900; letter-spacing: -2px; text-align: center; margin: 0; text-transform: uppercase; }
+    
+    .navbar-container { border-top: 1px solid var(--mag-border); border-bottom: 4px solid var(--mag-dark); margin-top: 1.5rem; background-color: var(--mag-surface); }
+    [data-bs-theme="dark"] .navbar-container { border-bottom-color: var(--mag-primary); }
+    .nav-link { font-family: var(--font-text); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; color: var(--mag-title) !important; padding: 15px 20px !important; }
+    .nav-link:hover { color: var(--mag-primary) !important; }
+
+    /* === HERO MOSAICO (CSS GRID) === */
+    .hero-mosaic { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    .hero-card { position: relative; overflow: hidden; height: 300px; background: #000; }
+    .hero-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: transform 0.7s ease; }
+    .hero-card:hover img { transform: scale(1.05); opacity: 1; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.1) 80%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem; }
+    .hero-title { color: #fff; font-weight: 700; line-height: 1.2; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    
+    @media (min-width: 992px) {
+      .hero-mosaic { grid-template-columns: 2fr 1fr; grid-template-rows: 250px 250px; }
+      .hero-item-0 { grid-row: 1 / -1; height: 100%; }
+      .hero-item-0 .hero-title { font-size: 2.5rem; }
+      .hero-item-1, .hero-item-2 { height: 100%; }
+      .hero-item-1 .hero-title, .hero-item-2 .hero-title { font-size: 1.3rem; }
+    }
+
+    .mag-badge { position: absolute; top: 20px; left: 20px; background: var(--mag-primary); color: #fff; font-family: var(--font-text); font-size: 0.7rem; font-weight: 700; padding: 5px 12px; text-transform: uppercase; letter-spacing: 1px; z-index: 2; border-radius: 20px; }
+
+    /* === CARDS DE NOTÍCIAS (FEED PREMIUM) === */
+    .news-card { background: transparent; border: none; transition: transform 0.3s; height: 100%; }
+    .news-card:hover .news-title a { color: var(--mag-primary); }
+    .news-card-img { overflow: hidden; border-radius: 4px; position: relative; margin-bottom: 1rem; }
+    .news-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .news-card:hover .news-card-img img { transform: scale(1.03); }
+    .news-title { font-weight: 700; font-size: 1.4rem; line-height: 1.3; }
+    .news-title a { color: var(--mag-title); } 
+    
+    /* === SINGLE POST & DROPCAP === */
+    .post-header-single { text-align: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--mag-border); }
+    .post-title-single { font-weight: 900; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; margin: 15px 0; letter-spacing: -1px; }
+    .post-body-content { font-size: 1.15rem; line-height: 1.8; color: var(--mag-text); }
+    .post-body-content img, .post-body-content iframe { max-width: 100% !important; height: auto !important; margin: 2rem 0; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    
+    /* LETRA CAPITULAR (DROPCAP) */
+    .post-body-content > p:first-of-type::first-letter, 
+    .post-body-content > div:first-of-type::first-letter {
+      font-family: var(--font-title);
+      font-size: 4.5rem;
+      font-weight: 900;
+      color: var(--mag-primary);
+      float: left;
+      line-height: 0.8;
+      margin-right: 12px;
+      margin-top: 5px;
+    }
+
+    /* === PÁGINA 404 EDITORIAL === */
+    .error-404-wrapper { min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 4rem 1rem; }
+    .error-code { font-family: var(--font-title); font-size: clamp(6rem, 15vw, 12rem); color: var(--mag-title); font-weight: 900; line-height: 1; letter-spacing: -5px; }
+    .error-subtitle { font-family: var(--font-title); font-style: italic; color: var(--mag-primary); }
+
+    /* === TAGS / MARCADORES (PÍLULAS PREMIUM) === */
+    .list-label-widget-content ul, .cloud-label-widget-content { list-style: none !important; padding: 0 !important; margin: 0 !important; display: flex; flex-wrap: wrap; gap: 8px; }
+    .list-label-widget-content ul li, .cloud-label-widget-content .label-size { display: inline-flex; align-items: center; margin: 0; }
+    .list-label-widget-content ul li a, .cloud-label-widget-content .label-size a, .post-bottom-tags a {
+      display: inline-flex; align-items: center; background: transparent; color: var(--mag-text);
+      font-size: 0.8rem !important; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+      padding: 8px 18px; border-radius: 30px; border: 1px solid var(--mag-border);
+      transition: all 0.3s ease; text-decoration: none !important;
+    }
+    .list-label-widget-content ul li a:hover, .cloud-label-widget-content .label-size a:hover, .post-bottom-tags a:hover {
+      background: var(--mag-primary); color: #ffffff !important; border-color: var(--mag-primary); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.2);
+    }
+    .list-label-widget-content ul li span[dir='ltr'], .cloud-label-widget-content .label-count {
+      background: var(--mag-dark); color: #ffffff; font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; margin-left: -12px; margin-top: -15px; font-weight: 700; z-index: 2; border: 2px solid var(--mag-surface);
+    }
+    [data-bs-theme="dark"] .list-label-widget-content ul li a, [data-bs-theme="dark"] .cloud-label-widget-content .label-size a { border-color: #334155; }
+    [data-bs-theme="dark"] .list-label-widget-content ul li span[dir='ltr'], [data-bs-theme="dark"] .cloud-label-widget-content .label-count { border-color: var(--mag-surface); }
+
+    /* === WIDGETS SIDEBAR === */
+    .widget-title { font-family: var(--font-title); font-weight: 900; font-size: 1.5rem; border-bottom: 2px solid var(--mag-primary); padding-bottom: 10px; margin-bottom: 20px; color: var(--mag-title); display: inline-block; }
+    
+    /* NEWSLETTER ESTILO REVISTA */
+    .mag-newsletter { background: var(--mag-dark); color: #fff; padding: 2rem; border-radius: 8px; text-align: center; }
+    .mag-newsletter h4 { font-family: var(--font-title); color: #fff; font-size: 1.8rem; margin-bottom: 1rem; }
+    [data-bs-theme="dark"] .mag-newsletter { background: var(--mag-surface); border: 1px solid var(--mag-border); }
+
+    /* === FOOTER PREMIUM EDITORIAL === */
+    .mag-footer { background-color: #030712; color: #9ca3af; padding-top: 5rem; margin-top: 5rem; }
+    .mag-footer .playfair { color: #ffffff; }
+    .mag-footer .widget-title { color: #ffffff; border-bottom-color: #374151; }
+    .mag-footer a { color: #9ca3af; text-decoration: none; transition: color 0.3s ease; }
+    .mag-footer a:hover { color: var(--mag-primary); }
+    .mag-footer .btn-social { border-color: #374151; color: #d1d5db; transition: all 0.3s ease; }
+    .mag-footer .btn-social:hover { background-color: var(--mag-primary); border-color: var(--mag-primary); color: #ffffff; transform: translateY(-3px); }
+    .mag-footer-bottom { border-top: 1px solid #1f2937; padding: 1.5rem 0; margin-top: 3rem; }
+
+    /* === BOTÃO VOLTAR AO TOPO === */
+    #backToTop {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background-color: var(--mag-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+    #backToTop.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    #backToTop:hover {
+      background-color: #1d4ed8;
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+    }
+
+    /* === ANIMAÇÕES === */
+    .animate-up { opacity: 0; transform: translateY(20px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .animate-up.visible { opacity: 1; transform: translateY(0); }
+/*---------------------------------------------------------
+  WIDGET: POSTAGENS MAIS VISTAS (Alta Qualidade)
+-----------------------------------------------------------*/
+.popular-posts .item-content {
+  display: flex;
+  flex-direction: column; /* Coloca a imagem em cima e o texto embaixo */
+  margin-bottom: 2rem;
+}
+
+.popular-posts .item-thumbnail {
+  width: 100%;
+  height: 200px; /* Altura do banner da imagem */
+  margin: 0 0 1rem 0 !important; /* Remove a margem nativa do Blogger */
+  overflow: hidden;
+  border-radius: 8px; /* Bordas arredondadas modernas */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.popular-posts .item-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Garante que a imagem não fique esticada */
+  transition: transform 0.5s ease;
+}
+
+/* Efeito de zoom suave ao passar o mouse */
+.popular-posts .item-thumbnail a:hover img {
+  transform: scale(1.05);
+}
+
+.popular-posts .item-title {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.popular-posts .item-title a {
+  color: var(--mag-title);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.popular-posts .item-title a:hover {
+  color: var(--mag-primary);
+}
+
+.popular-posts .item-snippet {
+  font-size: 0.9rem;
+  color: var(--mag-text);
+  line-height: 1.6;
+  opacity: 0.85;
+  /* Truque para limitar o resumo a 2 linhas com "..." no final */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/*---------------------------------------------------------
+  WIDGET: FORMULÁRIO DE CONTATO (Moderno & Responsivo)
+-----------------------------------------------------------*/
+/* Container principal do formulário */
+.contact-form-widget {
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: var(--bs-body-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid var(--bs-border-color);
+}
+
+/* Campos de entrada (Nome, Email, Mensagem) */
+.contact-form-name,
+.contact-form-email,
+.contact-form-email-message {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-bottom: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  border: 1px solid var(--bs-border-color-translucent);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: var(--bs-body-color);
+  background-color: var(--bs-tertiary-bg);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Área de texto maior para a mensagem */
+.contact-form-email-message {
+  min-height: 160px;
+  resize: vertical;
+}
+
+/* Efeito de Foco (Acessibilidade e UX) */
+.contact-form-name:focus,
+.contact-form-email:focus,
+.contact-form-email-message:focus {
+  outline: none;
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Botão de Envio (Estilo Premium) */
+.contact-form-button-submit {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 1rem 1.5rem;
+  background-color: var(--bs-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.contact-form-button-submit:hover {
+  background-color: var(--bs-primary-text-emphasis);
+}
+
+.contact-form-button-submit:active {
+  transform: translateY(2px);
+}
+
+/* Mensagens de Status Nativas (Erro/Sucesso) */
+.contact-form-error-message-with-border,
+.contact-form-success-message-with-border {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+}
+
+.contact-form-error-message-with-border {
+  background-color: var(--bs-danger-bg-subtle);
+  color: var(--bs-danger-text-emphasis);
+  border: 1px solid var(--bs-danger-border-subtle);
+}
+
+.contact-form-success-message-with-border {
+  background-color: var(--bs-success-bg-subtle);
+  color: var(--bs-success-text-emphasis);
+  border: 1px solid var(--bs-success-border-subtle);
+}
+
+/* Esconde elementos desnecessários injetados pelo Blogger */
+.contact-form-cross,
+.contact-form-widget br {
+  display: none !important;
+}
+
+/*---------------------------------------------------------
+  WIDGET: BARRA DE PESQUISA (Nativa Blogger)
+-----------------------------------------------------------*/
+/* Container do Gadget */
+.BlogSearch .search-form {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: var(--bs-tertiary-bg); /* Usa o fundo do Bootstrap 5 */
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Efeito ao clicar/focar na barra toda */
+.BlogSearch .search-form:focus-within {
+  border-color: var(--mag-primary);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+  background-color: var(--bs-body-bg);
+}
+
+/* Campo de Texto (Input) */
+.BlogSearch .search-input {
+  width: 100%;
+  background: none !important;
+  border: none !important;
+  padding: 10px 15px !important;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--mag-text);
+  outline: none !important;
+}
+
+/* Placeholder (Texto de exemplo) */
+.BlogSearch .search-input::placeholder {
+  color: var(--bs-secondary-color);
+  opacity: 0.7;
+}
+
+/* Botão de Pesquisa (Action) */
+.BlogSearch .search-action {
+  background-color: var(--mag-primary) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: calc(var(--radius) - 2px) !important;
+  padding: 8px 20px !important;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.BlogSearch .search-action:hover {
+  filter: brightness(1.1);
+}
+
+.BlogSearch .search-action:active {
+  transform: scale(0.96);
+}
+
+/* Ajuste para Mobile */
+@media (max-width: 480px) {
+  .BlogSearch .search-action {
+    padding: 8px 12px !important;
+  }
+}
+
+/* Limpeza de elementos extras que o Blogger injeta */
+.BlogSearch .search-cancel {
+  display: none !important; /* Esconde o botão de cancelar nativo */
+}
+
+/*---------------------------------------------------------
+  WIDGET: HEADER & LOGO
+-----------------------------------------------------------*/
+.mag-header-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Centraliza a logo */
+  padding: 1.5rem 0;
+}
+
+.mag-logo-link {
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* Força a imagem a nunca ultrapassar o tamanho da tela no Mobile */
+.mag-logo-img {
+  max-width: 280px; /* Tamanho máximo ideal para mobile/desktop */
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.mag-logo-img:hover {
+  transform: scale(1.02);
+}
+
+/* Estilo alternativo caso o usuário use apenas Texto (Sem Logo) */
+.mag-title-text {
+  font-family: var(--font-title, 'Playfair Display', serif);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0;
+  text-align: center;
+}
+
+.mag-title-text a {
+  color: var(--mag-title, #1a1a1a);
+  text-decoration: none;
+}
+
+.mag-header-desc {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.9rem;
+  color: var(--mag-secondary, #6c757d);
+  margin-top: 0.5rem;
+  text-align: center;
+}
+  
+
+ /*---------------------------------------------------------
+  COMPONENT: BLOCKQUOTE (Rede de Captura Larga)
+-----------------------------------------------------------*/
+.post-body blockquote,
+.post-content blockquote,
+.entry-content blockquote,
+article blockquote,
+blockquote.tr_bq {
+  position: relative !important;
+  margin: 2.5rem 0 !important;
+  padding: 1.5rem 2rem 1.5rem 3rem !important;
+  background-color: var(--bs-tertiary-bg) !important; 
+  border-left: 5px solid var(--mag-primary) !important; 
+  border-radius: 0 var(--radius) var(--radius) 0 !important;
+  font-family: var(--font-title) !important; 
+  font-style: italic !important;
+  font-size: 1.35rem !important;
+  line-height: 1.6 !important;
+  color: var(--mag-title) !important;
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.03) !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* Ícone de Aspas Decorativo */
+.post-body blockquote::before,
+.post-content blockquote::before,
+.entry-content blockquote::before,
+article blockquote::before,
+blockquote.tr_bq::before {
+  content: "\f6b0" !important; 
+  font-family: "bootstrap-icons" !important;
+  position: absolute !important;
+  top: 10px !important;
+  left: 10px !important;
+  font-size: 2rem !important;
+  color: var(--mag-primary) !important;
+  opacity: 0.2 !important; 
+}
+
+/* Estilização para o Autor da Citação */
+.post-body blockquote cite,
+.post-content blockquote cite,
+.entry-content blockquote cite,
+article blockquote cite,
+blockquote.tr_bq cite {
+  display: block !important;
+  margin-top: 1rem !important;
+  font-family: var(--font-body) !important; 
+  font-style: normal !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  color: var(--mag-secondary) !important;
+}
+
+.post-body blockquote cite::before,
+.post-content blockquote cite::before,
+.entry-content blockquote cite::before,
+article blockquote cite::before,
+blockquote.tr_bq cite::before {
+  content: "— " !important; 
+}
+
+/* Ajuste Responsivo para Mobile */
+@media (max-width: 768px) {
+  .post-body blockquote,
+  .post-content blockquote,
+  .entry-content blockquote,
+  article blockquote,
+  blockquote.tr_bq {
+    padding: 1.2rem 1.5rem 1.2rem 2.2rem !important;
+    font-size: 1.15rem !important;
+    margin: 1.5rem 0 !important;
+  }
+}
+
+/*---------------------------------------------------------
+  WIDGET: CONTADOR DE VISUALIZAÇÕES (Dashboard Lado a Lado)
+-----------------------------------------------------------*/
+/* A Caixa Principal (Card) */
+.Stats .widget-content {
+  position: relative !important;
+  background-color: var(--bs-tertiary-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius) !important;
+  padding: 1.5rem 1.5rem 1.5rem 5.5rem !important; 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02) !important;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  
+  /* MUDANÇA DE EIXO: Coloca elementos lado a lado */
+  display: flex !important;
+  flex-direction: row !important; 
+  align-items: baseline !important; /* Alinha o texto pela base das letras */
+  flex-wrap: wrap; /* Se a tela for muito fina, não quebra o card */
+  gap: 12px; /* Espaço exato entre o texto e o número */
+  
+  /* O texto do Blogger herda este estilo base */
+  font-family: var(--font-body) !important;
+  font-size: 0.8rem !important;
+  color: var(--mag-secondary) !important;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Oculta o gráfico nativo */
+.Stats img {
+  display: none !important;
+}
+
+/* 1. O Fundo Redondo do Ícone */
+.Stats .widget-content::before {
+  content: "" !important;
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3.2rem;
+  height: 3.2rem;
+  background-color: var(--mag-primary);
+  opacity: 0.15; 
+  border-radius: 50%;
+}
+
+/* 2. O Ícone de Gráfico (SVG Mask - À prova de falhas) */
+.Stats .widget-content::after {
+  content: "" !important;
+  position: absolute;
+  left: 2.05rem; 
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--mag-primary);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M0 0h1v15h15v1H0V0Zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M0 0h1v15h15v1H0V0Zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07Z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* O Número do Contador */
+.Stats span {
+  display: inline-block !important; /* A chave para ficarem na mesma linha */
+  font-family: var(--font-title) !important;
+  font-size: 2.2rem !important;
+  font-weight: 800 !important;
+  color: var(--mag-title) !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1 !important;
+  margin: 0 !important; /* Zera qualquer margem antiga */
+}
+
+/* Efeito Hover */
+.Stats .widget-content:hover {
+  transform: translateY(-3px);
+  border-color: var(--mag-primary) !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06) !important;
+}
+
+/*---------------------------------------------------------
+  WIDGET: LISTA DE BLOGS (Cards de Parceiros)
+-----------------------------------------------------------*/
+/* Reseta a lista feia do Blogger e aplica Grid/Flex */
+.BlogList ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* Espaço elegante entre os cards */
+}
+
+/* O Card Principal */
+.BlogList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: var(--bs-tertiary-bg); /* Sincronizado com seu Dark Mode */
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  transition: all 0.3s ease;
+}
+
+/* Micro-interação Premium */
+.BlogList li:hover {
+  transform: translateY(-3px);
+  border-color: var(--mag-primary);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+}
+
+/* O Ícone/Favicon do Blog Parceiro */
+.BlogList .blog-icon {
+  width: 35px !important;
+  height: 35px !important;
+  border-radius: 6px;
+  object-fit: cover;
+  margin: 0 !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Organiza o conteúdo de texto */
+.BlogList .blog-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Nome do Blog Parceiro (Ex: The New York Times) */
+.BlogList .blog-title {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.BlogList .blog-title a {
+  color: var(--mag-primary);
+  text-decoration: none;
+}
+
+/* Título da Postagem Recente (A manchete) */
+.BlogList .item-title {
+  font-family: var(--font-title); /* Usando a Playfair Display */
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.BlogList .item-title a {
+  color: var(--mag-title);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.BlogList .item-title a:hover {
+  color: var(--mag-primary);
+}
+
+/* Resumo da Postagem (Snippet) */
+.BlogList .item-snippet {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--mag-secondary);
+  line-height: 1.6;
+  /* Engenharia para truncar o texto em 2 linhas com "..." */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Tempo desde a última atualização (Ex: "Há 2 horas") */
+.BlogList .item-time {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--bs-secondary-color);
+  margin-top: 0.8rem;
+  font-style: italic;
+  display: block;
+}
+
+/*---------------------------------------------------------
+  COMPONENTE: VÍDEO RESPONSIVO (16:9 PREMIUM)
+-----------------------------------------------------------*/
+.mag-video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* Matemática exata para a proporção 16:9 */
+    height: 0;
+    border-radius: var(--radius, 12px); /* Arredondamento premium */
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Sombra elegante */
+    margin: 2rem 0; /* Espaçamento para respirar no texto */
+    background-color: #000; /* Fundo preto enquanto o vídeo carrega */
+}
+
+.mag-video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+  ]]></b:skin>
+</head>
+
+<body>
+
+  <div class='top-bar py-2 d-none d-md-block'>
+    <div class='container d-flex justify-content-between align-items-center'>
+      <div class='fw-bold'><b:section id='top-date' maxwidgets='1' name='Data Topo' showaddelement='yes'/></div>
+      <div class='d-flex gap-4 align-items-center'>
+        <b:section id='top-social' name='Redes Sociais' showaddelement='yes'/>
+        <button class='btn btn-link btn-sm text-decoration-none p-0 btn-dark-mode text-white' title='Alternar Tema'><i class='bi bi-moon-stars-fill fs-6'/></button>
+      </div>
+    </div>
+  </div>
+
+<header>
+  <div class='container'>
+    <div class='header-logo'>
+      <b:section id='header-branding' maxwidgets='1' name='Logotipo Principal' showaddelement='yes'>
+        <b:widget id='Header100' locked='false' title='news (Cabeçalho)' type='Header' version='2' visible='true'>
+          <b:widget-settings>
+            <b:widget-setting name='displayUrl'>https://blogger.googleusercontent.com/img/a/AVvXsEhxNW9rn5_t0I5apkTwFMYLQJsoO5lQ-C9uAvJFR-NoENZl5QVVZa6SrNLTEWaXGFBDQbpQuEHUJnY2MWI92z6gfOA-BZ3B5YT_J2nRTvta6P3GfnaOShpuU8-nwxg1pfX38iMfdX5TiF5ZjKlZ_C52qJXhHfPoslDsZ6jqJOS7_0wLAIDR3_PLer8UrcBn=s300</b:widget-setting>
+            <b:widget-setting name='displayHeight'>100</b:widget-setting>
+            <b:widget-setting name='sectionWidth'>2249</b:widget-setting>
+            <b:widget-setting name='useImage'>true</b:widget-setting>
+            <b:widget-setting name='shrinkToFit'>false</b:widget-setting>
+            <b:widget-setting name='imagePlacement'>REPLACE</b:widget-setting>
+            <b:widget-setting name='displayWidth'>300</b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+            <div class='mag-header-content'>
+              <a class='mag-logo-link' expr:href='data:blog.homepageUrl'>
+                
+                <img alt='Logótipo MAG News' class='mag-logo-img' src='https://blogger.googleusercontent.com/img/a/AVvXsEjUVUueoknqzmIOBMSlEhYRryUHW6XIL6RclC2VwG7IPYSZm7xGbMVyYsc1fkly5FLkoB0DA55x2Vq4owElcf97N1lPM-zgan-uWeqFHs5h-_Gesu8kf2b98LhrW-KG_l4Dlggv83DeBeSM_mor-abl1Si0d2vNGnvk5hHz0z0L2TYaCeqYMa9gT9WzdVs'/>
+                
+              </a>
+            </div>
+          </b:includable>
+          <b:includable id='behindImageStyle'/>
+          <b:includable id='description'/>
+          <b:includable id='image'/>
+          <b:includable id='title'/>
+        </b:widget>
+      </b:section>
+    </div>
+  </div>
+
+  <div class='navbar-container sticky-top'>
+    <nav class='navbar navbar-expand-lg py-0'>
+      <div class='container'>
+        <button aria-controls='mainNavbar' aria-expanded='false' class='navbar-toggler border-0 py-3' data-bs-target='#mainNavbar' data-bs-toggle='collapse' type='button'>
+          <i class='bi bi-list fs-2 text-primary'/> <span class='fw-bold ms-2 text-uppercase'>Menu</span>
+        </button>
+        <div class='collapse navbar-collapse justify-content-center' id='mainNavbar'>
+          <b:section id='main-menu' maxwidgets='1' name='Menu Principal' showaddelement='yes'>
+            <b:widget id='PageList1' locked='false' title='Menu' type='PageList' version='2' visible='true'>
+              <b:widget-settings>
+                <b:widget-setting name='pageListJson'><![CDATA[{"link1":{"href":"https://news-webly.blogspot.com/2026/05/404-personalizado.html","position":1,"title":"404 personalizado "},"link0":{"href":"/","position":0,"title":"Página inicial"},"link2":{"href":"https://drive.google.com/file/d/1vC7uqtbFaq7GBIwEbk2Nkqob47UMcrjr/view?usp=drive_link","position":2,"title":"Documentação"}}]]></b:widget-setting>
+                <b:widget-setting name='homeTitle'>Página inicial</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+                <ul class='navbar-nav gap-2 gap-lg-4'>
+                  <b:loop values='data:links' var='link'>
+                    <li class='nav-item'><a class='nav-link' expr:href='data:link.href'><data:link.title/></a></li>
+                  </b:loop>
+                </ul>
+              </b:includable>
+              <b:includable id='content'><b:include name='main'/></b:includable>
+              <b:includable id='overflowButton'>
+  <b:include name='verticalMoreIcon'/>
+</b:includable>
+              <b:includable id='overflowablePageList'>
+  <div class='overflowable-container'>
+    <div class='overflowable-contents'>
+      <div class='container'>
+        <b:with value='true' var='overflow'>
+        <b:with value='&quot;tabs&quot;' var='pageListClass'>
+          <b:include name='pageList'/>
+        </b:with>
+        </b:with>
+      </div>
+    </div>
+    <div class='overflow-button hidden'>
+      <b:include name='overflowButton'/>
+    </div>
+  </div>
+</b:includable>
+              <b:includable id='pageLink'>
+  <li>
+    <b:class cond='data:overflow' name='overflowable-item'/>
+    <b:class cond='data:link.isCurrentPage' name='selected'/>
+
+    <a expr:href='data:link.href'><data:link.title/></a>
+  </li>
+</b:includable>
+              <b:includable id='pageList'>
+  <ul>
+    <b:class cond='data:pageListClass' expr:name='data:pageListClass'/>
+    <b:loop values='data:links' var='link'>
+      <b:include name='pageLink'/>
+    </b:loop>
+  </ul>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+  
+  
+  <b:if cond='data:view.isHomepage'>
+    <div class='container mt-5 mb-5'>
+      <b:section id='hero-section' maxwidgets='1' name='Destaque Mosaico (3 Posts)' showaddelement='yes'>
+        <b:widget id='Blog2' locked='false' title='Postagens no blog' type='Blog' version='2' visible='true'>
+          <b:widget-settings>
+            <b:widget-setting name='showDateHeader'>false</b:widget-setting>
+            <b:widget-setting name='commentLabel'>comments</b:widget-setting>
+            <b:widget-setting name='style.textcolor'>#ffffff</b:widget-setting>
+            <b:widget-setting name='showShareButtons'>true</b:widget-setting>
+            <b:widget-setting name='showCommentLink'>true</b:widget-setting>
+            <b:widget-setting name='style.urlcolor'>#ffffff</b:widget-setting>
+            <b:widget-setting name='postLocationLabel'>Location:</b:widget-setting>
+            <b:widget-setting name='showAuthor'>false</b:widget-setting>
+            <b:widget-setting name='style.linkcolor'>#ffffff</b:widget-setting>
+            <b:widget-setting name='style.unittype'>TextAndImage</b:widget-setting>
+            <b:widget-setting name='style.bgcolor'>#ffffff</b:widget-setting>
+            <b:widget-setting name='reactionsLabel'/>
+            <b:widget-setting name='showAuthorProfile'>true</b:widget-setting>
+            <b:widget-setting name='style.layout'>1x1</b:widget-setting>
+            <b:widget-setting name='showLabels'>true</b:widget-setting>
+            <b:widget-setting name='showLocation'>true</b:widget-setting>
+            <b:widget-setting name='postLabelsLabel'>Labels:</b:widget-setting>
+            <b:widget-setting name='showTimestamp'>true</b:widget-setting>
+            <b:widget-setting name='postsPerAd'>1</b:widget-setting>
+            <b:widget-setting name='showBacklinks'>false</b:widget-setting>
+            <b:widget-setting name='style.bordercolor'>#ffffff</b:widget-setting>
+            <b:widget-setting name='showInlineAds'>false</b:widget-setting>
+            <b:widget-setting name='showReactions'>false</b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+            <div class='hero-mosaic animate-up'>
+              <b:loop index='i' values='data:posts limit 3' var='post'>
+                <div expr:class='&quot;hero-card rounded-3 hero-item-&quot; + i'>
+                  <a expr:href='data:post.url'>
+                    <img expr:alt='data:post.title' expr:src='resizeImage(data:post.featuredImage, 1200, &quot;16:9&quot;)' loading='lazy'/>
+                    <div class='hero-overlay'>
+                      <b:if cond='data:post.labels'><span class='mag-badge'><data:post.labels.first.name/></span></b:if>
+                      <h2 class='hero-title playfair mt-3'><data:post.title/></h2>
+                      <div class='text-light small fw-bold text-uppercase mt-2' style='letter-spacing: 1px;'>
+                        <data:post.author.name/> <span class='mx-2'>&#8226;</span> <data:post.date/>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </b:loop>
+            </div>
+          </b:includable>
+          <b:includable id='aboutPostAuthor'><div/></b:includable>
+          <b:includable id='addComments'><div/></b:includable>
+          <b:includable id='blogThisShare'>
+  <b:with value='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=270,width=475\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+          <b:includable id='bylineByName' var='byline'>
+  <b:switch var='data:byline.name'>
+  <b:case value='share'/>
+    <b:include cond='data:post.shareUrl' name='postShareButtons'/>
+  <b:case value='comments'/>
+    <b:include cond='data:post.allowComments' name='postCommentsLink'/>
+  <b:case value='location'/>
+    <b:include cond='data:post.location' name='postLocation'/>
+  <b:case value='timestamp'/>
+    <b:include cond='not data:view.isPage' name='postTimestamp'/>
+  <b:case value='author'/>
+    <b:include name='postAuthor'/>
+  <b:case value='labels'/>
+    <b:include cond='data:post.labels' name='postLabels'/>
+  <b:case value='icons'/>
+    <b:include cond='data:post.emailPostUrl' name='emailPostIcon'/>
+  </b:switch>
+</b:includable>
+          <b:includable id='bylineRegion' var='regionItems'>
+  <b:loop values='data:regionItems' var='byline'>
+    <b:include data='byline' name='bylineByName'/>
+  </b:loop>
+</b:includable>
+          <b:includable id='commentAuthorAvatar'><div/></b:includable>
+          <b:includable id='commentDeleteIcon' var='comment'><span/></b:includable>
+          <b:includable id='commentForm' var='post'><div/></b:includable>
+          <b:includable id='commentFormIframeSrc' var='post'><a/></b:includable>
+          <b:includable id='commentItem' var='comment'><div/></b:includable>
+          <b:includable id='commentList' var='comments'><div/></b:includable>
+          <b:includable id='commentPicker' var='post'><div/></b:includable>
+          <b:includable id='comments' var='post'><div/></b:includable>
+          <b:includable id='commentsLink'>
+  <a class='comment-link' expr:href='data:post.commentsUrl' expr:onclick='data:post.commentsUrlOnclick'>
+    <b:if cond='data:post.numberOfComments &gt; 0'>
+      <b:message name='messages.numberOfComments'>
+        <b:param expr:value='data:post.numberOfComments' name='numComments'/>
+      </b:message>
+    <b:else/>
+      <data:messages.postAComment/>
+    </b:if>
+  </a>
+</b:includable>
+          <b:includable id='commentsLinkIframe'>
+  <!-- G+ comments, no longer available. The includable is retained for backwards-compatibility. -->
+</b:includable>
+          <b:includable id='commentsTitle'><div/></b:includable>
+          <b:includable id='defaultAdUnit'>
+  <ins class='adsbygoogle' data-ad-format='auto' expr:data-ad-client='data:adClientId ?: data:blog.adsenseClientId' expr:data-ad-host='data:blog.adsenseHostId' expr:style='data:style ?: &quot;display: block;&quot;'>
+    <b:attr cond='not data:blog.analytics4' expr:value='data:blog.analyticsAccountNumber' name='data-analytics-uacct'/>
+  </ins>
+  <script>
+   (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</b:includable>
+          <b:includable id='emailPostIcon'>
+  <span class='byline post-icons'>
+    <!-- email post links -->
+    <span class='item-action'>
+      <a expr:href='data:post.emailPostUrl' expr:title='data:messages.emailPost'>
+        <b:include data='{ iconClass: &quot;touch-icon sharing-icon&quot; }' name='emailIcon'/>
+      </a>
+    </span>
+  </span>
+</b:includable>
+          <b:includable id='facebookShare'>
+  <b:with value='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=430,width=640\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+          <b:includable id='feedLinks'><div/></b:includable>
+          <b:includable id='feedLinksBody' var='links'><div/></b:includable>
+          <b:includable id='footerBylines'>
+  <b:if cond='data:widgets.Blog.first.footerBylines'>
+    <b:loop index='i' values='data:widgets.Blog.first.footerBylines' var='region'>
+      <b:if cond='not data:region.items.empty'>
+        <div expr:class='&quot;post-footer-line post-footer-line-&quot; + (data:i + 1)'>
+          <b:with value='&quot;footer-&quot; + (data:i + 1)' var='regionName'>
+            <b:include data='region.items' name='bylineRegion'/>
+          </b:with>
+        </div>
+      </b:if>
+    </b:loop>
+  </b:if>
+</b:includable>
+          <b:includable id='googlePlusShare'>
+</b:includable>
+          <b:includable id='headerByline'>
+  <b:if cond='data:widgets.Blog.first.headerByline'>
+    <div class='post-header'>
+      <div class='post-header-line-1'>
+        <b:with value='&quot;header-1&quot;' var='regionName'>
+          <b:include data='data:widgets.Blog.first.headerByline.items' name='bylineRegion'/>
+        </b:with>
+      </div>
+    </div>
+  </b:if>
+</b:includable>
+          <b:includable id='homePageLink'><div/></b:includable>
+          <b:includable id='iframeComments' var='post'><div/></b:includable>
+          <b:includable id='inlineAd' var='post'><div/></b:includable>
+          <b:includable id='linkShare'>
+  <b:with value='&quot;window.prompt(\&quot;Copy to clipboard: Ctrl+C, Enter\&quot;, \&quot;&quot; + data:originalUrl + &quot;\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+          <b:includable id='nextPageLink'><div/></b:includable>
+          <b:includable id='otherSharingButton'>
+  <span class='sharing-platform-button sharing-element-other' expr:aria-label='data:messages.shareToOtherApps.escaped' expr:data-url='data:originalUrl' expr:title='data:messages.shareToOtherApps.escaped' role='menuitem' tabindex='-1'>
+    <b:with value='{key: &quot;sharingOther&quot;}' var='platform'>
+      <b:include name='sharingPlatformIcon'/>
+    </b:with>
+    <span class='platform-sharing-text'><data:messages.shareOtherApps.escaped/></span>
+  </span>
+</b:includable>
+          <b:includable id='platformShare'>
+  <a expr:class='&quot;goog-inline-block sharing-&quot; + data:platform.key' expr:data-url='data:originalUrl' expr:href='data:shareUrl + &quot;&amp;target=&quot; + data:platform.target' expr:onclick='data:onclick ? data:onclick : &quot;&quot;' expr:title='data:platform.shareMessage' target='_blank'>
+    <span class='share-button-link-text'>
+      <data:platform.shareMessage/>
+    </span>
+  </a>
+</b:includable>
+          <b:includable id='post' var='post'><div/></b:includable>
+          <b:includable id='postAuthor'>
+  <span class='byline post-author vcard'>
+    <span class='post-author-label'>
+      <data:byline.label/>
+    </span>
+    <span class='fn'>
+      <b:if cond='data:post.author.profileUrl'>
+        <meta expr:content='data:post.author.profileUrl'/>
+        <a class='g-profile' expr:href='data:post.author.profileUrl' rel='author' title='author profile'>
+          <span><data:post.author.name/></span>
+        </a>
+      <b:else/>
+        <span><data:post.author.name/></span>
+      </b:if>
+    </span>
+  </span>
+</b:includable>
+          <b:includable id='postBody' var='post'><div/></b:includable>
+          <b:includable id='postBodySnippet' var='post'><div/></b:includable>
+          <b:includable id='postCommentsAndAd' var='post'><div/></b:includable>
+          <b:includable id='postCommentsLink'><div/></b:includable>
+          <b:includable id='postFooter' var='post'><div/></b:includable>
+          <b:includable id='postFooterAuthorProfile' var='post'><div/></b:includable>
+          <b:includable id='postHeader' var='post'><div/></b:includable>
+          <b:includable id='postJumpLink' var='post'>
+  <div class='jump-link flat-button'>
+    <a expr:href='data:post.url fragment &quot;more&quot;' expr:title='data:post.title'>
+      <b:eval expr='data:blog.jumpLinkMessage'/>
+    </a>
+  </div>
+</b:includable>
+          <b:includable id='postLabels'>
+  <span class='byline post-labels'>
+    <span class='byline-label'><data:byline.label/></span>
+    <b:loop index='i' values='data:post.labels' var='label'>
+      <a expr:href='data:label.url' rel='tag'>
+        <data:label.name/>
+      </a>
+    </b:loop>
+  </span>
+</b:includable>
+          <b:includable id='postLocation'>
+  <span class='byline post-location'>
+    <data:byline.label/>
+    <a expr:href='data:post.location.mapsUrl' target='_blank'><data:post.location.name/></a>
+  </span>
+</b:includable>
+          <b:includable id='postMeta' var='post'><div/></b:includable>
+          <b:includable id='postMetadataJSONImage'>
+  &quot;image&quot;: {
+    &quot;@type&quot;: &quot;ImageObject&quot;,
+    <b:if cond='data:post.featuredImage.isResizable'>
+    &quot;url&quot;: &quot;<b:eval expr='resizeImage(data:post.featuredImage, 1200, &quot;1200:630&quot;)'/>&quot;,
+    &quot;height&quot;: 630,
+    &quot;width&quot;: 1200
+    <b:else/>
+    &quot;url&quot;: &quot;https://blogger.googleusercontent.com/img/b/U2hvZWJveA/AVvXsEgfMvYAhAbdHksiBA24JKmb2Tav6K0GviwztID3Cq4VpV96HaJfy0viIu8z1SSw_G9n5FQHZWSRao61M3e58ImahqBtr7LiOUS6m_w59IvDYwjmMcbq3fKW4JSbacqkbxTo8B90dWp0Cese92xfLMPe_tg11g/w1200/&quot;,
+    &quot;height&quot;: 348,
+    &quot;width&quot;: 1200
+    </b:if>
+  },
+</b:includable>
+          <b:includable id='postMetadataJSONPublisher'>
+ &quot;publisher&quot;: {
+    &quot;@type&quot;: &quot;Organization&quot;,
+    &quot;name&quot;: &quot;Blogger&quot;,
+    &quot;logo&quot;: {
+      &quot;@type&quot;: &quot;ImageObject&quot;,
+      &quot;url&quot;: &quot;https://blogger.googleusercontent.com/img/b/U2hvZWJveA/AVvXsEgfMvYAhAbdHksiBA24JKmb2Tav6K0GviwztID3Cq4VpV96HaJfy0viIu8z1SSw_G9n5FQHZWSRao61M3e58ImahqBtr7LiOUS6m_w59IvDYwjmMcbq3fKW4JSbacqkbxTo8B90dWp0Cese92xfLMPe_tg11g/h60/&quot;,
+      &quot;width&quot;: 206,
+      &quot;height&quot;: 60
+    }
+  },
+</b:includable>
+          <b:includable id='postPagination'><div/></b:includable>
+          <b:includable id='postReactions'>
+  <!-- Reaction feature no longer available. The includable is retained for backwards-compatibility. -->
+</b:includable>
+          <b:includable id='postShareButtons'>
+  <div class='byline post-share-buttons goog-inline-block'>
+    <b:with value='data:sharingId ?: ((data:widget.instanceId ?: &quot;sharing&quot;) + &quot;-&quot; + (data:regionName ?: &quot;byline&quot;) + &quot;-&quot; + data:post.id)' var='sharingId'>
+      <!-- Note: 'sharingButtons' includable is from the default Sharing widget markup. -->
+      <b:include data='{                                                sharingId: data:sharingId,                                                originalUrl: data:post.url,                                                platforms: data:this.sharing.platforms,                                                shareUrl: data:post.shareUrl,                                                shareTitle: data:post.title,                                              }' name='sharingButtons'/>
+    </b:with>
+  </div>
+</b:includable>
+          <b:includable id='postTimestamp'>
+  <span class='byline post-timestamp'>
+    <data:byline.label/>
+    <b:if cond='data:post.url'>
+      <meta expr:content='data:post.url.canonical'/>
+      <a class='timestamp-link' expr:href='data:post.url' rel='bookmark' title='permanent link'>
+        <time class='published' expr:datetime='data:post.date.iso8601' expr:title='data:post.date.iso8601'>
+          <data:post.date/>
+        </time>
+      </a>
+    </b:if>
+  </span>
+</b:includable>
+          <b:includable id='postTitle' var='post'><div/></b:includable>
+          <b:includable id='previousPageLink'><div/></b:includable>
+          <b:includable id='sharingButton'>
+  <span expr:aria-label='data:platform.shareMessage' expr:class='&quot;sharing-platform-button sharing-element-&quot; + data:platform.key' expr:data-href='data:shareUrl + &quot;&amp;target=&quot; + data:platform.target' expr:data-url='data:originalUrl' expr:title='data:platform.shareMessage' role='menuitem' tabindex='-1'>
+    <b:include name='sharingPlatformIcon'/>
+    <span class='platform-sharing-text'><data:platform.name/></span>
+  </span>
+</b:includable>
+          <b:includable id='sharingButtonContent'>
+  <div class='flat-icon-button ripple'>
+    <b:include name='shareIcon'/>
+  </div>
+</b:includable>
+          <b:includable id='sharingButtons'>
+  <div class='sharing' expr:aria-owns='&quot;sharing-popup-&quot; + data:sharingId' expr:data-title='data:shareTitle'>
+    <button class='sharing-button touch-icon-button' expr:aria-controls='&quot;sharing-popup-&quot; + data:sharingId' expr:aria-label='data:messages.share.escaped' expr:id='&quot;sharing-button-&quot; + data:sharingId' role='button'>
+      <b:include name='sharingButtonContent'/>
+    </button>
+    <b:include name='sharingButtonsMenu'/>
+  </div>
+</b:includable>
+          <b:includable id='sharingButtonsMenu'>
+  <div class='share-buttons-container'>
+    <ul aria-hidden='true' class='share-buttons hidden' expr:aria-label='data:messages.share.escaped' expr:id='&quot;sharing-popup-&quot; + data:sharingId' role='menu'>
+      <b:loop values='(data:platforms ?: data:blog.sharing.platforms) filter (p =&gt; p.key not in {&quot;blogThis&quot;})' var='platform'>
+        <li>
+          <b:include name='sharingButton'/>
+        </li>
+      </b:loop>
+      <li aria-hidden='true' class='hidden'>
+        <b:include name='otherSharingButton'/>
+      </li>
+    </ul>
+  </div>
+</b:includable>
+          <b:includable id='sharingPlatformIcon'>
+  <b:include data='{ iconClass: (&quot;touch-icon sharing-&quot; + data:platform.key) }' expr:name='data:platform.key + &quot;Icon&quot;'/>
+</b:includable>
+          <b:includable id='threadedCommentForm' var='post'><div/></b:includable>
+          <b:includable id='threadedCommentJs' var='post'><div/></b:includable>
+          <b:includable id='threadedComments' var='post'><div/></b:includable>
+          <b:includable id='tooltipCss'>
+  <!-- LINT.IfChange -->
+  <style>
+    .post-body a.b-tooltip-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .post-body a.b-tooltip-container .b-tooltip {
+      display: block !important;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translate(-20%, 1px);
+      visibility: hidden;
+      opacity: 0;
+      z-index: 1;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .post-body a.b-tooltip-container .b-tooltip iframe {
+      width: 200px;
+      height: 198px;
+      max-width: none;
+      border: none;
+      border-radius: 20px;
+      box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (hover: hover) {
+      .post-body a.b-tooltip-container:hover .b-tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+  </style>
+  <!-- LINT.ThenChange(//depot/google3/java/com/google/blogger/b2/layouts/widgets/v2-style.css) -->
+</b:includable>
+        </b:widget>
+      </b:section>
+    </div>
+  </b:if>
+
+  <div class='container mt-5'>
+    <div class='row g-5'>
+      
+      <main class='col-lg-8'>
+        <b:section id='main-content' name='Feed de Notícias' showaddelement='no'>
+          <b:widget id='Blog1' locked='true' title='Postagens no blog' type='Blog' version='2' visible='true'>
+            <b:widget-settings>
+              <b:widget-setting name='showDateHeader'>false</b:widget-setting>
+              <b:widget-setting name='commentLabel'>comments</b:widget-setting>
+              <b:widget-setting name='style.textcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='showShareButtons'>true</b:widget-setting>
+              <b:widget-setting name='showCommentLink'>true</b:widget-setting>
+              <b:widget-setting name='style.urlcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='postLocationLabel'>Location:</b:widget-setting>
+              <b:widget-setting name='showAuthor'>false</b:widget-setting>
+              <b:widget-setting name='style.linkcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='style.unittype'>TextAndImage</b:widget-setting>
+              <b:widget-setting name='style.bgcolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='timestampLabel'/>
+              <b:widget-setting name='reactionsLabel'/>
+              <b:widget-setting name='showAuthorProfile'>false</b:widget-setting>
+              <b:widget-setting name='style.layout'>1x1</b:widget-setting>
+              <b:widget-setting name='showLabels'>true</b:widget-setting>
+              <b:widget-setting name='showLocation'>true</b:widget-setting>
+              <b:widget-setting name='postLabelsLabel'/>
+              <b:widget-setting name='showTimestamp'>true</b:widget-setting>
+              <b:widget-setting name='postsPerAd'>1</b:widget-setting>
+              <b:widget-setting name='showBacklinks'>false</b:widget-setting>
+              <b:widget-setting name='style.bordercolor'>#ffffff</b:widget-setting>
+              <b:widget-setting name='showInlineAds'>false</b:widget-setting>
+              <b:widget-setting name='showReactions'>false</b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main' var='top'>
+              
+              <b:if cond='data:view.isError'>
+                <div class='error-404-wrapper animate-up'>
+                  <h1 class='error-code'>404</h1>
+                  <h2 class='h3 error-subtitle mb-4'>Página não encontrada</h2>
+                  <p class='text-muted mb-5 mx-auto' style='max-width: 500px;'>A edição que procura parece ter sido recolhida das bancas. O link pode estar quebrado ou a matéria foi arquivada.</p>
+                  <a class='btn btn-dark rounded-pill px-5 py-3 fw-bold text-uppercase' href='/' style='background-color: var(--mag-dark); border: none;'><i class='bi bi-journal-text me-2'/> Voltar à Capa</a>
+                </div>
+              </b:if>
+
+              <b:if cond='data:view.isMultipleItems'>
+                
+                <h3 class='widget-title animate-up mb-4'>Últimas Edições</h3>
+                <div class='row row-cols-1 row-cols-md-2 g-5'>
+                  <b:loop values='data:posts' var='post'>
+                    <div class='col'>
+                      <article class='news-card animate-up d-flex flex-column'>
+                        <div class='news-card-img ratio ratio-4x3'>
+                          <a expr:href='data:post.url'>
+                            <b:if cond='data:post.featuredImage'>
+                              <img expr:alt='data:post.title' expr:src='resizeImage(data:post.featuredImage, 800, &quot;4:3&quot;)' loading='lazy'/>
+                            <b:else/>
+                              <div class='w-100 h-100 d-flex align-items-center justify-content-center bg-light'><i class='bi bi-image fs-1 opacity-25'/></div>
+                            </b:if>
+                          </a>
+                        </div>
+                        <div class='d-flex flex-column flex-grow-1'>
+                          <div class='d-flex gap-2 mb-2'>
+                            <b:if cond='data:post.labels'>
+                              <a class='text-primary fw-bold text-uppercase small' expr:href='data:post.labels.first.url' style='letter-spacing: 1px;'><data:post.labels.first.name/></a>
+                            </b:if>
+                          </div>
+                          <h3 class='news-title playfair'><a expr:href='data:post.url'><data:post.title/></a></h3>
+                          <p class='text-muted mt-2 mb-3 flex-grow-1' style='font-size: 0.95rem;'><data:post.snippet/></p>
+                          <div class='small fw-bold text-uppercase mt-auto' style='color: var(--mag-text); letter-spacing: 1px;'>
+                            <data:post.date/>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </b:loop>
+                </div>
+                
+                <b:include name='nextprev'/>
+
+              <b:else/>
+                
+                <b:loop values='data:posts' var='post'>
+                  <article class='animate-up mb-5'>
+                    <header class='post-header-single'>
+                      <b:if cond='data:post.labels'>
+                        <div class='mb-3'>
+                          <b:loop values='data:post.labels' var='label'>
+                            <a class='badge text-decoration-none me-2' expr:href='data:label.url' style='background: var(--mag-primary); color: #fff; padding: 6px 12px; font-weight: 700; text-transform: uppercase;'><data:label.name/></a>
+                          </b:loop>
+                        </div>
+                      </b:if>
+                      <h1 class='post-title-single playfair'><data:post.title/></h1>
+                      
+                      <div class='d-flex justify-content-center align-items-center gap-4 text-muted small fw-bold text-uppercase mt-4' style='letter-spacing: 1px;'>
+                        <span>Por <span style='color: var(--mag-primary);'><data:post.author.name/></span></span>
+                        <span>&#8226;</span>
+                        <span><data:post.date/></span>
+                        <span>&#8226;</span>
+                        <span id='read-time-calc'><i class='bi bi-hourglass-split me-1'/> Calculando...</span>
+                      </div>
+                    </header>
+
+                    <div class='post-body-content' id='post-body-content'>
+                      <data:post.body/>
+                    </div>
+                    
+                    <div class='mt-5 pt-4 border-top d-flex justify-content-between align-items-center'>
+                       <div class='post-bottom-tags d-flex flex-wrap gap-2'>
+                          <b:loop values='data:post.labels' var='label'>
+                            <a expr:href='data:label.url'><data:label.name/></a>
+                          </b:loop>
+                       </div>
+                       <div class='d-flex gap-2'>
+                         <a class='btn btn-outline-dark rounded-circle' expr:href='&quot;https://twitter.com/intent/tweet?url=&quot; + data:post.url' style='width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;' target='_blank'><i class='bi bi-twitter-x'/></a>
+                         <a class='btn btn-outline-dark rounded-circle' expr:href='&quot;https://api.whatsapp.com/send?text=&quot; + data:post.url' style='width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;' target='_blank'><i class='bi bi-whatsapp'/></a>
+                       </div>
+                    </div>
+
+                    <div class='related-posts mt-5 pt-5 border-top'>
+                      <h4 class='widget-title'>Leia Também</h4>
+                      <div class='row g-4' id='related-grid'>
+                        <div class='col-12 text-center text-muted spinner-border text-primary mx-auto' role='status'/>
+                      </div>
+                    </div>
+
+                  </article>
+                  
+                  <b:if cond='data:post.labels'>
+                    <script>
+                    //<![CDATA[
+                    document.addEventListener('DOMContentLoaded', () => {
+                      const label = ']]><data:post.labels.first.name/><![CDATA[';
+                      const cUrl = ']]><data:post.url/><![CDATA[';
+                      const rGrid = document.getElementById('related-grid');
+                      
+                      fetch('/feeds/posts/default/-/' + label + '?alt=json-in-script&amp;max-results=4')
+                      .then(res => res.text())
+                      .then(txt => {
+                        const jsonStr = txt.replace('gdata.io.handleScriptLoaded(', '').slice(0, -2);
+                        const d = JSON.parse(jsonStr);
+                        rGrid.innerHTML = '';
+                        const feed = d.feed;
+                        if (!feed.entry || feed.entry.length === 0) { rGrid.innerHTML = '<div class="col-12 text-muted">Nenhuma edição encontrada.</div>'; return; }
+                        let c = 0;
+                        feed.entry.forEach(e => {
+                          if (c >= 3) return;
+                          let pUrl = ''; e.link.forEach(l => { if (l.rel === 'alternate') pUrl = l.href; });
+                          if (pUrl.split('?')[0] === cUrl) return;
+                          let pImg = e.media$thumbnail ? e.media$thumbnail.url.replace(/\/s\d+(\-c)?\//, '/w600-h450-p/') : '';
+                          const title = e.title.$t;
+                          rGrid.innerHTML += `
+                            <div class="col-md-4">
+                              <div class="news-card">
+                                <a href="${pUrl}">
+                                  <div class="news-card-img ratio ratio-4x3 mb-3"><img src="${pImg}" class="rounded-3 object-fit-cover" alt="Thumb"></div>
+                                  <h6 class="playfair fw-bold" style="font-size: 1.1rem; color: var(--mag-title);">${title}</h6>
+                                </a>
+                              </div>
+                            </div>
+                          `;
+                          c++;
+                        });
+                      });
+
+                      // CALCULAR TEMPO DE LEITURA
+                      const textBlock = document.getElementById('post-body-content').innerText;
+                      const words = textBlock.trim().split(/\s+/).length;
+                      const time = Math.ceil(words / 225); // 225 palavras por min
+                      document.getElementById('read-time-calc').innerHTML = `<i class='bi bi-book me-1'></i> ${time} min de leitura`;
+                    });
+                    //]]>
+                    </script>
+                  </b:if>
+
+                  <div class='mt-5 pt-4 border-top animate-up'>
+                    <b:include cond='data:post.allowComments' data='post' name='threaded_comments'/>
+                  </div>
+                </b:loop>
+
+              </b:if>
+            </b:includable>
+            <b:includable id='aboutPostAuthor'><div/></b:includable>
+            <b:includable id='addComments'><div/></b:includable>
+            <b:includable id='blogThisShare'>
+  <b:with value='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=270,width=475\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+            <b:includable id='bylineByName' var='byline'>
+  <b:switch var='data:byline.name'>
+  <b:case value='share'/>
+    <b:include cond='data:post.shareUrl' name='postShareButtons'/>
+  <b:case value='comments'/>
+    <b:include cond='data:post.allowComments' name='postCommentsLink'/>
+  <b:case value='location'/>
+    <b:include cond='data:post.location' name='postLocation'/>
+  <b:case value='timestamp'/>
+    <b:include cond='not data:view.isPage' name='postTimestamp'/>
+  <b:case value='author'/>
+    <b:include name='postAuthor'/>
+  <b:case value='labels'/>
+    <b:include cond='data:post.labels' name='postLabels'/>
+  <b:case value='icons'/>
+    <b:include cond='data:post.emailPostUrl' name='emailPostIcon'/>
+  </b:switch>
+</b:includable>
+            <b:includable id='bylineRegion' var='regionItems'>
+  <b:loop values='data:regionItems' var='byline'>
+    <b:include data='byline' name='bylineByName'/>
+  </b:loop>
+</b:includable>
+            <b:includable id='commentAuthorAvatar'><div/></b:includable>
+            <b:includable id='commentDeleteIcon' var='comment'><span/></b:includable>
+            <b:includable id='commentForm' var='post'><div/></b:includable>
+            <b:includable id='commentFormIframeSrc' var='post'><a/></b:includable>
+            <b:includable id='commentItem' var='comment'><div/></b:includable>
+            <b:includable id='commentList' var='comments'><div/></b:includable>
+            <b:includable id='commentPicker' var='post'><div/></b:includable>
+            <b:includable id='comments' var='post'><div/></b:includable>
+            <b:includable id='commentsLink'>
+  <a class='comment-link' expr:href='data:post.commentsUrl' expr:onclick='data:post.commentsUrlOnclick'>
+    <b:if cond='data:post.numberOfComments &gt; 0'>
+      <b:message name='messages.numberOfComments'>
+        <b:param expr:value='data:post.numberOfComments' name='numComments'/>
+      </b:message>
+    <b:else/>
+      <data:messages.postAComment/>
+    </b:if>
+  </a>
+</b:includable>
+            <b:includable id='commentsLinkIframe'>
+  <!-- G+ comments, no longer available. The includable is retained for backwards-compatibility. -->
+</b:includable>
+            <b:includable id='commentsTitle'><div/></b:includable>
+            <b:includable id='defaultAdUnit'>
+  <ins class='adsbygoogle' data-ad-format='auto' expr:data-ad-client='data:adClientId ?: data:blog.adsenseClientId' expr:data-ad-host='data:blog.adsenseHostId' expr:style='data:style ?: &quot;display: block;&quot;'>
+    <b:attr cond='not data:blog.analytics4' expr:value='data:blog.analyticsAccountNumber' name='data-analytics-uacct'/>
+  </ins>
+  <script>
+   (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</b:includable>
+            <b:includable id='emailPostIcon'>
+  <span class='byline post-icons'>
+    <!-- email post links -->
+    <span class='item-action'>
+      <a expr:href='data:post.emailPostUrl' expr:title='data:messages.emailPost'>
+        <b:include data='{ iconClass: &quot;touch-icon sharing-icon&quot; }' name='emailIcon'/>
+      </a>
+    </span>
+  </span>
+</b:includable>
+            <b:includable id='facebookShare'>
+  <b:with value='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=430,width=640\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+            <b:includable id='feedLinks'><div/></b:includable>
+            <b:includable id='feedLinksBody' var='links'><div/></b:includable>
+            <b:includable id='footerBylines'>
+  <b:if cond='data:widgets.Blog.first.footerBylines'>
+    <b:loop index='i' values='data:widgets.Blog.first.footerBylines' var='region'>
+      <b:if cond='not data:region.items.empty'>
+        <div expr:class='&quot;post-footer-line post-footer-line-&quot; + (data:i + 1)'>
+          <b:with value='&quot;footer-&quot; + (data:i + 1)' var='regionName'>
+            <b:include data='region.items' name='bylineRegion'/>
+          </b:with>
+        </div>
+      </b:if>
+    </b:loop>
+  </b:if>
+</b:includable>
+            <b:includable id='googlePlusShare'>
+</b:includable>
+            <b:includable id='headerByline'>
+  <b:if cond='data:widgets.Blog.first.headerByline'>
+    <div class='post-header'>
+      <div class='post-header-line-1'>
+        <b:with value='&quot;header-1&quot;' var='regionName'>
+          <b:include data='data:widgets.Blog.first.headerByline.items' name='bylineRegion'/>
+        </b:with>
+      </div>
+    </div>
+  </b:if>
+</b:includable>
+            <b:includable id='homePageLink'><div/></b:includable>
+            <b:includable id='iframeComments' var='post'><div/></b:includable>
+            <b:includable id='inlineAd' var='post'><div/></b:includable>
+            <b:includable id='linkShare'>
+  <b:with value='&quot;window.prompt(\&quot;Copy to clipboard: Ctrl+C, Enter\&quot;, \&quot;&quot; + data:originalUrl + &quot;\&quot;); return false;&quot;' var='onclick'>
+    <b:include name='platformShare'/>
+  </b:with>
+</b:includable>
+            <b:includable id='nextPageLink'><div/></b:includable>
+            <b:includable id='nextprev'>
+              <div class='d-flex justify-content-between mt-5 pt-4 border-top animate-up'>
+                <b:if cond='data:newerPageUrl'><a class='btn btn-outline-dark rounded-pill px-4 fw-bold text-uppercase' expr:href='data:newerPageUrl' style='font-size: 0.85rem;'><i class='bi bi-arrow-left me-2'/> Edições Recentes</a><b:else/><span/></b:if>
+                <b:if cond='data:olderPageUrl'><a class='btn btn-outline-dark rounded-pill px-4 fw-bold text-uppercase' expr:href='data:olderPageUrl' style='font-size: 0.85rem;'>Edições Anteriores <i class='bi bi-arrow-right ms-2'/></a></b:if>
+              </div>
+            </b:includable>
+            <b:includable id='otherSharingButton'>
+  <span class='sharing-platform-button sharing-element-other' expr:aria-label='data:messages.shareToOtherApps.escaped' expr:data-url='data:originalUrl' expr:title='data:messages.shareToOtherApps.escaped' role='menuitem' tabindex='-1'>
+    <b:with value='{key: &quot;sharingOther&quot;}' var='platform'>
+      <b:include name='sharingPlatformIcon'/>
+    </b:with>
+    <span class='platform-sharing-text'><data:messages.shareOtherApps.escaped/></span>
+  </span>
+</b:includable>
+            <b:includable id='platformShare'>
+  <a expr:class='&quot;goog-inline-block sharing-&quot; + data:platform.key' expr:data-url='data:originalUrl' expr:href='data:shareUrl + &quot;&amp;target=&quot; + data:platform.target' expr:onclick='data:onclick ? data:onclick : &quot;&quot;' expr:title='data:platform.shareMessage' target='_blank'>
+    <span class='share-button-link-text'>
+      <data:platform.shareMessage/>
+    </span>
+  </a>
+</b:includable>
+            <b:includable id='post' var='post'><div/></b:includable>
+            <b:includable id='postAuthor'>
+  <span class='byline post-author vcard'>
+    <span class='post-author-label'>
+      <data:byline.label/>
+    </span>
+    <span class='fn'>
+      <b:if cond='data:post.author.profileUrl'>
+        <meta expr:content='data:post.author.profileUrl'/>
+        <a class='g-profile' expr:href='data:post.author.profileUrl' rel='author' title='author profile'>
+          <span><data:post.author.name/></span>
+        </a>
+      <b:else/>
+        <span><data:post.author.name/></span>
+      </b:if>
+    </span>
+  </span>
+</b:includable>
+            <b:includable id='postBody' var='post'><div/></b:includable>
+            <b:includable id='postBodySnippet' var='post'><div/></b:includable>
+            <b:includable id='postCommentsAndAd' var='post'><div/></b:includable>
+            <b:includable id='postCommentsLink'><div/></b:includable>
+            <b:includable id='postFooter' var='post'><div/></b:includable>
+            <b:includable id='postFooterAuthorProfile' var='post'><div/></b:includable>
+            <b:includable id='postHeader' var='post'><div/></b:includable>
+            <b:includable id='postJumpLink' var='post'>
+  <div class='jump-link flat-button'>
+    <a expr:href='data:post.url fragment &quot;more&quot;' expr:title='data:post.title'>
+      <b:eval expr='data:blog.jumpLinkMessage'/>
+    </a>
+  </div>
+</b:includable>
+            <b:includable id='postLabels'>
+  <span class='byline post-labels'>
+    <span class='byline-label'><data:byline.label/></span>
+    <b:loop index='i' values='data:post.labels' var='label'>
+      <a expr:href='data:label.url' rel='tag'>
+        <data:label.name/>
+      </a>
+    </b:loop>
+  </span>
+</b:includable>
+            <b:includable id='postLocation'>
+  <span class='byline post-location'>
+    <data:byline.label/>
+    <a expr:href='data:post.location.mapsUrl' target='_blank'><data:post.location.name/></a>
+  </span>
+</b:includable>
+            <b:includable id='postMeta' var='post'><div/></b:includable>
+            <b:includable id='postMetadataJSONImage'>
+  &quot;image&quot;: {
+    &quot;@type&quot;: &quot;ImageObject&quot;,
+    <b:if cond='data:post.featuredImage.isResizable'>
+    &quot;url&quot;: &quot;<b:eval expr='resizeImage(data:post.featuredImage, 1200, &quot;1200:630&quot;)'/>&quot;,
+    &quot;height&quot;: 630,
+    &quot;width&quot;: 1200
+    <b:else/>
+    &quot;url&quot;: &quot;https://blogger.googleusercontent.com/img/b/U2hvZWJveA/AVvXsEgfMvYAhAbdHksiBA24JKmb2Tav6K0GviwztID3Cq4VpV96HaJfy0viIu8z1SSw_G9n5FQHZWSRao61M3e58ImahqBtr7LiOUS6m_w59IvDYwjmMcbq3fKW4JSbacqkbxTo8B90dWp0Cese92xfLMPe_tg11g/w1200/&quot;,
+    &quot;height&quot;: 348,
+    &quot;width&quot;: 1200
+    </b:if>
+  },
+</b:includable>
+            <b:includable id='postMetadataJSONPublisher'>
+ &quot;publisher&quot;: {
+    &quot;@type&quot;: &quot;Organization&quot;,
+    &quot;name&quot;: &quot;Blogger&quot;,
+    &quot;logo&quot;: {
+      &quot;@type&quot;: &quot;ImageObject&quot;,
+      &quot;url&quot;: &quot;https://blogger.googleusercontent.com/img/b/U2hvZWJveA/AVvXsEgfMvYAhAbdHksiBA24JKmb2Tav6K0GviwztID3Cq4VpV96HaJfy0viIu8z1SSw_G9n5FQHZWSRao61M3e58ImahqBtr7LiOUS6m_w59IvDYwjmMcbq3fKW4JSbacqkbxTo8B90dWp0Cese92xfLMPe_tg11g/h60/&quot;,
+      &quot;width&quot;: 206,
+      &quot;height&quot;: 60
+    }
+  },
+</b:includable>
+            <b:includable id='postPagination'><div/></b:includable>
+            <b:includable id='postReactions'>
+  <!-- Reaction feature no longer available. The includable is retained for backwards-compatibility. -->
+</b:includable>
+            <b:includable id='postShareButtons'>
+  <div class='byline post-share-buttons goog-inline-block'>
+    <b:with value='data:sharingId ?: ((data:widget.instanceId ?: &quot;sharing&quot;) + &quot;-&quot; + (data:regionName ?: &quot;byline&quot;) + &quot;-&quot; + data:post.id)' var='sharingId'>
+      <!-- Note: 'sharingButtons' includable is from the default Sharing widget markup. -->
+      <b:include data='{                                                sharingId: data:sharingId,                                                originalUrl: data:post.url,                                                platforms: data:this.sharing.platforms,                                                shareUrl: data:post.shareUrl,                                                shareTitle: data:post.title,                                              }' name='sharingButtons'/>
+    </b:with>
+  </div>
+</b:includable>
+            <b:includable id='postTimestamp'>
+  <span class='byline post-timestamp'>
+    <data:byline.label/>
+    <b:if cond='data:post.url'>
+      <meta expr:content='data:post.url.canonical'/>
+      <a class='timestamp-link' expr:href='data:post.url' rel='bookmark' title='permanent link'>
+        <time class='published' expr:datetime='data:post.date.iso8601' expr:title='data:post.date.iso8601'>
+          <data:post.date/>
+        </time>
+      </a>
+    </b:if>
+  </span>
+</b:includable>
+            <b:includable id='postTitle' var='post'><div/></b:includable>
+            <b:includable id='previousPageLink'><div/></b:includable>
+            <b:includable id='sharingButton'>
+  <span expr:aria-label='data:platform.shareMessage' expr:class='&quot;sharing-platform-button sharing-element-&quot; + data:platform.key' expr:data-href='data:shareUrl + &quot;&amp;target=&quot; + data:platform.target' expr:data-url='data:originalUrl' expr:title='data:platform.shareMessage' role='menuitem' tabindex='-1'>
+    <b:include name='sharingPlatformIcon'/>
+    <span class='platform-sharing-text'><data:platform.name/></span>
+  </span>
+</b:includable>
+            <b:includable id='sharingButtonContent'>
+  <div class='flat-icon-button ripple'>
+    <b:include name='shareIcon'/>
+  </div>
+</b:includable>
+            <b:includable id='sharingButtons'>
+  <div class='sharing' expr:aria-owns='&quot;sharing-popup-&quot; + data:sharingId' expr:data-title='data:shareTitle'>
+    <button class='sharing-button touch-icon-button' expr:aria-controls='&quot;sharing-popup-&quot; + data:sharingId' expr:aria-label='data:messages.share.escaped' expr:id='&quot;sharing-button-&quot; + data:sharingId' role='button'>
+      <b:include name='sharingButtonContent'/>
+    </button>
+    <b:include name='sharingButtonsMenu'/>
+  </div>
+</b:includable>
+            <b:includable id='sharingButtonsMenu'>
+  <div class='share-buttons-container'>
+    <ul aria-hidden='true' class='share-buttons hidden' expr:aria-label='data:messages.share.escaped' expr:id='&quot;sharing-popup-&quot; + data:sharingId' role='menu'>
+      <b:loop values='(data:platforms ?: data:blog.sharing.platforms) filter (p =&gt; p.key not in {&quot;blogThis&quot;})' var='platform'>
+        <li>
+          <b:include name='sharingButton'/>
+        </li>
+      </b:loop>
+      <li aria-hidden='true' class='hidden'>
+        <b:include name='otherSharingButton'/>
+      </li>
+    </ul>
+  </div>
+</b:includable>
+            <b:includable id='sharingPlatformIcon'>
+  <b:include data='{ iconClass: (&quot;touch-icon sharing-&quot; + data:platform.key) }' expr:name='data:platform.key + &quot;Icon&quot;'/>
+</b:includable>
+            <b:includable id='threadedCommentForm' var='post'><div/></b:includable>
+            <b:includable id='threadedCommentJs' var='post'><div/></b:includable>
+            <b:includable id='threadedComments' var='post'><div/></b:includable>
+            <b:includable id='threaded_comments' var='post'>
+               <h4 class='widget-title'>Comentários</h4>
+               <div class='comments' id='comments'><data:post.commentHtml/></div>
+            </b:includable>
+            <b:includable id='tooltipCss'>
+  <!-- LINT.IfChange -->
+  <style>
+    .post-body a.b-tooltip-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .post-body a.b-tooltip-container .b-tooltip {
+      display: block !important;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translate(-20%, 1px);
+      visibility: hidden;
+      opacity: 0;
+      z-index: 1;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .post-body a.b-tooltip-container .b-tooltip iframe {
+      width: 200px;
+      height: 198px;
+      max-width: none;
+      border: none;
+      border-radius: 20px;
+      box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (hover: hover) {
+      .post-body a.b-tooltip-container:hover .b-tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+  </style>
+  <!-- LINT.ThenChange(//depot/google3/java/com/google/blogger/b2/layouts/widgets/v2-style.css) -->
+</b:includable>
+          </b:widget>
+        </b:section>
+      </main>
+
+      <aside class='col-lg-4'>
+      
+
+        <b:section id='sidebar-trending' name='Mais Lidas' showaddelement='true'>
+          <b:widget id='HTML4' locked='false' title='' type='HTML'>
+            <b:widget-settings>
+              <b:widget-setting name='content'><![CDATA[<style>
+/* --- Design do Slider Premium --- */
+#mag-slider-widget {
+    position: relative;
+    width: 100%;
+    /* Altura imponente para parecer capa de revista */
+    height: 450px;      
+    margin: 0 auto 2rem auto;
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+    border: 1px solid var(--border-color, #eaeaea);
+    border-radius: var(--radius, 8px);
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+}
+
+#mag-slider-loading {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-body, 'Inter', sans-serif);
+    color: var(--mag-secondary, #6c757d);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: fadePulse 2s infinite;
+}
+
+@keyframes fadePulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.mag-slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    display: block;
+    text-decoration: none;
+    z-index: 1;
+}
+
+.mag-slide.active-slide {
+    opacity: 1;
+    z-index: 5;
+}
+
+.mag-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Escurece a imagem suavemente para o texto branco sobressair */
+    filter: brightness(0.6) contrast(1.05); 
+    /* Zoom super lento e elegante típico de sites de notícias */
+    transition: transform 8s ease-out; 
+}
+
+.mag-slide.active-slide img {
+    transform: scale(1.04);
+}
+
+/* --- Informação da Postagem (Overlay) --- */
+.mag-slide-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 80px 40px 30px 40px;
+    background: linear-gradient(to top, rgba(0,0,0, 0.85) 0%, rgba(0,0,0, 0) 100%);
+    /* Linha de destaque com a tua cor principal */
+    border-bottom: 4px solid var(--mag-primary, #0d6efd);
+}
+
+.mag-slide-title {
+    font-family: var(--font-title, 'Playfair Display', serif);
+    font-weight: 700;
+    font-size: 2.2rem;
+    line-height: 1.2;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.mag-badge-news {
+    display: inline-block;
+    background: var(--mag-primary, #0d6efd);
+    color: #ffffff;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    border-radius: 4px;
+}
+
+/* --- Controlos de Navegação --- */
+.mag-slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 45px; height: 45px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.mag-slider-nav:hover {
+    background: var(--mag-primary, #0d6efd);
+    border-color: var(--mag-primary, #0d6efd);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.mag-slider-prev { left: 20px; }
+.mag-slider-next { right: 20px; }
+
+/* Responsividade Mobile */
+@media (max-width: 768px) {
+    #mag-slider-widget { height: 320px; }
+    .mag-slide-title { font-size: 1.5rem; }
+    .mag-slide-info { padding: 60px 20px 20px 20px; }
+    .mag-slider-nav { width: 35px; height: 35px; font-size: 1rem; left: 10px; }
+    .mag-slider-next { right: 10px; left: auto; }
+}
+</style>
+
+<div id="mag-slider-widget">
+    <div id="mag-slider-loading">A carregar destaques...</div>
+    <div id="mag-slider-track"></div>
+    
+    <div class="mag-slider-nav mag-slider-prev" onclick="window.moveMagSlide(-1)">&#10094;</div>
+    <div class="mag-slider-nav mag-slider-next" onclick="window.moveMagSlide(1)">&#10095;</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const maxPosts = 5; 
+    // Puxa as últimas postagens (alt=json)
+    const feedUrl = '/feeds/posts/default?alt=json&max-results=' + maxPosts;
+    
+    const track = document.getElementById('mag-slider-track');
+    const loading = document.getElementById('mag-slider-loading');
+    
+    if (!track || !loading) return; 
+
+    fetch(feedUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Erro HTTP: ' + response.status);
+            return response.json();
+        })
+        .then(data => {
+            const posts = data.feed && data.feed.entry ? data.feed.entry : [];
+            
+            if(posts.length === 0) {
+                loading.innerText = "Nenhuma postagem encontrada.";
+                return;
+            }
+
+            let slidesHtml = '';
+
+            posts.forEach((post, index) => {
+                let postLink = post.link.find(l => l.rel === 'alternate')?.href || '#';
+                let postTitle = post.title.$t;
+
+                // Placeholder elegante em tons escuros caso não haja imagem
+                let imgUrl = 'https://placehold.co/1000x500/212529/6c757d?text=SEM+IMAGEM';
+                
+                // 1. Tenta a miniatura do Google
+                if (post.media$thumbnail) {
+                    imgUrl = post.media$thumbnail.url;
+                } 
+                // 2. Extrai a primeira imagem de dentro da postagem via DOM
+                else if (post.content && post.content.$t) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = post.content.$t;
+                    const firstImg = tempDiv.querySelector('img');
+                    if (firstImg) imgUrl = firstImg.src;
+                }
+
+                // 3. Força Alta Resolução APENAS se a imagem for hospedada no Google
+                if (imgUrl.includes('bp.blogspot.com') || imgUrl.includes('googleusercontent.com')) {
+                    imgUrl = imgUrl.replace(/\/(s|w|h)\d+.*?(\/)/g, '/w1000-h500-c$2');
+                    imgUrl = imgUrl.replace(/=(s|w|h)\d+.*$/g, '=w1000-h500-c');
+                }
+
+                const activeClass = index === 0 ? 'active-slide' : '';
+
+                slidesHtml += `
+                    <a href="${postLink}" class="mag-slide ${activeClass}">
+                        <img src="${imgUrl}" alt="${postTitle}" loading="lazy">
+                        <div class="mag-slide-info">
+                            <span class="mag-badge-news">Em Destaque</span>
+                            <h3 class="mag-slide-title">${postTitle}</h3>
+                        </div>
+                    </a>
+                `;
+            });
+
+            track.innerHTML = slidesHtml;
+            loading.style.display = 'none';
+            
+            window.iniciarMagRotacao();
+        })
+        .catch(error => {
+            console.error('Falha ao carregar o Slider:', error);
+            loading.innerText = "Falha ao carregar destaques.";
+        });
+});
+
+// Lógica Global de Rotação
+let magSlideIndex = 0;
+let magSlideInterval;
+
+window.moveMagSlide = function(direcao) {
+    const slides = document.querySelectorAll('#mag-slider-track .mag-slide');
+    if(slides.length === 0) return;
+
+    slides[magSlideIndex].classList.remove('active-slide');
+
+    magSlideIndex += direcao;
+    if (magSlideIndex >= slides.length) magSlideIndex = 0;
+    if (magSlideIndex < 0) magSlideIndex = slides.length - 1;
+
+    slides[magSlideIndex].classList.add('active-slide');
+    window.resetMagRotacao();
+};
+
+window.iniciarMagRotacao = function() {
+    // Roda as imagens a cada 6 segundos (padrão de leitura confortável)
+    magSlideInterval = setInterval(() => { window.moveMagSlide(1); }, 6000); 
+};
+
+window.resetMagRotacao = function() {
+    clearInterval(magSlideInterval);
+    window.iniciarMagRotacao();
+};
+</script>]]></b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+          </b:widget>
+          <b:widget id='HTML3' locked='false' title='' type='HTML'>
+            <b:widget-settings>
+              <b:widget-setting name='content'><![CDATA[<div id="mag-cookie-banner" class="mag-cookie-wrapper">
+    <div class="mag-cookie-content">
+        <div class="cookie-text">
+            <strong>Valorizamos a sua privacidade</strong>
+            <p>Utilizamos cookies no nosso site para melhorar a sua experiência de leitura editorial, memorizar as suas preferências e analisar o nosso tráfego.</p>
+        </div>
+        <div class="cookie-buttons">
+            <a href="#" class="btn-cookie-link">Saber mais</a>
+            <button id="mag-cookie-accept" class="btn-cookie-accept">Aceitar e Continuar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.mag-cookie-wrapper {
+    position: fixed;
+    bottom: -150px; /* Escondido inicialmente para a animação */
+    left: 20px;
+    z-index: 10000;
+    max-width: 450px;
+    background-color: var(--bs-tertiary-bg, #1a1a1a);
+    border: 1px solid var(--border-color, #333);
+    border-radius: var(--radius, 12px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    padding: 1.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+/* Classe ativada pelo JavaScript para mostrar o banner */
+.mag-cookie-wrapper.show {
+    bottom: 20px;
+    opacity: 1;
+    visibility: visible;
+}
+
+.mag-cookie-content strong {
+    font-family: var(--font-title, 'Playfair Display', serif);
+    font-size: 1.1rem;
+    color: var(--mag-title, #fff);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.mag-cookie-content p {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+}
+
+.cookie-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.btn-cookie-link {
+    font-size: 0.85rem;
+    color: var(--mag-secondary, #6c757d);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease;
+}
+
+.btn-cookie-link:hover {
+    color: var(--mag-primary, #0d6efd);
+}
+
+.btn-cookie-accept {
+    background-color: var(--mag-primary, #0d6efd);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-cookie-accept:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* Responsividade: Centra o banner nos telemóveis */
+@media (max-width: 768px) {
+    .mag-cookie-wrapper {
+        left: 15px;
+        right: 15px;
+        max-width: 100%;
+    }
+    .cookie-buttons {
+        flex-direction: column;
+    }
+    .btn-cookie-accept {
+        width: 100%;
+        order: -1; /* Coloca o botão aceitar em cima no telemóvel */
+    }
+    .btn-cookie-link {
+        margin-top: 10px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cookieBanner = document.getElementById("mag-cookie-banner");
+    const acceptBtn = document.getElementById("mag-cookie-accept");
+    
+    // Verifica se a chave 'magConsent' JÁ EXISTE no Local Storage do navegador
+    if (!localStorage.getItem("magConsent")) {
+        // Se NÃO existe, espera 1.5 segundos após a página carregar e mostra o aviso (com animação)
+        setTimeout(() => {
+            cookieBanner.classList.add("show");
+        }, 1500);
+    }
+
+    // O que acontece quando o leitor clica em "Aceitar"
+    acceptBtn.addEventListener("click", function() {
+        // Grava a resposta no navegador (válido para sempre até o utilizador limpar o histórico)
+        localStorage.setItem("magConsent", "accepted");
+        
+        // Remove a classe de visibilidade (desce a caixa suavemente)
+        cookieBanner.classList.remove("show");
+        
+        // Destrói o elemento após a animação terminar para libertar memória
+        setTimeout(() => {
+            cookieBanner.remove();
+        }, 500);
+    });
+});
+</script>]]></b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+          </b:widget>
+          <b:widget id='HTML2' locked='false' title='' type='HTML'>
+            <b:widget-settings>
+              <b:widget-setting name='content'><![CDATA[<div class="mag-newsletter-widget" id="newsletter-box">
+    <h4 id="nl-title">A Edição Dominical</h4>
+    
+    <p id="nl-desc">Receba as melhores histórias, análises e entrevistas diretamente no seu e-mail.</p>
+    
+    <form id="nl-form" action="https://formspree.io/f/MUDAR_ID_AQUI" method="POST">
+        <div class="form-group">
+            <input type="email" name="email" id="nl-email" placeholder="Seu melhor e-mail..." required />
+        </div>
+        <button type="submit" id="nl-btn">Assinar Agora</button>
+    </form>
+    
+    <div class="nl-footer">Sem spam. Cancele quando quiser.</div>
+    <div id="nl-status"></div>
+</div>
+
+<style>
+.mag-newsletter-widget {
+    background-color: var(--bs-tertiary-bg, #1a1a1a);
+    border: 1px solid var(--border-color, #333);
+    padding: 2rem;
+    border-radius: var(--radius, 12px);
+    text-align: left;
+    transition: transform 0.3s ease;
+    margin-bottom: 2rem;
+}
+.mag-newsletter-widget h4 {
+    color: var(--mag-title, #fff);
+    font-family: var(--font-title, 'Playfair Display', serif);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+.mag-newsletter-widget p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+.mag-newsletter-widget .form-group {
+    margin-bottom: 1rem;
+}
+.mag-newsletter-widget input {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 6px;
+    background: #fff;
+    color: #333;
+    font-size: 0.95rem;
+    outline: none;
+}
+.mag-newsletter-widget input:focus {
+    box-shadow: 0 0 0 2px var(--mag-primary, #0d6efd);
+}
+.mag-newsletter-widget button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--mag-primary, #0d6efd);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.mag-newsletter-widget button:hover {
+    opacity: 0.9;
+}
+.nl-footer {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+}
+#nl-status {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: none;
+    padding: 10px;
+    border-radius: 6px;
+}
+</style>
+
+<script>
+document.getElementById("nl-form").addEventListener("submit", function(ev) {
+    ev.preventDefault();
+    const form = ev.target;
+    const btn = document.getElementById("nl-btn");
+    const status = document.getElementById("nl-status");
+    const data = new FormData(form);
+    
+    // Efeito de "A carregar" no botão
+    const btnOriginalText = btn.innerHTML;
+    btn.innerHTML = "A enviar...";
+    btn.style.opacity = "0.7";
+    
+    fetch(form.action, {
+        method: form.method,
+        body: data,
+        headers: { 'Accept': 'application/json' }
+    }).then(response => {
+        if (response.ok) {
+            status.innerHTML = "✓ Obrigado por assinar!";
+            status.style.display = "block";
+            status.style.backgroundColor = "rgba(40, 167, 69, 0.1)";
+            status.style.color = "#28a745";
+            form.reset();
+        } else {
+            status.innerHTML = "⚠ Erro ao enviar. Tente novamente.";
+            status.style.display = "block";
+            status.style.backgroundColor = "rgba(220, 53, 69, 0.1)";
+            status.style.color = "#dc3545";
+        }
+    }).catch(error => {
+        status.innerHTML = "⚠ Erro de conexão.";
+        status.style.display = "block";
+        status.style.color = "#dc3545";
+    }).finally(() => {
+        // Restaura o botão
+        btn.innerHTML = btnOriginalText;
+        btn.style.opacity = "1";
+    });
+});
+</script>]]></b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+          </b:widget>
+          <b:widget id='FeaturedPost1' locked='false' title='Postagem em destaque' type='FeaturedPost'>
+            <b:widget-settings>
+              <b:widget-setting name='showSnippet'>true</b:widget-setting>
+              <b:widget-setting name='showPostTitle'>true</b:widget-setting>
+              <b:widget-setting name='postId'>0</b:widget-setting>
+              <b:widget-setting name='showFirstImage'>true</b:widget-setting>
+              <b:widget-setting name='useMostRecentPost'>true</b:widget-setting>
+            </b:widget-settings>
+            <b:includable id='main'>
+  <!-- Only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <b:include name='content'/>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            <b:includable id='content'>
+  <div class='post-summary'>
+    <b:if cond='data:showPostTitle and data:postTitle != &quot;&quot;'>
+      <h3><a expr:href='data:postUrl'><data:postTitle/></a></h3>
+    </b:if>
+    <b:if cond='data:showSnippet and data:postSummary != &quot;&quot;'>
+      <p>
+        <data:postSummary/>
+      </p>
+    </b:if>
+    <b:if cond='data:showFirstImage and data:postFirstImage != &quot;&quot;'>
+      <img class='image' expr:src='data:postFirstImage'/>
+    </b:if>
+  </div>
+
+  <style type='text/css'>
+    .image {
+      width: 100%;
+    }
+  </style>
+</b:includable>
+          </b:widget>
+        </b:section>
+        
+        <div class='sticky-top' style='top: 100px;'>
+          <b:section id='sidebar-tags' name='Categorias (Marcadores)' showaddelement='yes'>
+            <b:widget id='HTML5' locked='false' title='' type='HTML'>
+              <b:widget-settings>
+                <b:widget-setting name='content'><![CDATA[<div class="mag-video-wrapper">
+    <iframe 
+        src="https://drive.google.com/file/d/1x6uv77pTiuZwcolU0ugJkIo2AtGiSuNE/preview" 
+        allow="autoplay; fullscreen" 
+        loading="lazy" 
+        title="Vídeo de Destaque">
+    </iframe>
+</div>]]></b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+            <b:widget id='PopularPosts1' locked='false' title='Notícias mais vistas do mês' type='PopularPosts' version='1'>
+              <b:widget-settings>
+                <b:widget-setting name='numItemsToShow'>10</b:widget-setting>
+                <b:widget-setting name='showThumbnails'>true</b:widget-setting>
+                <b:widget-setting name='showSnippets'>true</b:widget-setting>
+                <b:widget-setting name='timeRange'>LAST_MONTH</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'><h2><data:title/></h2></b:if>
+  <div class='widget-content popular-posts'>
+    <ul>
+      <b:loop values='data:posts' var='post'>
+      <li>
+        <b:if cond='!data:showThumbnails'>
+          <b:if cond='!data:showSnippets'>
+            <!-- (1) No snippet/thumbnail -->
+            <a expr:href='data:post.href'><data:post.title/></a>
+          <b:else/>
+            <!-- (2) Show only snippets -->
+            <div class='item-title'><a expr:href='data:post.href'><data:post.title/></a></div>
+            <div class='item-snippet'><data:post.snippet/></div>
+          </b:if>
+        <b:else/>
+          <!-- (3) Show only thumbnails or (4) Snippets and thumbnails. -->
+          <div expr:class='data:showSnippets ? &quot;item-content&quot; : &quot;item-thumbnail-only&quot;'>
+            <b:if cond='data:post.featuredImage.isResizable or data:post.thumbnail'>
+              <div class='item-thumbnail'>
+                <a expr:href='data:post.href' target='_blank'>
+                  <b:with value='data:post.featuredImage.isResizable                                ? resizeImage(data:post.featuredImage, 400, &quot;4:3&quot;)                               : data:post.thumbnail' var='image'>
+                    <img alt='' border='0' expr:src='data:image'/>
+                  </b:with>
+                </a>
+              </div>
+            </b:if>
+            <div class='item-title'><a expr:href='data:post.href'><data:post.title/></a></div>
+            <b:if cond='data:showSnippets'>
+              <div class='item-snippet'><data:post.snippet/></div>
+            </b:if>
+          </div>
+          <div style='clear: both;'/>
+        </b:if>
+      </li>
+      </b:loop>
+    </ul>
+    <b:include name='quickedit'/>
+  </div>
+</b:includable>
+            </b:widget>
+            <b:widget id='Label1' locked='false' title='Marcadores' type='Label'>
+              <b:widget-settings>
+                <b:widget-setting name='sorting'>ALPHA</b:widget-setting>
+                <b:widget-setting name='display'>CLOUD</b:widget-setting>
+                <b:widget-setting name='selectedLabelsList'>Brasil,Card,Jornal</b:widget-setting>
+                <b:widget-setting name='showType'>USER_SELECTED</b:widget-setting>
+                <b:widget-setting name='showFreqNumbers'>true</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2><data:title/></h2>
+  </b:if>
+  <div expr:class='&quot;widget-content &quot; + data:display + &quot;-label-widget-content&quot;'>
+    <b:if cond='data:display == &quot;list&quot;'>
+      <ul>
+        <b:loop values='data:labels' var='label'>
+          <li>
+            <b:if cond='data:blog.url == data:label.url'>
+              <span expr:dir='data:blog.languageDirection'><data:label.name/></span>
+            <b:else/>
+              <a expr:dir='data:blog.languageDirection' expr:href='data:label.url'><data:label.name/></a>
+            </b:if>
+            <b:if cond='data:showFreqNumbers'>
+              <span dir='ltr'>(<data:label.count/>)</span>
+            </b:if>
+          </li>
+        </b:loop>
+      </ul>
+    <b:else/>
+      <b:loop values='data:labels' var='label'>
+        <span expr:class='&quot;label-size label-size-&quot; + data:label.cssSize'>
+          <b:if cond='data:blog.url == data:label.url'>
+            <span expr:dir='data:blog.languageDirection'><data:label.name/></span>
+          <b:else/>
+            <a expr:dir='data:blog.languageDirection' expr:href='data:label.url'><data:label.name/></a>
+          </b:if>
+          <b:if cond='data:showFreqNumbers'>
+            <span class='label-count' dir='ltr'>(<data:label.count/>)</span>
+          </b:if>
+        </span>
+      </b:loop>
+    </b:if>
+    <b:include name='quickedit'/>
+  </div>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <footer class='mag-footer'>
+    <div class='container'>
+      <div class='row g-5'>
+        <div class='col-lg-5'>
+          <b:section id='footer-1' maxwidgets='1' name='Sobre o Portal' showaddelement='yes'>
+            <b:widget id='HTML105' locked='false' title='MAG News' type='HTML' version='2' visible='true'>
+              <b:widget-settings>
+                <b:widget-setting name='content'/>
+              </b:widget-settings>
+              <b:includable id='main'>
+                  <h1 class='playfair mb-4' style='font-size: 2.5rem;'><data:title/></h1>
+                  <p style='font-size: 1.1rem; line-height: 1.8; max-width: 400px; color: #9ca3af;'>Jornalismo editorial com foco na profundidade, design e narrativa. Contando as histórias que moldam o nosso futuro.</p>
+                  <div class='d-flex gap-3 mt-4'>
+                    <a class='btn btn-outline-dark btn-social rounded-circle' href='#' style='width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;'><i class='bi bi-instagram'/></a>
+                    <a class='btn btn-outline-dark btn-social rounded-circle' href='#' style='width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;'><i class='bi bi-linkedin'/></a>
+                    <a class='btn btn-outline-dark btn-social rounded-circle' href='#' style='width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;'><i class='bi bi-youtube'/></a>
+                  </div>
+                </b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+        
+        <div class='col-lg-3 offset-lg-1'>
+          <b:section id='footer-2' name='Links Rápidos' showaddelement='yes'>
+            <b:widget id='HTML6' locked='false' title='' type='HTML'>
+              <b:widget-settings>
+                <b:widget-setting name='content'><![CDATA[<div class="mag-share-box">
+  <style>
+.mag-share-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2.5rem auto; 
+    padding: 1.5rem;
+    max-width: 400px; 
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+    border: 1px solid var(--border-color, #eaeaea);
+    border-radius: var(--radius, 12px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+}
+
+.mag-share-box:hover {
+    transform: translateY(-2px);
+    border-color: var(--mag-primary, #0d6efd);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.mag-share-iframe {
+    border: none !important;
+    width: 100%;
+    min-height: 100px; 
+    overflow: hidden;
+    color-scheme: light dark;
+}
+
+.mag-share-box + br,
+.mag-share-box + div br {
+    display: none !important;
+}
+</style>
+  
+  
+    <iframe 
+        class="mag-share-iframe" 
+        src="/share-widget?w=poi&amp;u=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dnovidades%2520do%2520Google%2520Gemini&amp;ved=1t%3A269313&amp;bbid=3939438702693934260&amp;bpid=5684243158592981327" 
+        allowtransparency="true" 
+        loading="lazy" 
+        title="Partilhar Artigo">
+    </iframe>
+</div>]]></b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+            <b:widget id='HTML1' locked='false' title='' type='HTML'>
+              <b:widget-settings>
+                <b:widget-setting name='content'><![CDATA[<div id="nat-reading-time" class="mb-4" style="display: none;">
+  <span class="badge bg-white text-secondary border border-light-subtle px-3 py-2 rounded-pill shadow-sm" style="font-size: 0.85rem; font-weight: 500;">
+    <i class="bi bi-stopwatch me-1" style="color: var(--nat-primary, #8FBC8F); font-size: 1rem; vertical-align: middle;"></i>
+    <span id="nat-read-text">Tempo estimado...</span>
+  </span>
+</div>
+
+<script>
+  (function() {
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Procura o texto da postagem e o nosso botão de tempo
+      var postContent = document.querySelector('.post-content');
+      var readingBadge = document.getElementById('nat-reading-time');
+      var readingText = document.getElementById('nat-read-text');
+
+      // 2. Se estivermos na página de um artigo (onde existe .post-content)
+      if (postContent && readingBadge && readingText) {
+        
+        // Pega todo o texto, ignora o HTML e conta as palavras usando Regex
+        var text = postContent.innerText || postContent.textContent;
+        var wordCount = text.trim().split(/\s+/).length;
+        
+        // Calcula o tempo (Velocidade média: 200 palavras por minuto)
+        var wordsPerMinute = 200; 
+        var readingTime = Math.ceil(wordCount / wordsPerMinute);
+
+        // Atualiza o texto na tela
+        if (readingTime === 1) {
+          readingText.innerHTML = "1 min de leitura";
+        } else {
+          readingText.innerHTML = readingTime + " min de leitura";
+        }
+        
+        // Remove a trava de invisibilidade
+        readingBadge.style.display = 'block';
+
+        // Mágica de UX: Move a pílula de tempo para baixo da Data/Autor do post
+        var postMeta = document.querySelector('.post-meta');
+        if (postMeta) {
+          postMeta.insertAdjacentElement('afterend', readingBadge);
+        }
+      }
+    });
+  })();
+</script>]]></b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+            <b:widget id='PopularPosts2' locked='false' title='Noticias da semana' type='PopularPosts'>
+              <b:widget-settings>
+                <b:widget-setting name='numItemsToShow'>10</b:widget-setting>
+                <b:widget-setting name='showThumbnails'>true</b:widget-setting>
+                <b:widget-setting name='showSnippets'>true</b:widget-setting>
+                <b:widget-setting name='timeRange'>LAST_WEEK</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'><h2><data:title/></h2></b:if>
+  <div class='widget-content popular-posts'>
+    <ul>
+      <b:loop values='data:posts' var='post'>
+      <li>
+        <b:if cond='!data:showThumbnails'>
+          <b:if cond='!data:showSnippets'>
+            <!-- (1) No snippet/thumbnail -->
+            <a expr:href='data:post.href'><data:post.title/></a>
+          <b:else/>
+            <!-- (2) Show only snippets -->
+            <div class='item-title'><a expr:href='data:post.href'><data:post.title/></a></div>
+            <div class='item-snippet'><data:post.snippet/></div>
+          </b:if>
+        <b:else/>
+          <!-- (3) Show only thumbnails or (4) Snippets and thumbnails. -->
+          <div expr:class='data:showSnippets ? &quot;item-content&quot; : &quot;item-thumbnail-only&quot;'>
+            <b:if cond='data:post.featuredImage.isResizable or data:post.thumbnail'>
+              <div class='item-thumbnail'>
+                <a expr:href='data:post.href' target='_blank'>
+                  <b:with value='data:post.featuredImage.isResizable                                  ? resizeImage(data:post.featuredImage, 72, &quot;1:1&quot;)                                  : data:post.thumbnail' var='image'>
+                    <img alt='' border='0' expr:src='data:image'/>
+                  </b:with>
+                </a>
+              </div>
+            </b:if>
+            <div class='item-title'><a expr:href='data:post.href'><data:post.title/></a></div>
+            <b:if cond='data:showSnippets'>
+              <div class='item-snippet'><data:post.snippet/></div>
+            </b:if>
+          </div>
+          <div style='clear: both;'/>
+        </b:if>
+      </li>
+      </b:loop>
+    </ul>
+    <b:include name='quickedit'/>
+  </div>
+</b:includable>
+            </b:widget>
+            <b:widget id='Translate1' locked='false' title='Translate' type='Translate'>
+              <b:widget-settings>
+                <b:widget-setting name='displayMode'>VERTICAL</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div id='google_translate_element'/>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: &#39;<data:pageLanguage/>&#39;,
+        autoDisplay: &#39;true&#39;,
+        layout: google.translate.TranslateElement.InlineLayout.<data:layout/>
+      }, &#39;google_translate_element&#39;);
+    }
+  </script>
+  <script src='//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'/>
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+            <b:widget id='Stats1' locked='false' title='Total de visualizações de página' type='Stats'>
+              <b:widget-settings>
+                <b:widget-setting name='showGraphicalCounter'>true</b:widget-setting>
+                <b:widget-setting name='showAnimatedCounter'>true</b:widget-setting>
+                <b:widget-setting name='showSparkline'>true</b:widget-setting>
+                <b:widget-setting name='sparklineStyle'>BLACK_TRANSPARENT</b:widget-setting>
+                <b:widget-setting name='timeRange'>ALL_TIME</b:widget-setting>
+              </b:widget-settings>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'><h2><data:title/></h2></b:if>
+  <div class='widget-content'>
+    <!-- Content is going to be visible when data will be fetched from server. -->
+    <div expr:id='data:widget.instanceId + &quot;_content&quot;' style='display: none;'>
+      <!-- Counter and image will be injected later via AJAX call. -->
+      <b:if cond='data:showSparkline'>
+        <script src='https://www.gstatic.com/charts/loader.js' type='text/javascript'/>
+        <span expr:id='data:widget.instanceId + &quot;_sparklinespan&quot;' style='display:inline-block; width:75px; height:30px'/>
+      </b:if>
+      <span expr:class='&quot;counter-wrapper &quot; + (data:showGraphicalCounter ? &quot;graph-counter-wrapper&quot; : &quot;text-counter-wrapper&quot;)' expr:id='data:widget.instanceId + &quot;_totalCount&quot;'>
+      </span>
+      <b:include name='quickedit'/>
+    </div>
+  </div>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+        
+        <div class='col-lg-3'>
+          <b:section id='footer-3' name='Edições' showaddelement='yes'>
+            <b:widget id='ContactForm1' locked='false' title='Formulário de contato' type='ContactForm'>
+              <b:includable id='main'>
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='contact-form-widget'>
+    <div class='form'>
+      <form name='contact-form'>
+        <p/>
+        <data:contactFormNameMsg/>
+        <br/>
+        <input class='contact-form-name' expr:id='data:widget.instanceId + &quot;_contact-form-name&quot;' name='name' size='30' type='text' value=''/>
+        <p/>
+        <data:contactFormEmailMsg/> <span style='font-weight: bolder;'>*</span>
+        <br/>
+        <input class='contact-form-email' expr:id='data:widget.instanceId + &quot;_contact-form-email&quot;' name='email' size='30' type='text' value=''/>
+        <p/>
+        <data:contactFormMessageMsg/> <span style='font-weight: bolder;'>*</span>
+        <br/>
+        <textarea class='contact-form-email-message' cols='25' expr:id='data:widget.instanceId + &quot;_contact-form-email-message&quot;' name='email-message' rows='5'/>
+        <p/>
+        <input class='contact-form-button contact-form-button-submit' expr:id='data:widget.instanceId + &quot;_contact-form-submit&quot;' expr:value='data:contactFormSendMsg' type='button'/>
+        <p/>
+        <div style='text-align: center; max-width: 222px; width: 100%'>
+          <p class='contact-form-error-message' expr:id='data:widget.instanceId + &quot;_contact-form-error-message&quot;'/>
+          <p class='contact-form-success-message' expr:id='data:widget.instanceId + &quot;_contact-form-success-message&quot;'/>
+        </div>
+      </form>
+    </div>
+  </div>
+  <b:include name='quickedit'/>
+</b:includable>
+            </b:widget>
+          </b:section>
+        </div>
+      </div>
+      
+      <div class='mag-footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center font-monospace small'>
+        <b:section id='footer-copyright' maxwidgets='1' name='Copyright' showaddelement='yes'/>
+        <span>&#169; 2026 MAG News Editorial. Desenvolvido com Bootstrap.</span>
+      </div>
+    </div>
+  </footer>
+
+  <button aria-label='Voltar ao Topo' id='backToTop' title='Voltar ao Topo'>
+    <i class='bi bi-arrow-up-short'/>
+  </button>
+
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'/>
+  <script>
+  //<![CDATA[
+  document.addEventListener('DOMContentLoaded', () => {
+    // Sistema Dark Mode Blindado
+    const setTheme = t => { 
+      document.documentElement.setAttribute('data-bs-theme', t); 
+      localStorage.setItem('theme', t); 
+      const icon = document.querySelector('.btn-dark-mode i');
+      if(icon) icon.className = t === 'dark' ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars-fill';
+    };
+    const getTheme = () => localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setTheme(getTheme());
+    
+    document.querySelectorAll('.btn-dark-mode').forEach(btn => {
+      btn.addEventListener('click', () => setTheme(document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark'));
+    });
+
+    // Animações de Scroll
+    const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }), {threshold: 0.1});
+    document.querySelectorAll('.animate-up, .news-card').forEach((el, i) => {
+      if(el.classList.contains('news-card')) el.style.transitionDelay = `${(i % 2) * 0.1}s`;
+      el.classList.add('animate-up');
+      obs.observe(el);
+    });
+
+    // Seta Voltar ao Topo
+    const backToTopBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        backToTopBtn.classList.add('show');
+      } else {
+        backToTopBtn.classList.remove('show');
+      }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+  //]]>
+  </script>
+  
+  <script type='text/javascript'>
+//<![CDATA[
+document.addEventListener("DOMContentLoaded", function() {
+    // Seleciona todas as imagens dentro do widget de postagens populares
+    const popImages = document.querySelectorAll('.popular-posts .item-thumbnail img');
+    
+    popImages.forEach(img => {
+        let src = img.getAttribute('src');
+        if (src) {
+            // Padrão 1: Substitui URLs antigas do Blogger (/s72-c/) por imagens com largura de 500px e altura de 350px com corte perfeito (-c)
+            if (src.match(/\/s[0-9]+(\-c)?\//)) {
+                img.setAttribute('src', src.replace(/\/s[0-9]+(\-c)?\//, '/w500-h350-c/'));
+            } 
+            // Padrão 2: Substitui URLs modernas do Blogger (/w72-h72-p.../) pela nossa resolução premium
+            else if (src.match(/\/w[0-9]+\-h[0-9]+(.*?)\//)) {
+                img.setAttribute('src', src.replace(/\/w[0-9]+\-h[0-9]+(.*?)\//, '/w500-h350-c/'));
+            }
+        }
+    });
+});
+//]]>
+</script>
+</body>
+</html>

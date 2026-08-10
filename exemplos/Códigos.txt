@@ -1,0 +1,927 @@
+﻿Barra de Leitura (no topo da página):
+<div id='read-progress'/>
+
+
+Caixa de Sumário (TOC) dentro do post:
+<div class="toc-box p-3 mb-4 bg-light rounded border">
+  <strong class="d-block mb-2">Índice do Artigo</strong>
+  <div id="auto-toc"></div>
+</div>
+
+
+Botão Voltar ao Topo:
+<button id="back-to-top" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-3 d-none d-md-flex align-items-center justify-content-center" style="width:44px; height:44px; z-index:1000;" aria-label="Voltar ao topo">
+  &#8593;
+</button>
+
+
+CSS complementar para o botão "Voltar ao topo":
+#back-to-top {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+#back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
+
+// -----------------------------------------------------------------
+// Busca Instantânea em Tempo Real (Blogger JSON Feed)
+// -----------------------------------------------------------------
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+
+
+if (searchInput && searchResults) {
+  let debounceTimer;
+
+
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(debounceTimer);
+    const query = e.target.value.trim();
+
+
+    if (query.length < 3) {
+      searchResults.innerHTML = '';
+      searchResults.classList.add('d-none');
+      return;
+    }
+
+
+    debounceTimer = setTimeout(async () => {
+      try {
+        const response = await fetch(`/feeds/posts/summary?alt=json&q=${encodeURIComponent(query)}&max-results=5`);
+        const data = await response.json();
+        const entries = data.feed.entry || [];
+
+
+        if (entries.length === 0) {
+          searchResults.innerHTML = '<div class="p-3 text-muted small text-center">Nenhum resultado encontrado.</div>';
+        } else {
+          searchResults.innerHTML = entries.map(entry => {
+            const title = entry.title.$t;
+            const link = entry.link.find(l => l.rel === 'alternate').href;
+            const thumb = entry.media$thumbnail ? entry.media$thumbnail.url.replace('/s72-c/', '/w100-h100-c/') : 'https://via.placeholder.com/50';
+
+
+            return `
+              <a href="${link}" class="list-group-item list-group-item-action d-flex align-items-center gap-2 p-2">
+                <img src="${thumb}" width="40" height="40" class="rounded object-fit-cover" alt=""/>
+                <span class="small fw-semibold text-truncate">${title}</span>
+              </a>
+            `;
+          }).join('');
+        }
+        searchResults.classList.remove('d-none');
+      } catch (err) {
+        console.error('Erro na busca instantânea:', err);
+      }
+    }, 300);
+  });
+
+
+  // Fechar resultados ao clicar fora
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+      searchResults.classList.add('d-none');
+    }
+  });
+}
+
+
+HTML da Busca com Dropdown:
+
+
+
+
+<div class='position-relative me-2'>
+  <input class='form-control form-control-sm' id='search-input' placeholder='Buscar post ou curso...' type='text'/>
+  <div class='list-group position-absolute top-100 start-0 w-100 shadow-lg d-none z-3 mt-1' id='search-results' style='max-height: 300px; overflow-y: auto;'></div>
+</div>
+
+
+
+
+Precarregamento ao Passar o Mouse (Instant Click / Instant Page)
+// -----------------------------------------------------------------
+// Prefetch Inteligente ao Focar/Hover em Links Internos
+// -----------------------------------------------------------------
+document.querySelectorAll('a[href^="/"]').forEach(link => {
+  link.addEventListener('mouseenter', () => {
+    const href = link.getAttribute('href');
+    if (href && !document.querySelector(`link[rel="prefetch"][href="${href}"]`)) {
+      const prefetchLink = document.createElement('link');
+      prefetchLink.rel = 'prefetch';
+      prefetchLink.href = href;
+      document.head.appendChild(prefetchLink);
+    }
+  }, { once: true });
+});
+
+
+Skeleton Loading (Animação de Carregamento sem CLS)
+
+
+/* Efeito Skeleton Shimmer */
+.skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 0.375rem;
+  display: inline-block;
+}
+
+
+[data-bs-theme="dark"] .skeleton {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+}
+
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+/* Utilitários de Tamanho Skeleton */
+.skeleton-text { height: 1em; width: 100%; margin-bottom: 0.5rem; }
+.skeleton-title { height: 1.5em; width: 80%; margin-bottom: 1rem; }
+.skeleton-thumb { width: 100%; aspect-ratio: 16/9; }
+
+
+
+
+Schema.org JSON-LD para Artigos e Breadcrumbs (SEO Avançado)
+
+
+Otimização de Imagens Nativas do Blogger (Auto WebP e Resize)
+
+
+// -----------------------------------------------------------------
+// Otimizador Dinâmico de Imagens do Blogger
+// -----------------------------------------------------------------
+document.querySelectorAll('.post-body img, .post-thumb-img').forEach(img => {
+  let src = img.getAttribute('src');
+  if (src && src.includes('bp.blogspot.com')) {
+    // Redimensiona proporcionalmente para 800px de largura com compressão WebP (/w800-rw/)
+    src = src.replace(/\/s\d+(-c)?\//, '/w800-rw/').replace(/\/w\d+-h\d+(-c)?\//, '/w800-rw/');
+    img.setAttribute('src', src);
+  }
+  img.setAttribute('loading', 'lazy');
+  img.setAttribute('decoding', 'async');
+});
+
+
+
+
+
+
+
+
+
+
+Meta Tags de SEO, Open Graph e Social Cards (No <head>)
+​Injeta metadados essenciais para compartilhamento no WhatsApp, X (Twitter), Facebook e indexação do Google
+
+
+
+
+<!-- Meta Tags Dinâmicas do Blogger -->
+<meta content='width=device-width, initial-scale=1, shrink-to-fit-no' name='viewport'/>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+
+
+<!-- Canonical URL -->
+<link expr:href='data:blog.canonicalUrl' rel='canonical'/>
+
+
+<!-- SEO Básico -->
+<b:if cond='data:view.isHomepage'>
+  <title><data:blog.title/></title>
+  <meta expr:content='data:blog.metaDescription' name='description'/>
+</b:if>
+<b:if cond='data:view.isPost or data:view.isPage'>
+  <title><data:view.title.escaped/> - <data:blog.title/></title>
+  <meta expr:content='data:blog.metaDescription' name='description'/>
+</b:if>
+
+
+<!-- Open Graph (WhatsApp, Facebook, LinkedIn) -->
+<meta expr:content='data:view.title.escaped' property='og:title'/>
+<meta expr:content='data:blog.canonicalUrl' property='og:url'/>
+<meta expr:content='data:blog.title' property='og:site_name'/>
+<b:if cond='data:view.isPost'>
+  <meta content='article' property='og:type'/>
+  <b:if cond='data:post.featuredImage'>
+    <meta expr:content='data:post.featuredImage' property='og:image'/>
+  </b:if>
+<b:else/>
+  <meta content='website' property='og:type'/>
+</b:if>
+
+
+<!-- Twitter Card -->
+<meta content='summary_large_image' name='twitter:card'/>
+<meta expr:content='data:view.title.escaped' name='twitter:title'/>
+<meta expr:content='data:blog.metaDescription' name='twitter:description'/>
+
+
+
+
+Espaços para AdSense / Banners sem CLS (Layout Shift)
+
+
+/* Containers para Anúncios (Anti-CLS) */
+.ad-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.02);
+  border: 1px dashed #e2e8f0;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+
+
+/* Tamanhos Padrão de Anúncios */
+.ad-header { min-height: 90px; width: 100%; }
+.ad-infeed { min-height: 250px; width: 100%; }
+.ad-sidebar { min-height: 600px; width: 100%; }
+
+
+[data-bs-theme="dark"] .ad-slot {
+  background-color: rgba(255, 255, 255, 0.02);
+  border-color: #334155;
+}
+
+
+
+
+<div class='ad-slot ad-header rounded'>
+  <!-- Código do Bloco do AdSense Aqui -->
+</div>
+
+
+
+
+Migalhas de Pão (Breadcrumbs) Dinâmicas com Schema.org
+
+
+
+
+<b:if cond='data:view.isPost'>
+  <nav aria-label='breadcrumb' class='mb-3'>
+    <ol class='breadcrumb small text-muted' itemscope='itemscope' itemtype='https://schema.org/BreadcrumbList'>
+      <li class='breadcrumb-item' itemprop='itemListElement' itemscope='itemscope' itemtype='https://schema.org/ListItem'>
+        <a class='text-decoration-none' expr:href='data:blog.homepageUrl' itemprop='item'>
+          <span itemprop='name'>Início</span>
+        </a>
+        <meta content='1' itemprop='position'/>
+      </li>
+      <b:if cond='data:post.labels'>
+        <li class='breadcrumb-item' itemprop='itemListElement' itemscope='itemscope' itemtype='https://schema.org/ListItem'>
+          <a class='text-decoration-none' expr:href='data:post.labels.first.url' itemprop='item'>
+            <span itemprop='name'><data:post.labels.first.name/></span>
+          </a>
+          <meta content='2' itemprop='position'/>
+        </li>
+      </b:if>
+      <li class='breadcrumb-item active text-truncate' itemprop='itemListElement' itemscope='itemscope' itemtype='https://schema.org/ListItem'>
+        <span itemprop='name'><data:post.title/></span>
+        <meta content='3' itemprop='position'/>
+      </li>
+    </ol>
+  </nav>
+</b:if>
+
+
+
+
+Preconnect e Otimização de Assets Remotos (Lighthouse Performance)
+
+
+<!-- Preconnect de Recursos Críticos -->
+<link rel='preconnect' href='https://fonts.googleapis.com'/>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin='anonymous'/>
+<link rel='preconnect' href='https://blogger.googleusercontent.com'/>
+<link rel='preconnect' href='https://cdn.jsdelivr.net'/>
+
+
+<!-- Preload de CSS Crítico -->
+<link rel='preload' as='style' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'/>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'/>
+
+
+
+
+Aqui está o bloco completo com o CSS do Header, Footer e Badges, o Botão de Dark Mode com ícones SVG inline, e os modelos de Menu/Dropdown e Categorias com SVGs prontos para você replicar facilmente.
+1. CSS Integrado (Header, Footer, Badges e Dark Mode)
+Adicione estas regras no seu bloco <style> do template:
+/* ==========================================================================
+   1. BADGES DE CATEGORIA
+   ========================================================================== */
+.badge-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35em 0.75em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 50rem;
+  background-color: rgba(13, 110, 253, 0.1);
+  color: var(--bs-primary, #0d6efd);
+  border: 1px solid rgba(13, 110, 253, 0.2);
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+
+.badge-category:hover {
+  background-color: var(--bs-primary, #0d6efd);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+}
+
+
+.badge-category svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+
+/* ==========================================================================
+   2. HEADER & NAVBAR RESPONSIVA
+   ========================================================================== */
+.site-header {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+[data-bs-theme="dark"] .site-header {
+  background-color: rgba(15, 23, 42, 0.95);
+  border-bottom-color: #1e293b;
+}
+
+
+.site-header.is-scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+.site-header .nav-link {
+  font-weight: 500;
+  color: #334155;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+
+[data-bs-theme="dark"] .site-header .nav-link {
+  color: #cbd5e1;
+}
+
+
+.site-header .nav-link:hover, 
+.site-header .nav-link.active {
+  color: var(--bs-primary, #0d6efd);
+  background-color: rgba(13, 110, 253, 0.08);
+}
+
+
+/* Dropdown Menu com SVG */
+.dropdown-menu {
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+}
+
+
+[data-bs-theme="dark"] .dropdown-menu {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+
+.dropdown-item {
+  border-radius: 0.375rem;
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+
+[data-bs-theme="dark"] .dropdown-item {
+  color: #e2e8f0;
+}
+
+
+.dropdown-item:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: var(--bs-primary, #0d6efd);
+}
+
+
+/* Ícones SVG alinhados nos Links */
+.nav-link svg, 
+.dropdown-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+
+/* ==========================================================================
+   3. BOTÃO DARK MODE (SOL / LUA)
+   ========================================================================== */
+.theme-toggle-btn {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd5e1;
+  background-color: transparent;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+
+[data-bs-theme="dark"] .theme-toggle-btn {
+  border-color: #334155;
+  color: #fbbf24; /* Cor amarela do sol no modo escuro */
+}
+
+
+.theme-toggle-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+
+[data-bs-theme="dark"] .theme-toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+
+/* Alternância automática dos ícones de Sol e Lua via CSS */
+.theme-toggle-btn .icon-sun { display: none; }
+.theme-toggle-btn .icon-moon { display: inline-block; }
+
+
+[data-bs-theme="dark"] .theme-toggle-btn .icon-sun { display: inline-block; }
+[data-bs-theme="dark"] .theme-toggle-btn .icon-moon { display: none; }
+
+
+.theme-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+
+/* ==========================================================================
+   4. FOOTER
+   ========================================================================== */
+.site-footer {
+  background-color: #0f172a;
+  color: #94a3b8;
+  padding-top: 3.5rem;
+  padding-bottom: 2rem;
+  border-top: 1px solid #1e293b;
+  font-size: 0.9rem;
+}
+
+
+.site-footer h5, 
+.site-footer .widget-title {
+  color: #f8fafc;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 1.25rem;
+}
+
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.footer-links li {
+  margin-bottom: 0.65rem;
+}
+
+
+.footer-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+
+.footer-links a:hover {
+  color: #38bdf8;
+  transform: translateX(4px);
+}
+
+
+.footer-links svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+
+2. HTML do Botão de Dark Mode (com SVGs Sol e Lua Inline)
+Adicione dentro da sua barra de navegação no Header (próximo ao campo de busca):
+<!-- Botão Alternador de Tema Dark/Light -->
+<button type="button" id="theme-toggle" class="theme-toggle-btn" aria-label="Alternar Tema">
+  <!-- Ícone Lua (Exibido no Modo Claro) -->
+  <svg class="icon-moon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+  <!-- Ícone Sol (Exibido no Modo Escuro) -->
+  <svg class="icon-sun" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+</button>
+
+
+3. Modelo do Header, Menu Hambúrguer e Dropdown (com SVGs Inlines de Exemplo)
+Use esta estrutura como base para o seu menu. Para adicionar um novo item, basta copiar e colar a tag <li>...</li> e trocar o texto e o SVG.
+<header class="site-header sticky-top">
+  <nav class="navbar navbar-expand-lg py-2">
+    <div class="container-xl">
+      
+      <!-- LOGO -->
+      <a class="navbar-brand fw-bold text-primary" href="/">
+        SOFTLOAD
+      </a>
+
+
+      <!-- BOTÃO HAMBÚRGUER (MOBILE) -->
+      <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+
+      <!-- MENU NAVEGAÇÃO -->
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
+          
+          <!-- MODELO 1: ITEM SIMPLES - INÍCIO -->
+          <li class="nav-item">
+            <a class="nav-link active" href="/">
+              <!-- SVG Ícone Casa (Início) -->
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              Início
+            </a>
+          </li>
+
+
+          <!-- MODELO 2: ITEM SIMPLES - FAQ -->
+          <li class="nav-item">
+            <a class="nav-link" href="/p/faq.html">
+              <!-- SVG Ícone Ajuda (FAQ) -->
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              FAQ
+            </a>
+          </li>
+
+
+          <!-- MODELO 3: MENU DROPDOWN DE CATEGORIAS -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="catDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <!-- SVG Ícone Grid / Categorias -->
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+              Categorias
+            </a>
+            
+            <ul class="dropdown-menu" aria-labelledby="catDropdown">
+              
+              <!-- Item Dropdown 1: Desenvolvimento (Replicável) -->
+              <li>
+                <a class="dropdown-item" href="/search/label/Desenvolvimento">
+                  <!-- SVG Código -->
+                  <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                  Desenvolvimento
+                </a>
+              </li>
+
+
+              <!-- Item Dropdown 2: Design (Replicável) -->
+              <li>
+                <a class="dropdown-item" href="/search/label/Design">
+                  <!-- SVG Pincel / Layout -->
+                  <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                  </svg>
+                  Design &amp; UI
+                </a>
+              </li>
+
+
+            </ul>
+          </li>
+
+
+        </ul>
+
+
+        <!-- ÁREA DIREITA DO HEADER (Busca e Dark Mode) -->
+        <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
+          <!-- O botão Dark Mode inserido acima vai aqui -->
+        </div>
+
+
+      </div>
+    </div>
+  </nav>
+</header>
+
+
+4. Modelo para Badges de Categoria na Seção de Posts (com SVGs Inlines)
+Use este bloco para renderizar as tags/badges dentro da lista de posts ou nos artigos individuais. É só duplicar o <a> trocando o nome e a URL:
+<!-- SEÇÃO DE BADGES / MARCADORES -->
+<div class="d-flex flex-wrap gap-2 mb-3">
+  
+  <!-- BADGE 1: CATEGORIA TUTORIAIS -->
+  <a href="/search/label/Tutoriais" class="badge-category">
+    <!-- SVG Ícone de Tag -->
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+      <line x1="7" y1="7" x2="7.01" y2="7"></line>
+    </svg>
+    Tutoriais
+  </a>
+
+
+  <!-- BADGE 2: CATEGORIA BOOTSTRAP (REPLICÁVEL) -->
+  <a href="/search/label/Bootstrap" class="badge-category">
+    <!-- SVG Ícone de Camadas -->
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+      <polyline points="2 17 12 22 22 17"></polyline>
+      <polyline points="2 12 12 17 22 12"></polyline>
+    </svg>
+    Bootstrap 5
+  </a>
+
+
+</div>
+
+
+Como replicar para novos ícones no futuro:
+Para criar novos links com ícones SVG sem carregar fontes externas pesadas (como FontAwesome):
+ * Mantenha o atributo viewBox="0 0 24 24" nos SVGs.
+ * Certifique-se de que o elemento pai (.nav-link, .dropdown-item ou .badge-category) já tem o CSS do exemplo aplicado, garantindo o alinhamento e o dimensionamento perfeitos.
+
+
+
+
+Para deixar seu template 100% completo, o que faltava era o tratamento CSS dos links dentro do conteúdo dos artigos (.post-body a) e a estilização fina dos elementos internos da postagem (como citações, tabelas, imagens e barra de rolagem).
+Sem esse ajuste, os links do texto correm o risco de ficar com a cor padrão azul do Bootstrap que pode ter contraste ruim no Dark Mode ou ficar sem destaque.
+Abaixo está o bloco final do CSS de Links, Conteúdo e Detalhes Globais:
+CSS de Links Globais, Conteúdo e Barra de Rolagem
+Adicione este bloco ao seu CSS existente:
+/* ==========================================================================
+   1. ESTILIZAÇÃO DE LINKS (GERAL E DENTRO DOS POSTS)
+   ========================================================================== */
+/* Links padrão no corpo do post */
+.post-body a {
+  color: var(--bs-primary, #0d6efd);
+  text-decoration: underline;
+  text-decoration-color: rgba(13, 110, 253, 0.3);
+  text-underline-offset: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+
+.post-body a:hover {
+  color: #0b5ed7;
+  text-decoration-color: currentColor;
+  background-color: rgba(13, 110, 253, 0.08);
+  border-radius: 0.2rem;
+}
+
+
+/* Ajuste de Links para o Dark Mode */
+[data-bs-theme="dark"] .post-body a {
+  color: #38bdf8; /* Azul cyan mais claro para alto contraste */
+  text-decoration-color: rgba(56, 189, 248, 0.3);
+}
+
+
+[data-bs-theme="dark"] .post-body a:hover {
+  color: #7dd3fc;
+  background-color: rgba(56, 189, 248, 0.12);
+}
+
+
+/* ==========================================================================
+   2. TRATAMENTO DE ELEMENTOS DENTRO DO ARTIGO (.post-body)
+   ========================================================================== */
+/* Citações (Blockquotes) */
+.post-body blockquote {
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid var(--bs-primary, #0d6efd);
+  background-color: #f8fafc;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-style: italic;
+  color: #475569;
+}
+
+
+[data-bs-theme="dark"] .post-body blockquote {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  border-left-color: #38bdf8;
+}
+
+
+/* Tabelas Nativas no Blogger */
+.post-body table {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  border-collapse: collapse;
+  font-size: 0.925rem;
+}
+
+
+.post-body th,
+.post-body td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+
+.post-body th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+}
+
+
+[data-bs-theme="dark"] .post-body th {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+
+[data-bs-theme="dark"] .post-body td {
+  border-color: #334155;
+}
+
+
+/* Imagens e Legendas */
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+
+.post-body figcaption,
+.post-body .caption {
+  font-size: 0.825rem;
+  color: #64748b;
+  text-align: center;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+
+
+/* Embeds de Vídeos Responsivos (YouTube, Vimeo) */
+.post-body iframe {
+  max-width: 100%;
+  border-radius: 0.5rem;
+}
+
+
+/* ==========================================================================
+   3. BARRA DE ROLAGEM E SELEÇÃO DE TEXTO
+   ========================================================================== */
+/* Seleção de Texto */
+::selection {
+  background-color: rgba(13, 110, 253, 0.2);
+  color: var(--bs-primary, #0d6efd);
+}
+
+
+[data-bs-theme="dark"] ::selection {
+  background-color: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+
+/* Scrollbar Customizada (Webkit) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+
+Resumo do Checkup Final do Template:
+Com isso, o layout possui:
+ * Header & Navegação: Responsivo com dropdown, menu hambúrguer e ícones SVG inline.
+ * Dark Mode: Botão com troca automática Sol/Lua e suporte nativo ao Bootstrap 5.3.
+ * Badges e Categorias: Pills estilizados com ícones para indexação e taxonomia.
+ * Footer: Layout em grid com colunas de widgets, links e copyright.
+ * Formatação de Conteúdo (.post-body): Links destacados no dark/light, citações, tabelas, imagens e vídeos ajustados sem quebrar tela.
+ * Performance & JS: Live Search, Prefetch, TOC de artigos e suporte a CDATA para o Blogger.
+Agora a estrutura CSS/JS do template está completa.

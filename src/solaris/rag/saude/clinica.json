@@ -1,0 +1,31 @@
+{
+  "id":"clinica-medica",
+
+  "slug":"clinica-medica",
+
+  "categoria":"saude",
+
+  "frameworks":[
+    "php",
+    "django",
+    "flask",
+    "bootstrap5"
+  ],
+
+  "componentes":[
+    "header",
+    "especialidades",
+    "medicos",
+    "agendamento",
+    "faq",
+    "convenios",
+    "depoimentos",
+    "footer"
+  ],
+
+  "integracoes":[
+    "whatsapp",
+    "google-maps",
+    "formulario"
+  ]
+}

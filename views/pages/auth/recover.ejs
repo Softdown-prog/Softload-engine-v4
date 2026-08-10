@@ -1,0 +1,78 @@
+<%- include('../../partials/header') %>
+
+<main class="d-flex align-items-center justify-content-center px-3 sl-pt-nav"
+      style="min-height:100vh;background:var(--sl-bg-900);position:relative;overflow:hidden">
+
+    <div style="position:absolute;top:25%;left:25%;width:384px;height:384px;background:rgba(14,165,233,0.07);border-radius:50%;filter:blur(120px);pointer-events:none"></div>
+
+    <div style="width:100%;max-width:440px;position:relative;z-index:1">
+
+        <% if (typeof erro !== 'undefined' && erro) { %>
+        <div class="alert alert-danger fw-bold small text-center mb-4 rounded-3 d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> <%= erro %>
+        </div>
+        <% } %>
+
+        <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+        <div class="alert alert-success fw-bold small text-center mb-4 rounded-3 d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-check-circle-fill"></i> <%= sucesso %>
+        </div>
+        <% } %>
+
+        <div class="rounded-4 p-4 p-sm-5"
+             style="background:rgba(30,41,59,0.4);backdrop-filter:blur(24px);border:1px solid rgba(51,65,85,0.5)">
+
+            <div class="text-center mb-4">
+                <div class="d-flex align-items-center justify-content-center mx-auto mb-3 rounded-circle"
+                     style="width:64px;height:64px;background:var(--sl-bg-900);border:1px solid var(--sl-bg-800)">
+                    <i class="bi bi-key" style="font-size:1.5rem;color:var(--sl-primary-light)"></i>
+                </div>
+                <h1 class="fw-black text-white text-uppercase mb-0" style="letter-spacing:-0.03em">Recuperar Acesso</h1>
+            </div>
+
+            <form action="/recover" method="POST">
+                <div class="mb-4">
+                    <label class="d-block mb-1 fw-bold text-uppercase"
+                           style="font-size:11px;color:var(--sl-text-500);letter-spacing:0.12em">E-mail do Operador</label>
+                    <input type="email" name="email" placeholder="ALVO@DOMINIO.COM" required
+                           class="form-control text-uppercase"
+                           style="background:rgba(15,23,42,0.6);border-color:var(--sl-bg-800);color:#fff;letter-spacing:0.05em">
+                </div>
+
+                <button type="submit" class="btn btn-sl-primary w-100 fw-black text-uppercase mb-4"
+                        style="letter-spacing:0.1em;height:48px">
+                    Enviar Link de Resgate
+                </button>
+            </form>
+
+            <div class="rounded-3 p-3 mb-4" style="background:rgba(15,23,42,0.5);border:1px solid rgba(51,65,85,0.3)">
+                <h3 class="fw-black text-uppercase mb-3 d-flex align-items-center gap-2"
+                    style="font-size:10px;color:var(--sl-primary);letter-spacing:0.25em">
+                    <i class="bi bi-info-square-fill"></i> Protocolo de Resgate
+                </h3>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <span class="font-monospace fw-bold flex-shrink-0" style="font-size:11px;color:var(--sl-primary-light);margin-top:1px">01.</span>
+                        <p class="mb-0" style="font-size:11px;color:var(--sl-text-400);line-height:1.6">Verifique a sua <strong>caixa de entrada</strong> e a pasta de <strong>spam</strong> após disparar o sinal.</p>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <span class="font-monospace fw-bold flex-shrink-0" style="font-size:11px;color:var(--sl-primary-light);margin-top:1px">02.</span>
+                        <p class="mb-0" style="font-size:11px;color:var(--sl-text-400);line-height:1.6">Utilize o link seguro enviado pelo <strong>Firebase</strong> para redefinir a sua chave de acesso.</p>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <span class="font-monospace fw-bold flex-shrink-0" style="font-size:11px;color:var(--sl-primary-light);margin-top:1px">03.</span>
+                        <p class="mb-0" style="font-size:11px;color:var(--sl-text-400);line-height:1.6">O link de resgate é temporário e <strong>expira em 60 minutos</strong> por razões de blindagem.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pt-3" style="border-top:1px solid rgba(51,65,85,0.5)">
+                <a href="/login" class="fw-bold text-decoration-none" style="font-size:0.875rem;color:var(--sl-text-400)">
+                    <i class="bi bi-arrow-left me-1"></i> Voltar ao Login
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../../partials/footer') %>

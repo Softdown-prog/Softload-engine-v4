@@ -1,0 +1,77 @@
+name: Deploy para Produção
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Instalar dependências
+        run: npm ci --legacy-peer-deps
+
+      - name: Build Docker
+        run: docker build -t softload-engine:latest .
+
+      # Antes, um curl sem URL (secret ausente) falhava em milissegundos e o
+      # "|| echo ..." escondia isso — o job sempre reportava verde mesmo
+      # quando NENHUM deploy real era disparado. Agora:
+      #   - secret ausente  → warning explícito, job continua verde (pode
+      #     haver outro mecanismo de deploy, ex: Cloud Build Trigger nativo),
+      #     mas SEM alegar "deploy iniciado com sucesso".
+      #   - secret presente mas o webhook responde erro/timeout → job FALHA
+      #     de verdade, porque nesse caso o mecanismo configurado quebrou.
+      - name: Deploy webhook
+        id: deploy_webhook
+        run: |
+          if [ -z "${{ secrets.DEPLOY_WEBHOOK_URL }}" ]; then
+            echo "::warning::DEPLOY_WEBHOOK_URL não configurado nos secrets — este workflow NÃO disparou nenhum deploy. Se o deploy real acontece por outro mecanismo (ex: Cloud Build Trigger), tudo bem; caso contrário, configure o secret."
+            echo "chamado=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          http_status=$(curl -sS --max-time 30 -o /tmp/webhook_response.txt -w "%{http_code}" -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{"ref":"main","repository":"softload-engine-v3","commit":"${{ github.sha }}"}')
+
+          echo "Resposta do webhook (HTTP $http_status):"
+          cat /tmp/webhook_response.txt || true
+
+          if [ "$http_status" -lt 200 ] || [ "$http_status" -ge 300 ]; then
+            echo "::error::Webhook de deploy retornou HTTP $http_status — o deploy provavelmente NÃO foi disparado."
+            exit 1
+          fi
+
+          echo "chamado=true" >> "$GITHUB_OUTPUT"
+
+      - name: Notificar sucesso
+        if: success() && steps.deploy_webhook.outputs.chamado == 'true'
+        run: |
+          echo "✅ Webhook de deploy respondeu OK para o commit ${{ github.sha }}."
+          echo "Confirme em produção em /eu (painel admin) ou /health depois de alguns minutos."
+
+      - name: Notificar - nenhum webhook chamado
+        if: success() && steps.deploy_webhook.outputs.chamado != 'true'
+        run: |
+          echo "⚠️  Nenhum webhook de deploy foi chamado nesta execução (DEPLOY_WEBHOOK_URL ausente)."
+          echo "Isso NÃO confirma que o commit ${{ github.sha }} chegou em produção."
+          echo "Confirme em /eu (painel admin) ou /health."
+
+      - name: Notificar erro
+        if: failure()
+        run: |
+          echo "❌ Erro no pipeline de deploy."
+          echo "Verifique os logs acima para mais detalhes."

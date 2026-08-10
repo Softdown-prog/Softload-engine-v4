@@ -1,0 +1,100 @@
+<%# Sidebar — oculta no mobile (navegação lá é pela grade de cards do dashboard), estática no desktop (lg+) %>
+<aside id="sl-dash-sidebar" class="sl-sidebar d-none d-lg-flex">
+
+    <%# Topo: logo %>
+    <div class="d-flex align-items-center justify-content-between px-4 py-4 flex-shrink-0"
+         style="border-bottom:1px solid var(--bs-border-color)">
+        <div>
+            <a href="/" class="fw-black text-decoration-none sl-brand d-block" style="font-size:1.05rem;color:var(--bs-body-color)">
+                SOFTLOAD<span class="sl-accent">ENGINE</span>
+            </a>
+            <p class="mb-0 text-uppercase font-monospace"
+               style="font-size:9px;color:var(--sl-text-400);letter-spacing:0.25em;margin-top:2px">Fábrica de Templates XML</p>
+        </div>
+    </div>
+
+    <%# Info do usuário %>
+    <div class="px-4 py-3 flex-shrink-0" style="border-bottom:1px solid var(--bs-border-color)">
+        <div class="d-flex align-items-center gap-3">
+            <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black flex-shrink-0"
+                 style="width:36px;height:36px;background:linear-gradient(135deg,#0ea5e9,#2563eb);font-size:14px">
+                <%= (user.nome || 'U').charAt(0).toUpperCase() %>
+            </div>
+            <div class="overflow-hidden">
+                <p class="mb-0 fw-bold small text-truncate"><%= user.nome || 'Usuário' %></p>
+                <span class="d-inline-flex align-items-center gap-1 fw-black text-uppercase"
+                      style="font-size:9px;letter-spacing:0.15em;color:<%= user.is_active ? 'var(--sl-primary)' : 'var(--sl-text-400)' %>">
+                    <span class="rounded-circle <%= user.is_active ? 'sl-pulse' : '' %>"
+                          style="width:6px;height:6px;background:<%= user.is_active ? 'var(--sl-primary)' : '#94a3b8' %>;display:inline-block;flex-shrink:0"></span>
+                    <%= user.is_active ? 'Premium' : 'Gratuito' %>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <%# Navegação %>
+    <nav class="flex-grow-1 px-3 py-3" style="overflow-y:auto">
+
+        <p class="fw-black text-uppercase mb-2 px-2"
+           style="font-size:9px;letter-spacing:0.3em;color:var(--sl-text-400)">Ferramentas</p>
+
+        <a href="/dashboard/chat"
+           class="sl-nav-item <%= activePage === 'chat' ? 'active' : '' %>">
+            <span class="sl-nav-label">
+                <i class="bi bi-patch-check sl-nav-icon"></i>
+                Especialista Blogger
+            </span>
+            <span class="badge rounded-pill fw-black text-uppercase"
+                  style="font-size:8px;letter-spacing:0.08em;background:rgba(14,165,233,.15);color:var(--sl-primary)">Gemini</span>
+        </a>
+
+        <a href="/dashboard/solaris"
+           class="sl-nav-item <%= activePage === 'solaris' ? 'active' : '' %>">
+            <span class="sl-nav-label">
+                <i class="bi bi-cpu sl-nav-icon"></i>
+                Solaris Code
+            </span>
+            <span class="badge rounded-pill fw-black text-uppercase"
+                  style="font-size:8px;letter-spacing:0.08em;background:rgba(99,102,241,.15);color:#818cf8">Novo</span>
+        </a>
+
+        <p class="fw-black text-uppercase mb-2 px-2 mt-4"
+           style="font-size:9px;letter-spacing:0.3em;color:var(--sl-text-400)">Conta</p>
+
+        <a href="/dashboard/workspace"
+           class="sl-nav-item <%= activePage === 'workspace' ? 'active' : '' %>">
+            <span class="sl-nav-label">
+                <i class="bi bi-folder2-open sl-nav-icon"></i>
+                Workspace
+            </span>
+        </a>
+
+        <a href="/dashboard/historico"
+           class="sl-nav-item <%= activePage === 'historico' ? 'active' : '' %>">
+            <span class="sl-nav-label">
+                <i class="bi bi-clock-history sl-nav-icon"></i>
+                Histórico XML
+            </span>
+        </a>
+
+        <a href="/dashboard/configuracoes"
+           class="sl-nav-item <%= activePage === 'configuracoes' ? 'active' : '' %>">
+            <span class="sl-nav-label">
+                <i class="bi bi-gear sl-nav-icon"></i>
+                Configurações
+            </span>
+        </a>
+
+    </nav>
+
+    <%# Logout %>
+    <div class="px-3 py-3 flex-shrink-0" style="border-top:1px solid var(--bs-border-color)">
+        <a href="/logout" class="sl-nav-item text-danger" style="color:#f87171 !important">
+            <span class="sl-nav-label">
+                <i class="bi bi-box-arrow-right sl-nav-icon"></i>
+                Encerrar Sessão
+            </span>
+        </a>
+    </div>
+
+</aside>

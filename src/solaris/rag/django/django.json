@@ -1,0 +1,34 @@
+{
+  "id":"django",
+
+  "slug":"django",
+
+  "categoria":"backend",
+
+  "linguagem":"Python",
+
+  "estrutura":[
+    "apps",
+    "templates",
+    "static",
+    "views",
+    "urls",
+    "models",
+    "admin"
+  ],
+
+  "template_engine":"Django Templates",
+
+  "casos_de_uso":[
+    "Portal",
+    "Blog",
+    "Marketplace",
+    "ERP",
+    "Sistema completo"
+  ],
+
+  "validadores":[
+    "python",
+    "django-check"
+  ]
+}
