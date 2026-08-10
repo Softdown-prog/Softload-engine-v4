@@ -6,7 +6,14 @@ const { db }          = require('../../services/firebase');
 const { PLAN_CREDITS, GPT_PLAN_CREDITS } = require('../../services/creditService');
 const { STORAGE_LIMITS_MB } = require('../../services/storageService');
 
-router.get('/dashboard', exigirLogin, async (req, res) => {
+router.get('/dashboard', exigirLogin, (req, res) => {
+    res.render('pages/react-test', {
+        activePage: 'home',
+        user: req.session.user
+    });
+});
+
+router.get('/api/dashboard/stats', exigirLogin, async (req, res) => {
     const user  = req.session.user;
     const email = user.email.toLowerCase();
 
@@ -44,17 +51,14 @@ router.get('/dashboard', exigirLogin, async (req, res) => {
         console.warn('[DASHBOARD] Falha ao buscar dados:', e.message);
     }
 
-    res.render('pages/dashboard', {
-        user,
-        titulo:            'Painel de Controle | Softload',
-        activePage:        'home',
+    res.json({
         creditos,
         creditosCicloTotal,
         creditosExpiraEm,
         creditosGpt,
         creditosGptCicloTotal,
         creditosGptExpiraEm,
-        storageLimitMb:    STORAGE_LIMITS_MB[user.plano] ?? STORAGE_LIMITS_MB.free,
+        storageLimitMb: STORAGE_LIMITS_MB[user.plano] ?? STORAGE_LIMITS_MB.free,
         totalProjetos,
     });
 });

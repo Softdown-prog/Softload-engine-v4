@@ -13,4 +13,5 @@ router.use(require('./workspace'));
 router.use(require('./workspaceChat'));
 router.use(require('./solaris'));
 
+router.use(require('./reactTest'));
 module.exports = router;

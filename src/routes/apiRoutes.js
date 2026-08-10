@@ -32,6 +32,20 @@ const client = new MercadoPagoConfig({
 const payment = new Payment(client);
 const preference = new Preference(client);
 
+// Contract: Provides the React frontend with context previously injected via res.locals
+router.get('/api/app-config', (req, res) => {
+    res.json({
+        user: req.session.user || null,
+        firebaseConfig: {
+            apiKey: process.env.FIREBASE_API_KEY,
+            appId: process.env.FIREBASE_APP_ID,
+        },
+        features: {
+            mpCheckoutUrl: process.env.MP_CHECKOUT_URL || '#'
+        }
+    });
+});
+
 // ==========================================
 // HMAC do webhook do Mercado Pago
 // Doc: https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks
