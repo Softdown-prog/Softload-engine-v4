@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, Link } from 'react-router-dom';
 import { History, Download, Cpu, HardDrive, FileCode, CheckCircle, RefreshCw } from 'lucide-react';
 
 export default function Historico() {
@@ -79,7 +79,7 @@ export default function Historico() {
                     <History size={48} className="text-muted mb-3" />
                     <h3 className="fw-bold mb-2">Nenhuma compilação encontrada</h3>
                     <p className="text-secondary small mb-4">Gere seu primeiro template XML no Solaris Code ou no compilador.</p>
-                    <a href="/dashboard/solaris" className="btn btn-sl-primary btn-sm">Abrir Solaris Code</a>
+                    <Link to="/dashboard/solaris" className="btn btn-sl-primary btn-sm">Abrir Solaris Code</Link>
                 </div>
             ) : (
                 <div className="sl-card p-0 overflow-hidden mb-0">

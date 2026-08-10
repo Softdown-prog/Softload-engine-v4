@@ -4,11 +4,9 @@ const router      = express.Router();
 const { exigirLogin } = require('../../middlewares/authGuard');
 
 router.get('/dashboard/configuracoes', exigirLogin, (req, res) => {
-    res.render('pages/dashboard/configuracoes', {
-        user:       req.session.user,
-        titulo:     'Configurações | Softload',
+    res.render('pages/react-test', {
         activePage: 'configuracoes',
-        query:      req.query
+        user: req.session.user
     });
 });
 

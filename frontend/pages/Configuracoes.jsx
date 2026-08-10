@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, Link } from 'react-router-dom';
 import { Settings, ShieldCheck, Mail, User, Key, Check } from 'lucide-react';
 
 export default function Configuracoes() {
@@ -74,7 +74,7 @@ export default function Configuracoes() {
                             {user?.is_active ? 'Assinatura ativa com acesso total aos recursos premium.' : 'Plano gratuito com recursos limitados.'}
                         </p>
                     </div>
-                    <a href="/dashboard/upgrade" className="btn btn-sl-outline btn-sm fw-bold">Gerenciar / Upgrade</a>
+                    <Link to="/dashboard/upgrade" className="btn btn-sl-outline btn-sm fw-bold">Gerenciar / Upgrade</Link>
                 </div>
             </div>
         </div>

@@ -35,18 +35,29 @@ function sessoesRef(email, projetoId) {
     return projetosRef(email).doc(projetoId).collection('sessoes');
 }
 
-router.get('/dashboard/workspace/chat', exigirLogin, exigirPlanoStudio, async (req, res) => {
+router.get('/dashboard/workspace/chat', exigirLogin, exigirPlanoStudio, (req, res) => {
+    const wsSessionId = req.query.wsSession || null;
+    const wsProjetoId = req.query.projeto   || null;
+
+    if (!wsSessionId || !wsProjetoId) {
+        return res.redirect('/dashboard/workspace');
+    }
+
+    res.render('pages/react-test', {
+        activePage: 'workspace',
+        user: req.session.user
+    });
+});
+
+router.get('/api/workspace/chat/info', exigirLogin, exigirPlanoStudio, async (req, res) => {
     const email       = req.session.user.email.toLowerCase();
     const wsSessionId = req.query.wsSession || null;
     const wsProjetoId = req.query.projeto   || null;
 
-    // Entrada rápida "Chat IA" (link na página do Workspace, sem projeto ou
-    // sessão escolhidos) — cria um projeto + sessão vazios (sem snapshot) na
-    // hora e redireciona pra cá com os IDs. Sessão sem snapshot já cai
-    // automaticamente no modo geração do chat (mesmo comportamento de
-    // qualquer sessão nova via "Novo Projeto"/"Criar Sessão") — não depende
-    // de já existir um template compilado.
     if (!wsSessionId || !wsProjetoId) {
+        // Entrada rápida "Chat IA" (link na página do Workspace, sem projeto ou
+        // sessão escolhidos) — cria um projeto + sessão vazios (sem snapshot) na
+        // hora e retorna os novos IDs para o cliente redirecionar/carregar.
         try {
             const agora       = admin.firestore.FieldValue.serverTimestamp();
             const nomeProjeto = `Chat IA — ${new Date().toLocaleDateString('pt-BR')}`;
@@ -61,47 +72,90 @@ router.get('/dashboard/workspace/chat', exigirLogin, exigirPlanoStudio, async (r
                 criadoEm:      agora,
                 chatSessionId: null,
             });
-            return res.redirect(`/dashboard/workspace/chat?wsSession=${sessaoRef.id}&projeto=${projetoRef.id}`);
+            return res.json({ redirect: `/dashboard/workspace/chat?wsSession=${sessaoRef.id}&projeto=${projetoRef.id}` });
         } catch (err) {
             console.error('[WORKSPACE-CHAT] criar sessão rápida err:', err.message);
-            return res.redirect('/dashboard/workspace');
+            return res.status(500).json({ erro: 'Falha ao iniciar chat do workspace.' });
         }
     }
 
-    const sessaoRef  = sessoesRef(email, wsProjetoId).doc(wsSessionId);
-    const sessaoDoc  = await sessaoRef.get();
-    if (!sessaoDoc.exists) {
-        return res.redirect('/dashboard/workspace');
-    }
-    const snapshot = sessaoDoc.data().snapshot || null;
-
-    // Chat do Workspace é Gemini-only (decisão do produto — sem seletor de
-    // modelo aqui, diferente do Especialista) — só créditos Gemini importam.
-    const planoSessao = req.session.user?.plano || 'free';
-    let creditosGemini      = PLAN_CREDITS[planoSessao] ?? PLAN_CREDITS.free;
-    let creditosGeminiTotal = creditosGemini;
     try {
-        const contaSnap = await db.collection('clientes_premium').doc(email).get();
-        if (contaSnap.exists) {
-            const d = contaSnap.data();
-            if (d.creditos !== undefined) {
-                const expirado = d.creditos_expira_em && new Date(d.creditos_expira_em) < new Date();
-                creditosGemini = expirado ? 0 : d.creditos;
-            }
-            if (d.creditos_ciclo_total !== undefined) creditosGeminiTotal = d.creditos_ciclo_total;
+        const sessaoRef  = sessoesRef(email, wsProjetoId).doc(wsSessionId);
+        const sessaoDoc  = await sessaoRef.get();
+        if (!sessaoDoc.exists) {
+            return res.status(404).json({ erro: 'Sessão não encontrada.' });
         }
-    } catch (_) { /* degradação silenciosa */ }
+        const sessaoData = sessaoDoc.data();
+        let snapshot = sessaoData.snapshot || null;
 
-    res.render('pages/dashboard/workspace/chat', {
-        user:       req.session.user,
-        titulo:     `${snapshot?.siteName || 'Workspace'} · Editor | Softload`,
-        activePage: 'workspace',
-        creditosGemini,
-        creditosGeminiTotal,
-        snapshot,
-        wsSessionId,
-        wsProjetoId,
-    });
+        // Backfill do manifesto se necessário
+        if (snapshot && snapshot.compilacaoId && (!snapshot.manifesto || !snapshot.xmlPath)) {
+            try {
+                const compSnap = await db.collection('clientes_premium').doc(email)
+                    .collection('compilacoes').doc(snapshot.compilacaoId).get();
+                if (compSnap.exists) {
+                    const compData = compSnap.data();
+                    const patch = {};
+                    if (!snapshot.manifesto) {
+                        const manifestoResolvido = compData.manifesto
+                            || (compData.manifestoPath ? await carregarManifesto(compData.manifestoPath).catch(() => null) : null);
+                        if (manifestoResolvido) patch.manifesto = manifestoResolvido;
+                    }
+                    if (!snapshot.xmlPath && compData.xmlPath) patch.xmlPath = compData.xmlPath;
+                    if (!snapshot.gcPath && compData.gcPath) patch.gcPath = compData.gcPath;
+                    if (Object.keys(patch).length > 0) {
+                        snapshot = { ...snapshot, ...patch };
+                        await sessaoRef.update({ snapshot });
+                    }
+                }
+            } catch (err) {
+                console.warn('[WORKSPACE-CHAT] backfill manifesto api err:', err.message);
+            }
+        }
+
+        const planoSessao = req.session.user?.plano || 'free';
+        let creditosGemini      = PLAN_CREDITS[planoSessao] ?? PLAN_CREDITS.free;
+        let creditosGeminiTotal = creditosGemini;
+        try {
+            const contaSnap = await db.collection('clientes_premium').doc(email).get();
+            if (contaSnap.exists) {
+                const d = contaSnap.data();
+                if (d.creditos !== undefined) {
+                    const expirado = d.creditos_expira_em && new Date(d.creditos_expira_em) < new Date();
+                    creditosGemini = expirado ? 0 : d.creditos;
+                }
+                if (d.creditos_ciclo_total !== undefined) creditosGeminiTotal = d.creditos_ciclo_total;
+            }
+        } catch (_) {}
+
+        // Obter mensagens antigas se houver
+        let messages = [];
+        if (sessaoData.chatSessionId) {
+            try {
+                const chatDoc = await db.collection('clientes_premium').doc(email)
+                    .collection('chats').doc(sessaoData.chatSessionId).get();
+                if (chatDoc.exists) {
+                    messages = chatDoc.data().messages || [];
+                }
+            } catch (err) {
+                console.warn('[WORKSPACE-CHAT] carregar mensagens persistidas err:', err.message);
+            }
+        }
+
+        res.json({
+            user: req.session.user,
+            creditosGemini,
+            creditosGeminiTotal,
+            snapshot,
+            wsSessionId,
+            wsProjetoId,
+            sessionId: sessaoData.chatSessionId || null,
+            messages
+        });
+    } catch (e) {
+        console.error('[WORKSPACE-CHAT] info api err:', e.message);
+        res.status(500).json({ erro: 'Falha ao carregar informações do chat.' });
+    }
 });
 
 // ──────────────────────────────────────────────────────────────────────────

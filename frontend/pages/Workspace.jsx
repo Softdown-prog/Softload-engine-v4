@@ -92,9 +92,9 @@ export default function Workspace() {
                     <button onClick={carregarProjetos} className="btn btn-sl-outline btn-sm d-flex align-items-center gap-1">
                         <RefreshCw size={14} className={loading ? 'fa-spin' : ''} /> Atualizar
                     </button>
-                    <a href="/dashboard/solaris" className="btn btn-sl-primary btn-sm d-flex align-items-center gap-1">
+                    <Link to="/dashboard/solaris" className="btn btn-sl-primary btn-sm d-flex align-items-center gap-1">
                         <Plus size={16} /> Novo Projeto IA
-                    </a>
+                    </Link>
                 </div>
             </div>
 
@@ -138,7 +138,7 @@ export default function Workspace() {
                     <FolderOpen size={48} className="text-muted mb-3" />
                     <h3 className="fw-bold mb-2">Nenhum projeto encontrado</h3>
                     <p className="text-secondary small mb-4">Crie seu primeiro projeto acima ou use o Solaris Code para gerar via inteligência artificial.</p>
-                    <a href="/dashboard/solaris" className="btn btn-sl-primary btn-sm">Abrir Solaris Code</a>
+                    <Link to="/dashboard/solaris" className="btn btn-sl-primary btn-sm">Abrir Solaris Code</Link>
                 </div>
             ) : (
                 <div className="row g-4">

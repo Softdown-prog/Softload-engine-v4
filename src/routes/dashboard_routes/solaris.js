@@ -15,6 +15,7 @@ const { criarSolarisChat } = require('../../solaris/chat/solarisChat');
 const { detectarMarcador, removerMarcadorTruncado } = require('../../solaris/chat/solarisGenerationTrigger');
 const { criarOrquestrador } = require('../../solaris/pipeline/orchestrator');
 const { criarModelRouter }  = require('../../solaris/llm/modelRouter');
+const { getAgent }          = require('../../services/agentBridge');
 const { inspecionarProjeto } = require('../../solaris/pipeline/projectInspector');
 const { responderOuEditarProjeto } = require('../../solaris/pipeline/projectEditor');
 const { extrairZip, criarZip, criarArquivo, deletarArquivo, listarProjeto, lerArquivo } = require('../../solaris/tools/fileTools');
@@ -48,32 +49,19 @@ const solarisChat = criarSolarisChat();
 const modelRouter  = criarModelRouter();
 const orquestrador = criarOrquestrador({ modelRouter });
 
-router.get('/dashboard/solaris', exigirLogin, async (req, res) => {
-    const planoSessao = req.session.user?.plano || 'free';
-    let creditosGemini      = PLAN_CREDITS[planoSessao] ?? PLAN_CREDITS.free;
-    let creditosGeminiTotal = creditosGemini;
-
-    const email = req.session.user?.email;
-    if (email) {
-        try {
-            const snap = await db.collection('clientes_premium').doc(email.toLowerCase()).get();
-            if (snap.exists) {
-                const d = snap.data();
-                if (d.creditos !== undefined) {
-                    const expirado = d.creditos_expira_em && new Date(d.creditos_expira_em) < new Date();
-                    creditosGemini = expirado ? 0 : d.creditos;
-                }
-                if (d.creditos_ciclo_total !== undefined) creditosGeminiTotal = d.creditos_ciclo_total;
-            }
-        } catch (_) { /* degradação silenciosa */ }
+let solarisAgent = null;
+async function getSolarisAgent() {
+    if (!solarisAgent) {
+        solarisAgent = await getAgent('solaris-chat');
+        await solarisAgent.start();
     }
+    return solarisAgent;
+}
 
-    res.render('pages/dashboard/solaris', {
-        user:       req.session.user,
-        titulo:     'Solaris Code | Softload',
+router.get('/dashboard/solaris', exigirLogin, (req, res) => {
+    res.render('pages/react-test', {
         activePage: 'solaris',
-        creditosGemini,
-        creditosGeminiTotal,
+        user: req.session.user
     });
 });
 

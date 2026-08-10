@@ -45,9 +45,9 @@ export default function DashboardHome() {
                                 Expira em {new Date(user.premium_ate).toLocaleDateString('pt-BR')}
                             </p>
                         )}
-                        <a href="/dashboard/upgrade" className="btn btn-sl-outline btn-sm w-100 mt-3" style={{ fontSize: '0.75rem' }}>
+                        <Link to="/dashboard/upgrade" className="btn btn-sl-outline btn-sm w-100 mt-3" style={{ fontSize: '0.75rem' }}>
                             Gerenciar Assinatura
-                        </a>
+                        </Link>
                     </div>
                 </div>
 
@@ -105,7 +105,7 @@ export default function DashboardHome() {
                     </h2>
                     <div className="row g-3">
                         <div className="col-12 col-md-6">
-                            <a href="/dashboard/workspace" className="sl-card h-100 mb-0 text-decoration-none d-block sl-hover-lift">
+                            <Link to="/dashboard/workspace" className="sl-card h-100 mb-0 text-decoration-none d-block sl-hover-lift">
                                 <div className="d-flex align-items-center gap-3 mb-2">
                                     <div className="rounded d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '40px', height: '40px', background: 'rgba(14,165,233,.1)', color: 'var(--sl-primary)' }}>
                                         <FolderOpen size={20} />
@@ -113,10 +113,10 @@ export default function DashboardHome() {
                                     <h3 className="fw-bold mb-0" style={{ fontSize: '1rem', color: 'var(--bs-body-color)' }}>Abrir Workspace</h3>
                                 </div>
                                 <p className="small mb-0" style={{ color: 'var(--sl-text-400)' }}>Acesse seus projetos salvos, continue de onde parou e baixe o código final.</p>
-                            </a>
+                            </Link>
                         </div>
                         <div className="col-12 col-md-6">
-                            <a href="/dashboard/solaris" className="sl-card h-100 mb-0 text-decoration-none d-block sl-hover-lift">
+                            <Link to="/dashboard/solaris" className="sl-card h-100 mb-0 text-decoration-none d-block sl-hover-lift">
                                 <div className="d-flex align-items-center gap-3 mb-2">
                                     <div className="rounded d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '40px', height: '40px', background: 'rgba(99,102,241,.1)', color: '#818cf8' }}>
                                         <Cpu size={20} />
@@ -124,7 +124,7 @@ export default function DashboardHome() {
                                     <h3 className="fw-bold mb-0" style={{ fontSize: '1rem', color: 'var(--bs-body-color)' }}>Solaris Code <span className="badge ms-2" style={{ background: '#818cf8', fontSize: '10px' }}>NOVO</span></h3>
                                 </div>
                                 <p className="small mb-0" style={{ color: 'var(--sl-text-400)' }}>Engenharia guiada por IA. Descreva o que você precisa e gere templates em segundos.</p>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
