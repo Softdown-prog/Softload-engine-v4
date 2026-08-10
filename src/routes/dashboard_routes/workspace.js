@@ -46,7 +46,14 @@ function formatarData(ts) {
 // ──────────────────────────────────────────────────────────────────────────
 // GET /dashboard/workspace
 // ──────────────────────────────────────────────────────────────────────────
-router.get('/dashboard/workspace', exigirLogin, exigirPlanoStudio, async (req, res) => {
+router.get('/dashboard/workspace', exigirLogin, exigirPlanoStudio, (req, res) => {
+    res.render('pages/react-test', {
+        activePage: 'workspace',
+        user: req.session.user
+    });
+});
+
+router.get('/api/workspace/projetos', exigirLogin, exigirPlanoStudio, async (req, res) => {
     try {
         const email = req.session.user.email.toLowerCase();
 
@@ -65,28 +72,18 @@ router.get('/dashboard/workspace', exigirLogin, exigirPlanoStudio, async (req, r
                 .get();
 
             p.sessoes = ssSnap.docs.map(s => {
-                const d = { id: s.id, ...s.data() };
-                d.criadoEmFmt = formatarData(d.criadoEm);
-                return d;
+                const sd = { id: s.id, ...s.data() };
+                sd.criadoEmFmt = formatarData(sd.criadoEm);
+                return sd;
             });
 
             return p;
         }));
 
-        res.render('pages/dashboard/workspace', {
-            user:       req.session.user,
-            titulo:     'Workspace | Softload',
-            activePage: 'workspace',
-            projetos,
-        });
+        res.json({ projetos });
     } catch (err) {
-        console.error('[WORKSPACE] GET:', err.message);
-        res.render('pages/dashboard/workspace', {
-            user:       req.session.user,
-            titulo:     'Workspace | Softload',
-            activePage: 'workspace',
-            projetos:   [],
-        });
+        console.error('[WORKSPACE] GET api:', err.message);
+        res.status(500).json({ erro: 'Falha ao carregar projetos.', projetos: [] });
     }
 });
 

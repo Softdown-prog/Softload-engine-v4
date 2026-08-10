@@ -16,8 +16,66 @@ const GRID_LABELS = {
     coluna:  'Coluna',
 };
 
-// GET /dashboard/historico — lista as últimas 30 compilações do usuário
-router.get('/dashboard/historico', exigirLogin, async (req, res) => {
+router.get('/dashboard/historico', exigirLogin, (req, res) => {
+    res.render('pages/react-test', {
+        activePage: 'historico',
+        user: req.session.user
+    });
+});
+
+router.get('/api/historico', exigirLogin, async (req, res) => {
+    try {
+        const email    = req.session.user.email.toLowerCase();
+        const snapshot = await db.collection('clientes_premium').doc(email)
+            .collection('compilacoes')
+            .orderBy('criadoEm', 'desc')
+            .limit(30)
+            .get();
+
+        const compilacoes = snapshot.docs.map(doc => {
+            const d = doc.data();
+            const preset = COLOR_PRESETS[d.colorPreset] || COLOR_PRESETS['tech-blue'];
+            const typo   = TYPOGRAPHY_PRESETS[d.typography];
+
+            return {
+                id:             doc.id,
+                arquivo:        d.arquivo,
+                gcPath:         d.gcPath,
+                xmlPath:        d.xmlPath || null,
+                tamanhoBytes:   d.tamanhoBytes || 0,
+                siteName:       d.siteName || 'Sem nome',
+                colorPreset:    d.colorPreset || 'tech-blue',
+                colorLabel:     preset.label,
+                colorHex:       preset.primary,
+                typography:     d.typography  || null,
+                typographyLabel: typo ? typo.label.split('(')[0].trim() : (d.typography || null),
+                gridLayout:     d.gridLayout  || null,
+                gridLabel:      GRID_LABELS[d.gridLayout] || d.gridLayout || null,
+                enableSeo:      d.enableSeo   || d.seo || false,
+                buttonStyle:    d.buttonStyle || null,
+                geradoPorIA:    d.geradoPorIA || false,
+                criadoEm:       d.criadoEm
+                    ? d.criadoEm.toDate().toLocaleDateString('pt-BR', {
+                        day: '2-digit', month: '2-digit', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                      })
+                    : '—',
+                criadoEmISO: d.criadoEm ? d.criadoEm.toDate().toISOString() : null,
+            };
+        });
+
+        const totalIA         = compilacoes.filter(c => c.geradoPorIA).length;
+        const storageLimitMb  = STORAGE_LIMITS_MB[req.session.user.plano] ?? STORAGE_LIMITS_MB.free;
+
+        res.json({ compilacoes, totalIA, storageLimitMb, user: req.session.user });
+    } catch (err) {
+        console.error('[HISTORICO] API:', err.message);
+        res.status(500).json({ erro: 'Falha ao carregar histórico.', compilacoes: [] });
+    }
+});
+
+// GET /dashboard/historico (legacy code skipped)
+router.get('/dashboard/historico_legacy', exigirLogin, async (req, res) => {
     try {
         const email    = req.session.user.email.toLowerCase();
         const snapshot = await db.collection('clientes_premium').doc(email)

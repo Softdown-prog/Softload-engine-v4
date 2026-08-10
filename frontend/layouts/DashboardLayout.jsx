@@ -13,9 +13,8 @@ import {
 import { fetchAppConfig } from '../services/api';
 
 function SidebarItem({ to, icon: Icon, label, badge, badgeColor, active }) {
-    // For now, use <a> instead of <Link> to allow EJS routes to load
     return (
-        <a href={to} className={`sl-nav-item ${active ? 'active' : ''}`}>
+        <Link to={to} className={`sl-nav-item ${active ? 'active' : ''}`}>
             <span className="sl-nav-label">
                 <Icon size={18} className="sl-nav-icon me-2" />
                 {label}
@@ -31,7 +30,7 @@ function SidebarItem({ to, icon: Icon, label, badge, badgeColor, active }) {
                     {badge}
                 </span>
             )}
-        </a>
+        </Link>
     );
 }
 

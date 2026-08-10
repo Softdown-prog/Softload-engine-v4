@@ -17,14 +17,17 @@ const { apagarProjeto }            = require('../../solaris/tools/projectStorage
 // /api/chat/sessions/:sessionId abaixo).
 const { SOLARIS_CHAT_SESSION_TYPE } = require('./solaris');
 
-router.get('/dashboard/chat', exigirLogin, async (req, res) => {
-    // Compatibilidade com links antigos que abriam o chat do Workspace por
-    // aqui (?wsSession=&projeto=) — o chat do Workspace agora tem rota
-    // própria (workspaceChat.js), espelhando a separação do Sol.
+router.get('/dashboard/chat', exigirLogin, (req, res) => {
     if (req.query.wsSession && req.query.projeto) {
         return res.redirect(`/dashboard/workspace/chat?wsSession=${encodeURIComponent(req.query.wsSession)}&projeto=${encodeURIComponent(req.query.projeto)}`);
     }
+    res.render('pages/react-test', {
+        activePage: 'chat',
+        user: req.session.user
+    });
+});
 
+router.get('/api/chat/status', exigirLogin, async (req, res) => {
     const planoSessao = req.session.user?.plano || 'free';
     const { GPT_PLAN_CREDITS, PLAN_CREDITS } = require('../../services/creditService');
     let creditosGpt         = GPT_PLAN_CREDITS[planoSessao] ?? 0;
@@ -47,18 +50,17 @@ router.get('/dashboard/chat', exigirLogin, async (req, res) => {
                 }
                 if (d.creditos_ciclo_total !== undefined) creditosGeminiTotal = d.creditos_ciclo_total;
             }
-        } catch (_) { /* degradação silenciosa */ }
+        } catch (_) {}
     }
 
-    res.render('pages/dashboard/chat', {
-        user:       req.session.user,
-        titulo:     'Especialista Blogger | Softload',
-        activePage: 'chat',
+    res.json({
         creditosGpt,
         creditosGemini,
         creditosGeminiTotal,
+        user: req.session.user
     });
 });
+
 
 // ──────────────────────────────────────────────────────────────────────────
 // POST /dashboard/chat/stream — SSE streaming

@@ -2,6 +2,12 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import DashboardLayout from './layouts/DashboardLayout';
 import DashboardHome from './pages/DashboardHome';
+import Workspace from './pages/Workspace';
+import Solaris from './pages/Solaris';
+import Configuracoes from './pages/Configuracoes';
+import Chat from './pages/Chat';
+import Historico from './pages/Historico';
+import Upgrade from './pages/Upgrade';
 
 function App() {
   return (
@@ -9,8 +15,12 @@ function App() {
       <Routes>
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardHome />} />
-          {/* We will add more routes here as we migrate them */}
-          {/* E.g. <Route path="workspace" element={<Workspace />} /> */}
+          <Route path="workspace" element={<Workspace />} />
+          <Route path="solaris" element={<Solaris />} />
+          <Route path="configuracoes" element={<Configuracoes />} />
+          <Route path="chat" element={<Chat />} />
+          <Route path="historico" element={<Historico />} />
+          <Route path="upgrade" element={<Upgrade />} />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -18,3 +28,4 @@ function App() {
 }
 
 export default App;
+
